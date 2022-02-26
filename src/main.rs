@@ -6,13 +6,11 @@ use serde::{Deserialize, Serialize};
 use self::{
     assets::{ConfigAsset, GameAssetsPlugin},
     battle_map::BattleMapPlugin,
-    input::InputPlugin,
 };
 
 mod assets;
 mod battle_map;
 mod config;
-mod input;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GameState {
@@ -35,7 +33,6 @@ pub fn main() {
         ..Default::default()
     })
     .add_plugins(DefaultPlugins)
-    .add_plugin(InputPlugin)
     .add_plugin(GameAssetsPlugin)
     .add_plugin(BattleMapPlugin)
     .add_state(GameState::StartScreen)

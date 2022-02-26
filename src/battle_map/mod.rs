@@ -1,14 +1,16 @@
 use bevy::prelude::Plugin;
 
-use self::{map::MapPlugin, render::RenderPlugin, units::UnitsPlugin, selection::BattleMapSelectionPlugin};
+use self::{map::MapPlugin, render::RenderPlugin, units::UnitsPlugin, selection::BattleMapSelectionPlugin, input::InputPlugin};
 
 mod components;
 mod map;
 mod render;
 mod selection;
 mod units;
+mod input;
 
 pub use map::{Map, MapUnits};
+pub use components::*;
 
 pub struct BattleMapPlugin;
 
@@ -17,6 +19,7 @@ impl Plugin for BattleMapPlugin {
         app.add_plugin(UnitsPlugin)
             .add_plugin(RenderPlugin)
             .add_plugin(BattleMapSelectionPlugin)
+            .add_plugin(InputPlugin)
             .add_plugin(MapPlugin);
     }
 }

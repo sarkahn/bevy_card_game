@@ -55,6 +55,7 @@ fn setup_from_ldtk(
     mut ev_ldtk: EventReader<LdtkRebuild>,
 ) {
     for ev in ev_ldtk.iter() {
+        println!("SETUP FROM LDTK");
         for (mat, mut mapping) in q_term.iter_mut() {
             if let Some(mut mat) = materials.get_mut(mat) {
                 mat.texture = Some(ev.tex.clone());

@@ -11,3 +11,4 @@ bevy_ascii_terminal = { git = "https://github.com/sarkahn/bevy_ascii_terminal", 
 ron = "0.7.0"
 serde = { version = "1", features = ["derive"] }
 anyhow = "1.0.54"
+sark_pathfinding = "0.1.2"

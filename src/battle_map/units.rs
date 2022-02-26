@@ -52,7 +52,7 @@ fn spawn_units(mut commands: Commands) {
 }
 
 fn update_sprite_position(
-    mut q_sprites: Query<(&mut Transform, &MapPosition), Changed<MapPosition>>,
+    mut q_sprites: Query<(&mut Transform, &MapPosition), (Changed<MapPosition>, With<MapUnit>)>,
 ) {
     for (mut t, p) in q_sprites.iter_mut() {
         t.translation = p.xy.extend(5).as_vec3() + Vec3::new(0.5, 0.5, 0.0);
@@ -61,9 +61,10 @@ fn update_sprite_position(
 
 fn update_map_units(
     mut units: ResMut<MapUnits>,
-    q_units: Query<(Entity,&MapPosition), (With<MapUnit>, Changed<MapPosition>)>,
+    q_moved_units: Query<(Entity,&MapPosition), (With<MapUnit>, Changed<MapPosition>)>,
+    q_units: Query<(Entity, &MapPosition), With<MapUnit>>,
 ) {
-    if q_units.is_empty() {
+    if q_moved_units.is_empty() {
         return;
     }
     units.clear();

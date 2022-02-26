@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_ascii_terminal::{ldtk::LdtkAsset, Point2d, Size2d};
+use sark_pathfinding::PathMap2d;
 
 use crate::GameState;
 
@@ -11,7 +12,9 @@ impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Map>()
             .init_resource::<MapUnits>()
+            .init_resource::<CollisionMap>()
             .add_system_set(SystemSet::on_enter(GameState::LoadBattleMap).with_system(setup))
+            .add_system_set(SystemSet::on_update(GameState::BattleMap).with_system(update_collision_map))
             .add_event::<LdtkRebuild>()
             .add_system(build_from_ldtk);
     }
@@ -44,10 +47,24 @@ pub struct MapUnits {
     size: UVec2,
 }
 
+pub struct CollisionMap(pub PathMap2d);
+impl std::ops::Deref for CollisionMap {
+    type Target = PathMap2d;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl Default for CollisionMap {
+    fn default() -> Self {
+        Self(PathMap2d::new([0,0]))
+    }
+}
+
 impl MapUnits {
     pub fn get(&self, xy: impl Point2d) -> Option<Entity> {
         let i = self.world_to_index(&xy);
-        println!("Trying to get unit at {}, i {}", xy.xy(), i );
+        //println!("Trying to get unit at {}, i {}", xy.xy(), i );
         self.units[i]
     }
     pub fn to_xy(&self, i: usize) -> IVec2 {
@@ -74,10 +91,10 @@ impl MapUnits {
     }
     pub fn set(&mut self, xy: impl Point2d, unit: Option<Entity>) {
         let i = self.world_to_index(&xy);
-        println!("Putting unit at {}, I {}", xy.xy(), i);
+        //println!("Putting unit at {}, I {}", xy.xy(), i);
         self.units[i] = unit;
 
-        println!("Unit in vec: {:?}", self.units[i]);
+        //println!("Unit in vec: {:?}", self.units[i]);
     }
     pub fn empty(&self) -> bool {
         self.units.is_empty()
@@ -211,5 +228,25 @@ pub fn tile_to_id(tile: &TerrainTile) -> u16 {
         TerrainTile::Grass => 4,
         TerrainTile::Mountain => 6,
         TerrainTile::Water => 5,
+    }
+}
+
+fn update_collision_map(
+    mut collision_map: ResMut<CollisionMap>,
+    map: Res<Map>,
+) {
+    if !map.is_changed() {
+        return;
+    }
+    if map.size() != collision_map.size() {
+        collision_map.0 = PathMap2d::new(map.size().into());
+    }
+    println!("Updating collision map. Size {}", map.size());
+    for (coll,tile) in collision_map.0.iter_mut().zip(map.iter()) {
+        *coll = match tile {
+            TerrainTile::Mountain => true,
+            TerrainTile::Water => true,
+            _ => false,
+        };
     }
 }
