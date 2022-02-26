@@ -1,10 +1,11 @@
 use bevy::{prelude::*};
 use bevy_ascii_terminal::TerminalBundle;
+use bevy_easings::EasingsPlugin;
 use bevy_tiled_camera::TiledCameraBundle;
+use config::{ConfigPlugin, ConfigAsset};
 use serde::{Deserialize, Serialize};
 
 use self::{
-    assets::{ConfigAsset, GameAssetsPlugin},
     battle_map::BattleMapPlugin,
 };
 
@@ -12,12 +13,15 @@ mod assets;
 mod battle_map;
 mod config;
 
+
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GameState {
     Starting,
     StartScreen,
     LoadBattleMap,
     BattleMap,
+    LoadArena,
+    Arena,
 }
 
 impl Default for GameState {
@@ -33,8 +37,10 @@ pub fn main() {
         ..Default::default()
     })
     .add_plugins(DefaultPlugins)
-    .add_plugin(GameAssetsPlugin)
+    //.add_plugin(GameAssetsPlugin)
     .add_plugin(BattleMapPlugin)
+    .add_plugin(EasingsPlugin)
+    .add_plugin(ConfigPlugin)
     .add_state(GameState::StartScreen)
     .add_startup_system(start)
     .add_system(load_config)
@@ -47,6 +53,7 @@ fn start(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 fn load_config(
+    mut commands: Commands,
     mut game_state: ResMut<State<GameState>>,
     configs: Res<Assets<ConfigAsset>>,
     mut ev_config: EventReader<AssetEvent<ConfigAsset>>,
@@ -55,7 +62,9 @@ fn load_config(
         match ev {
             AssetEvent::Created { handle } => {
                 let config = &configs.get(handle).unwrap();
+                println!("Settings {:?}", config.settings);
                 game_state.set(config.settings.begin_state).unwrap();
+                commands.insert_resource(config.settings.clone());
             }
             _ => {}
         }
