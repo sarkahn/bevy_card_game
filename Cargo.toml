@@ -1,8 +1,13 @@
 [package]
-name = "bevy_github_ci_template"
+name = "bevy_card_game"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-bevy = "0.6"
+bevy = { version="0.6", default-features=false, features=["bevy_winit", "bevy_render", "png"] }
+bevy_tiled_camera = "0.3.0"
+bevy_ascii_terminal = { git = "https://github.com/sarkahn/bevy_ascii_terminal", branch = "trait_formatting" }
+ron = "0.7.0"
+serde = { version = "1", features = ["derive"] }
+anyhow = "1.0.54"
