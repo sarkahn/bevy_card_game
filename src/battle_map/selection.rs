@@ -59,8 +59,8 @@ fn path(
         if let Ok(cursor_pos) = q_cursor.get_single() {
             if let Ok(unit_pos) = q_unit.get(unit) {
                 // Whee, I could stand to improve the api for pathfinding!
-                let a = cursor_pos.xy + map.size().as_ivec2() / 2;
-                let b = unit_pos.xy + map.size().as_ivec2() / 2;
+                let b = cursor_pos.xy + map.size().as_ivec2() / 2;
+                let a = unit_pos.xy + map.size().as_ivec2() / 2;
                 let a_i = map.to_index(a.into());
                 let b_i = map.to_index(b.into());
                 //println!("xy{} i {} to xy {} i {}", a, a_i, b, b_i);
@@ -69,6 +69,7 @@ fn path(
                 selection.path.clear();
                 let mut astar = AStar::new(10);
                 if let Some(path) = astar.find_path(&map.0, a.into(), b.into()) {
+                    //println!("Pathfind length {}, from {} to {}", path.len(), a, b);
                     selection.path.extend(path.iter().map(|p|IVec2::from(*p)));
                 }
             }

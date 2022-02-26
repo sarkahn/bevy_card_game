@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy_ascii_terminal::{ldtk::LdtkAsset, Point2d, Size2d};
-use sark_pathfinding::PathMap2d;
+use sark_pathfinding::{PathMap2d, PathingMap, AStar};
 
 use crate::GameState;
 
