@@ -2,6 +2,7 @@ use arena::ArenaPlugin;
 use assets::AssetsPlugin;
 use bevy::{asset::LoadState, prelude::*};
 use bevy_easings::EasingsPlugin;
+use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
 use config::{ConfigAsset, ConfigPlugin,};
 use ldtk_loader::LdtkPlugin;
@@ -55,6 +56,7 @@ pub fn main() {
         .add_plugin(ArenaPlugin)
         .add_plugin(LdtkPlugin)
         .add_plugin(AssetsPlugin)
+        .add_plugin(EguiPlugin)
         .add_state(GameState::StartScreen)
         .add_startup_system(start)
         .add_system(load_config)

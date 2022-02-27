@@ -13,7 +13,7 @@ pub struct GameAssetsPlugin;
 
 impl Plugin for GameAssetsPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_asset::<Prefab>()
+        app.add_asset::<PrefabAsset>()
             .add_asset_loader(PrefabAssetLoader)
             //.add_system(load_event)
             ;
@@ -22,7 +22,7 @@ impl Plugin for GameAssetsPlugin {
 
 #[derive(TypeUuid)]
 #[uuid = "dc21ad52-5293-4abe-578f-12c412aaa0eb"]
-pub struct Prefab {
+pub struct PrefabAsset {
     pub string: String,
 }
 
@@ -38,7 +38,7 @@ impl AssetLoader for PrefabAssetLoader {
         Box::pin(async move {
             let str = std::str::from_utf8(bytes)?;
 
-            let asset = LoadedAsset::new(Prefab {
+            let asset = LoadedAsset::new(PrefabAsset {
                 string: str.to_string(),
             });
 

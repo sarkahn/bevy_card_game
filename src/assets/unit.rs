@@ -9,27 +9,27 @@ pub struct AnimationData {
 
 #[derive(Default,Debug,Serialize,Deserialize)]
 pub struct SpriteData {
-    image: String,
-    index: i32,
+    pub image: String,
+    pub index: i32,
     #[serde(default)]
-    animations: Option<HashMap<String,AnimationData>>,
+    pub animations: Option<HashMap<String,AnimationData>>,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Stats {
-    max_hp: i32,
+    pub max_hp: i32,
     #[serde(default)]
-    current_hp: i32,
+    pub current_hp: i32,
 }
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct UnitComponents {
     #[serde(default)]
-    stats: Option<Stats>,
+    pub stats: Option<Stats>,
     #[serde(default)]
-    abilities: Option<Vec<String>>,
-    arena_sprite: SpriteData,
-    map_sprite: SpriteData,
+    pub abilities: Option<Vec<String>>,
+    pub arena_sprite: SpriteData,
+    pub map_sprite: SpriteData,
 }
 
 #[cfg(test)]
