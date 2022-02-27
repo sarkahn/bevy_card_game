@@ -4,9 +4,8 @@ use bevy_ascii_terminal::{
     renderer::uv_mapping::UvMapping,
     Terminal, TerminalBundle, TerminalMaterial, TerminalPlugin, TileWriter,
 };
-use bevy_tiled_camera::{TiledCameraBundle, TiledCameraPlugin, TiledProjection};
 
-use crate::battle_map::map::tile_to_id;
+use crate::{ResizeCamera};
 
 use super::map::Map;
 
@@ -16,7 +15,6 @@ impl Plugin for RenderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(TerminalPlugin)
             .add_plugin(LdtkPlugin)
-            .add_plugin(TiledCameraPlugin)
             .add_startup_system(setup)
             .add_system(setup_from_ldtk.label("term_ldtk_setup"))
             .add_system(render.after("term_ldtk_setup"));
@@ -40,7 +38,6 @@ fn setup(mut commands: Commands) {
             ..Default::default()
         })
         .insert(MapOverlayTerminal);
-    commands.spawn_bundle(TiledCameraBundle::new());
 }
 
 pub struct LdtkRebuild {
@@ -66,9 +63,9 @@ fn setup_from_ldtk(
 }
 
 fn render(
+    mut commands: Commands,
     map: Res<Map>,
     mut q_term: Query<&mut Terminal, (With<MapTerminal>, Without<MapOverlayTerminal>)>,
-    mut q_cam: Query<&mut TiledProjection>,
     mut q_overlay: Query<&mut Terminal, (With<MapOverlayTerminal>, Without<MapTerminal>)>,
 ) {
     if let Ok(mut term) = q_term.get_single_mut() {
@@ -80,9 +77,7 @@ fn render(
 
         if term.size() != map.size() {
             term.resize(map.size());
-            if let Ok(mut proj) = q_cam.get_single_mut() {
-                proj.set_tile_count(map.size().into());
-            }
+            commands.spawn().insert(ResizeCamera(map.size().as_ivec2()));
             if let Ok(mut overlay) = q_overlay.get_single_mut() {
                 overlay.resize(map.size());
                 overlay.fill('a'.fg(Color::rgba_u8(0,0,0,0)));
@@ -90,7 +85,8 @@ fn render(
         }
 
         for (i, tile) in map.iter().enumerate() {
-            let id = tile_to_id(tile);
+            let id = map.tile_id(*tile).unwrap();
+            let id = *id as u16;
             let xy = term.to_xy(i);
             term.put_tile(xy, id);
         }

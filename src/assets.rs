@@ -1,50 +1,75 @@
-// use bevy::{
-//     asset::{AssetLoader, BoxedFuture, LoadedAsset},
-//     prelude::*,
-//     reflect::TypeUuid,
-// };
+use bevy::{
+    asset::{AssetLoader, BoxedFuture, LoadedAsset},
+    prelude::*,
+    reflect::TypeUuid,
+};
+use serde::{Serialize,Deserialize};
+use ron::*;
 
-// use super::config::GameSettings;
 
-// pub struct GameAssetsPlugin;
+#[derive(Default)]
+pub struct PrefabLoaded {
+    pub content: String,
+}
 
-// impl Plugin for GameAssetsPlugin {
-//     fn build(&self, app: &mut bevy::prelude::App) {
-//         app.add_asset::<Prefab>()
-//             .add_asset_loader(PrefabAssetLoader)
-//     }
-// }
+pub struct GameAssetsPlugin;
 
-// #[derive(TypeUuid)]
-// #[uuid = "dc21ad52-5293-4abe-578f-12c412aaa0eb"]
-// pub struct Prefab {
-//     pub prefab_string: String,
-// }
+impl Plugin for GameAssetsPlugin {
+    fn build(&self, app: &mut bevy::prelude::App) {
+        app.add_asset::<Prefab>()
+            .add_asset_loader(PrefabAssetLoader)
+            .add_system(load_event)
+            ;
+    }
+}
 
-// #[derive(Copy, Clone, Debug, Default)]
-// pub struct PrefabAssetLoader;
+#[derive(TypeUuid)]
+#[uuid = "dc21ad52-5293-4abe-578f-12c412aaa0eb"]
+pub struct Prefab {
+    pub prefab_string: String,
+}
 
-// impl AssetLoader for PrefabAssetLoader {
-//     fn load<'a>(
-//         &'a self,
-//         bytes: &'a [u8],
-//         load_context: &'a mut bevy::asset::LoadContext,
-//     ) -> BoxedFuture<'a, anyhow::Result<()>> {
-//         Box::pin(async move {
-//             let str = std::str::from_utf8(bytes)?;
+#[derive(Copy, Clone, Debug, Default)]
+pub struct PrefabAssetLoader;
 
-//             let asset = LoadedAsset::new(Prefab {
-//                 prefab_string: str.to_string(),
-//             });
+impl AssetLoader for PrefabAssetLoader {
+    fn load<'a>(
+        &'a self,
+        bytes: &'a [u8],
+        load_context: &'a mut bevy::asset::LoadContext,
+    ) -> BoxedFuture<'a, anyhow::Result<()>> {
+        Box::pin(async move {
+            let str = std::str::from_utf8(bytes)?;
 
-//             load_context.set_default_asset(asset);
+            let asset = LoadedAsset::new(Prefab {
+                prefab_string: str.to_string(),
+            });
 
-//             Ok(())
-//         })
-//     }
+            load_context.set_default_asset(asset);
 
-//     fn extensions(&self) -> &[&str] {
-//         &["prefab"]
-//     }
-// }
+            Ok(())
+        })
+    }
 
+    fn extensions(&self) -> &[&str] {
+        &["prefab"]
+    }
+}
+
+fn load_event(
+    prefabs: Res<Assets<Prefab>>,
+    mut ev_config: EventReader<AssetEvent<Prefab>>,
+    mut ev_loaded: EventWriter<PrefabLoaded>,
+) {
+    for ev in ev_config.iter() {
+        match ev {
+            AssetEvent::Created { handle } | AssetEvent::Modified { handle} => {
+                let prefab = prefabs.get(handle).unwrap();
+                ev_loaded.send(PrefabLoaded {
+                    content: prefab.prefab_string.clone(),
+                });
+            }
+            _ => {}
+        }
+    }
+}
