@@ -71,8 +71,10 @@ fn cursor_system(
 
                     if input.just_pressed(MouseButton::Left) {
                         let xy = proj.world_to_tile(cam_transform, p).unwrap();
-                        let unit = units.get(xy);
+                        let xy = xy + units.size().as_ivec2() / 2;
+                        let unit = units[xy];
                         //println!("Sending click event! {}: {:?}", xy, unit);
+                        //ev_tile_clicked.send(TileClickedEvent { xy, unit });
                         ev_tile_clicked.send(TileClickedEvent { xy, unit });
                     }
 

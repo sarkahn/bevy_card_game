@@ -1,8 +1,14 @@
-use bevy::{prelude::*, utils::HashMap};
-use bevy_ascii_terminal::{ldtk::LdtkAsset, Point2d, Size2d};
-use sark_pathfinding::{AStar, PathMap2d, PathingMap};
+use std::slice::Iter;
 
-use crate::{config::GameSettings, GameState};
+use bevy::{prelude::*, utils::HashMap, ecs::system::EntityCommands};
+use bevy_ascii_terminal::{ldtk::LdtkAsset, Point2d, Size2d};
+use bevy_tiled_camera::TiledProjection;
+use sark_grids::Grid;
+use sark_pathfinding::{AStar, PathMap2d, PathingMap, pathing_map::ArrayVec};
+
+use crate::{config::{GameSettings, ConfigAsset}, GameState, ldtk_loader::{LoadLdtkMap, LdtkMapBuilt}, SETTINGS_PATH};
+
+use super::{units::{MapUnit, MapUnitBundle}, MapPosition, BattleMapState};
 
 pub struct MapPlugin;
 
@@ -11,6 +17,14 @@ impl Plugin for MapPlugin {
         app.init_resource::<Map>()
             .init_resource::<MapUnits>()
             .init_resource::<CollisionMap>()
+            
+            .add_system_set(
+                SystemSet::on_update(GameState::LoadBattleMap)
+                .with_system(setup)
+            ).add_system_set(
+                SystemSet::on_update(BattleMapState::BuildingMap)
+                .with_system(build_map)
+            );
             //.add_system_set(SystemSet::on_enter(GameState::LoadBattleMap).with_system(setup))
             // .add_system_set(
             //     SystemSet::on_update(GameState::BattleMap).with_system(update_collision_map),
@@ -36,17 +50,33 @@ impl Default for TerrainTile {
 }
 
 #[derive(Default)]
-pub struct Map {
-    tiles: Vec<TerrainTile>,
-    size: UVec2,
-    id_to_tile: HashMap<i32, TerrainTile>,
-    tile_to_id: HashMap<TerrainTile, i32>,
+pub struct Map(pub Grid<TerrainTile>);
+
+impl std::ops::Deref for Map {
+    type Target = Grid<TerrainTile>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl Map {
+    /// Offset a given axis based on whether it's even or odd.
+    /// Allows for a nicely centered map even with odd numbered tiles.
+    pub fn axis_offset(&self) -> Vec2 {
+        let cmp = (self.size().as_ivec2() % 2).cmpeq(IVec2::ZERO);
+        Vec2::select(cmp, Vec2::new(0.5,0.5), Vec2::ZERO)
+    }
 }
 
 #[derive(Default)]
-pub struct MapUnits {
-    pub units: Vec<Option<Entity>>,
-    size: UVec2,
+pub struct MapUnits(pub Grid<Option<Entity>>);
+
+impl std::ops::Deref for MapUnits {
+    type Target = Grid<Option<Entity>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
 pub struct CollisionMap(pub PathMap2d);
@@ -63,204 +93,85 @@ impl Default for CollisionMap {
     }
 }
 
-impl MapUnits {
-    pub fn get(&self, xy: impl Point2d) -> Option<Entity> {
-        let i = self.world_to_index(&xy);
-        //println!("Trying to get unit at {}, i {}", xy.xy(), i );
-        self.units[i]
-    }
-    pub fn to_xy(&self, i: usize) -> IVec2 {
-        let x = i as i32 % self.size.x as i32;
-        let y = i as i32 / self.size.x as i32;
-        IVec2::new(x, y)
-    }
 
-    pub fn to_index(&self, xy: impl Point2d) -> usize {
-        (xy.y() * self.size.x as i32 + xy.x()) as usize
+fn setup(
+    configs: Res<Assets<ConfigAsset>>,
+    mut ev_writer: EventWriter<LoadLdtkMap>,
+    mut state: ResMut<State<BattleMapState>>,
+) {
+    if *state.current() == BattleMapState::BuildingMap {
+        return;
     }
-
-    pub fn world_to_index(&self, xy: &impl Point2d) -> usize {
-        let xy = xy.xy() + self.size.as_ivec2() / 2;
-        self.to_index(xy)
-    }
-
-    pub fn resize(&mut self, size: impl Size2d) {
-        self.size = size.size();
-        self.units = vec![Default::default(); size.len()];
-    }
-    pub fn clear(&mut self) {
-        self.units.fill(None);
-    }
-    pub fn set(&mut self, xy: impl Point2d, unit: Option<Entity>) {
-        let i = self.world_to_index(&xy);
-        //println!("Putting unit at {}, I {}", xy.xy(), i);
-        //self.units[i] = unit;
-
-        //println!("Unit in vec: {:?}", self.units[i]);
-    }
-    pub fn empty(&self) -> bool {
-        self.units.is_empty()
+    if let Some(config) = configs.get(SETTINGS_PATH) {
+        state.set(BattleMapState::BuildingMap).unwrap();
+        ev_writer.send(LoadLdtkMap::from_path(config.settings.map_file.to_owned()));
     }
 }
 
-impl Map {
-    pub fn iter(&self) -> impl Iterator<Item = &TerrainTile> {
-        self.tiles.iter()
-    }
+#[derive(Component)]
+pub struct MapTile;
 
-    pub fn resize(&mut self, size: impl Size2d) {
-        self.size = size.size();
-        self.tiles = vec![Default::default(); size.len()];
-    }
+/// Offset a given axis based on whether it's even or odd.
+/// Allows for a nicely centered map even with odd numbered tiles.
+fn axis_offset(size: IVec2) -> Vec2 {
+    let cmp = (size % 2).cmpeq(IVec2::ZERO);
+    Vec2::select(cmp, Vec2::new(0.5,0.5), Vec2::ZERO)
+}
+fn build_map(
+    mut commands: Commands,
+    mut ev_reader: EventReader<LdtkMapBuilt>,
+    mut q_cam: Query<&mut TiledProjection>,
+    mut map: ResMut<Map>,
+    mut collision_map: ResMut<CollisionMap>,
+    mut units: ResMut<MapUnits>,
+    mut battle_map_state: ResMut<State<BattleMapState>>,
+    mut game_state: ResMut<State<GameState>>,
+) {
+    for ev in ev_reader.iter() {
+        let ldtk_map = &ev.0;
 
-    pub fn size(&self) -> UVec2 {
-        self.size
-    }
+        if map.size().as_ivec2() != ldtk_map.size {
+            map.0 = Grid::new(TerrainTile::default(), ldtk_map.size.as_uvec2().into());
+            collision_map.0 = PathMap2d::new(map.size().into());
+            units.0 = Grid::default(collision_map.size().into());
+        }
 
-    pub fn to_xy(&self, i: usize) -> IVec2 {
-        let x = i as i32 % self.size.x as i32;
-        let y = i as i32 / self.size.x as i32;
-        IVec2::new(x, y)
-    }
+        let axis_offset = axis_offset(ldtk_map.size);
+        if let Ok(mut cam) = q_cam.get_single_mut() {
+            cam.pixels_per_tile = ldtk_map.tile_size.y as u32;
+            cam.set_tile_count(ldtk_map.size.as_uvec2().into());
+        }
+        for (depth, layer) in ldtk_map.layers.iter().rev().enumerate() {
+            let atlas = &layer.atlas;
+            let layer_name = &layer.name;
+            for tile in layer.tiles.iter() {
+                let xy = tile.xy.as_vec2() + axis_offset;
 
-    pub fn to_index(&self, xy: impl Point2d) -> usize {
-        (xy.y() * self.size.x as i32 + xy.x()) as usize
-    }
+                let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
+                let sprite = TextureAtlasSprite {
+                    custom_size: Some(Vec2::ONE),
+                    index: tile.id as usize,
+                    ..Default::default()
+                };
+                let sprite = SpriteSheetBundle {
+                    sprite,
+                    texture_atlas: atlas.clone(),
+                    transform,
+                    ..Default::default()
+                };
 
-    fn map_tile(&mut self, id: i32, tile: TerrainTile) {
-        self.id_to_tile.insert(id, tile);
-        self.tile_to_id.insert(tile, id);
-    }
-
-    pub fn tile_id(&self, tile: TerrainTile) -> Option<&i32> {
-        self.tile_to_id.get(&tile)
+                let mut entity = commands.spawn_bundle(sprite);
+                match layer_name.to_lowercase().as_str() {
+                    "tiles" => {
+                    },
+                    "units" => {
+                        entity.insert_bundle(MapUnitBundle::new(xy.round().as_ivec2()));
+                    }
+                    _ => {}
+                }
+            }
+        }
+        battle_map_state.set(BattleMapState::SelectUnit).unwrap();
+        game_state.set(GameState::BattleMap).unwrap();
     }
 }
-
-
-
-// #[derive(Component)]
-// struct BuildFromLdtk;
-
-// fn build_from_ldtk(
-//     mut map: ResMut<Map>,
-//     mut units: ResMut<MapUnits>,
-//     mut commands: Commands,
-//     ldtk_assets: Res<Assets<LdtkAsset>>,
-//     mut ev_ldtk: EventReader<AssetEvent<LdtkAsset>>,
-//     q_builder: Query<(Entity, &Handle<LdtkAsset>), With<BuildFromLdtk>>,
-//     mut ev_ldtk_writer: EventWriter<LdtkRebuild>,
-//     mut game_state: ResMut<State<GameState>>,
-// ) {
-//     for ev in ev_ldtk.iter() {
-//         match ev {
-//             AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
-//                 println!("Asset loaded...");
-//                 for (entity, old_handle) in q_builder.iter() {
-//                     if old_handle != handle {
-//                         continue;
-//                     }
-//                     commands.entity(entity).remove::<BuildFromLdtk>();
-
-//                     if let Some(new_map) = ldtk_assets.get(handle) {
-//                         let p = &new_map.project;
-//                         if !new_map.tilesets.is_empty() {
-//                             let tex_handle = new_map.tilesets.iter().next().unwrap().1.clone();
-
-//                             let tileset = &new_map.project.defs.tilesets[0];
-//                             let data = &tileset.custom_data;
-//                             for data in data.iter() {
-//                                 let id = data.get("tileId").unwrap().as_ref().unwrap();
-//                                 let id = id.as_i64().unwrap() as i32;
-//                                 let tile = data.get("data").unwrap().as_ref().unwrap();
-//                                 let tile = tile.as_str().unwrap();
-//                                 println!("Mapping tile {} to {}", tile, id);
-//                                 map.map_tile(id, name_to_tile(tile));
-//                             };
-
-//                             //println!("Size of tiles vec {}", tiles.len());
-
-//                             let w = tileset.c_wid as u32;
-//                             let h = tileset.c_hei as u32;
-//                             ev_ldtk_writer.send(LdtkRebuild {
-//                                 map_size: map.size(),
-//                                 tileset_size: UVec2::new(w, h),
-//                                 tex: tex_handle.clone(),
-//                             });
-//                             for level in p.levels.iter() {
-//                                 if let Some(layers) = &level.layer_instances {
-//                                     let w = layers.iter().map(|l| l.c_wid).max().unwrap() as u32;
-//                                     let h = layers.iter().map(|l| l.c_hei).max().unwrap() as u32;
-//                                     map.resize([w, h]);
-//                                     units.resize([w,h]);
-
-//                                     println!("Populating map. Size: {}", map.size());
-//                                     for layer in layers.iter().rev() {
-//                                         let height_offset = layer.c_hei as i32 - 1;
-//                                         for tile in layer.grid_tiles.iter() {
-//                                             let xy = IVec2::new(tile.px[0] as i32, tile.px[1] as i32);
-//                                             let xy = xy / layer.grid_size as i32;
-//                                             let xy = IVec2::new(xy.x, height_offset - xy.y);
-//                                             let i = xy.y as usize * h as usize + xy.x as usize;
-
-//                                             let id = tile.t as i32;
-//                                             if let Some(tile) = map.id_to_tile.get(&id) {
-//                                                 map.tiles[i] = *tile;
-//                                             }
-//                                         }
-//                                         for tile in layer.auto_layer_tiles.iter() {
-//                                             let xy = IVec2::new(tile.px[0] as i32, tile.px[1] as i32);
-//                                             let xy = xy / layer.grid_size as i32;
-//                                             let xy = IVec2::new(xy.x, height_offset - xy.y);
-//                                             let i = xy.y as usize * h as usize + xy.x as usize;
-
-//                                             let id = tile.t as i32;
-//                                             if let Some(tile) = map.id_to_tile.get(&id) {
-//                                                 map.tiles[i] = *tile;
-//                                             }
-//                                         }
-//                                     }
-
-//                                     game_state.set(GameState::BattleMap).unwrap();
-//                                 }
-//                             }
-//                         }
-//                     }
-
-//                 }
-//             }
-//             _ => {}
-//         }
-//     }
-// }
-
-// fn name_to_tile(name: &str) -> TerrainTile {
-//     match name {
-//         "Dirt" => TerrainTile::Dirt,
-//         "Grass" => TerrainTile::Grass,
-//         "Mountain" => TerrainTile::Mountain,
-//         "Mud" => TerrainTile::Mud,
-//         "Water" => TerrainTile::Water,
-//         _ => TerrainTile::Dirt,
-//     }
-// }
-
-// fn update_collision_map(
-//     mut collision_map: ResMut<CollisionMap>,
-//     map: Res<Map>,
-// ) {
-//     if !map.is_changed() {
-//         return;
-//     }
-//     if map.size() != collision_map.size() {
-//         collision_map.0 = PathMap2d::new(map.size().into());
-//     }
-//     println!("Updating collision map. Size {}", map.size());
-//     for (coll,tile) in collision_map.0.iter_mut().zip(map.iter()) {
-//         *coll = match tile {
-//             TerrainTile::Mountain => true,
-//             TerrainTile::Water => true,
-//             _ => false,
-//         };
-//     }
-// }

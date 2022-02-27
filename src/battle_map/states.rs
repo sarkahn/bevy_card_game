@@ -6,9 +6,9 @@ use sark_pathfinding::*;
 use super::{
     components::MapPosition,
     input::{Cursor, TileClickedEvent},
-    map::{CollisionMap, TerrainTile},
+    map::*,
     //render::MapOverlayTerminal,
-    units::{AnimationTimer, MapUnit, MapUnitMovement, MoveUnit, UnitPath},
+    units::{ MapUnit, UnitPath, MapUnitMovement},
     BattleMapState, Map,
 };
 use crate::{
@@ -30,8 +30,8 @@ impl Plugin for BattleMapSelectionPlugin {
         )
         .add_system_set(SystemSet::on_update(BattleMapState::ChooseTarget)
             .with_system(choose_target))
-        // .add_system_set(SystemSet::on_exit(BattleMapState::ChooseTarget)
-        //     .with_system(on_exit_choose_target))
+        .add_system_set(SystemSet::on_exit(BattleMapState::ChooseTarget)
+            .with_system(on_exit_choose_target))
 
         // .add_system_set(SystemSet::on_update(BattleMapState::UnitMoving)
         //     .with_system(unit_moving_update))
@@ -98,40 +98,57 @@ fn select_unit(
     // }
 }
 
+#[derive(Component)]
+struct PathSprite;
+fn make_path_sprite(commands: &mut Commands, xy: Vec2) {
+    commands.spawn_bundle(SpriteBundle {
+        sprite: Sprite {
+            color: Color::rgba_u8(200, 200, 200, 200),
+            custom_size: Some(Vec2::ONE),
+            ..Default::default()
+        },
+        transform: Transform::from_xyz(
+            xy.x, xy.y, 2.0
+        ),
+        ..Default::default()
+    }).insert(PathSprite);
+}
+/// Offset a given axis based on whether it's even or odd.
+/// Allows for a nicely centered map even with odd numbered tiles.
+fn axis_offset(size: IVec2) -> Vec2 {
+    let cmp = (size % 2).cmpeq(IVec2::ZERO);
+    Vec2::select(cmp, Vec2::new(0.5,0.5), Vec2::ZERO)
+}
 fn choose_target(
     mut commands: Commands,
     mut state: ResMut<State<BattleMapState>>,
     mut ev_tile_clicked: EventReader<TileClickedEvent>,
     mut selection: ResMut<SelectionState>,
-    mut q_units: Query<(Entity, &MapPosition, &mut MapUnitMovement, &mut UnitPath), With<MapUnit>>,
+    mut q_units: Query<(Entity, &MapPosition), With<MapUnit>>,
     //mut q_overlay: Query<&mut Terminal, With<MapOverlayTerminal>>,
     settings: Res<GameSettings>,
     q_cursor: Query<&MapPosition, With<Cursor>>,
+    q_path_sprites: Query<Entity, With<PathSprite>>,
     map: ResMut<CollisionMap>,
 ) {
+    q_path_sprites.for_each(|e|commands.entity(e).despawn());
     if let Some(unit) = selection.selected_unit {
         if let Ok(cursor_pos) = q_cursor.get_single() {
-            if let Ok((_, unit_pos, _, _)) = q_units.get(unit) {
-                // Whee, I could stand to improve the api for pathfinding!
+            if let Ok((_, unit_pos)) = q_units.get(unit) {
                 let b = cursor_pos.xy + map.size().as_ivec2() / 2;
                 let a = unit_pos.xy + map.size().as_ivec2() / 2;
-                //let a_i = map.to_index(a.into());
-                //let b_i = map.to_index(b.into());
-                //println!("xy{} i {} to xy {} i {}", a, a_i, b, b_i);
-                //map.0.toggle_obstacle_index(a_i);
-                //map.0.toggle_obstacle_index(b_i);
-                //let mut astar = AStar::new(10);
-                //selection.path.clear();
-                // if let Ok(mut overlay) = q_overlay.get_single_mut() {
-                //     overlay.fill('a'.fg(Color::rgba_u8(0, 0, 0, 0)));
+                selection.path.clear();
+                let mut astar = AStar::new(10);
+                if let Some(path) = astar.find_path(&map.0, a.into(), b.into()) {
+                    for p in path {
+                        let xy = IVec2::from(*p).as_vec2() - map.size().as_vec2() / 2.0;
+                        let xy = xy + Vec2::new(0.5,0.5);
+                        make_path_sprite(&mut commands, xy);
+                    }
+                    //println!("Path length {}", path.len());
+                    selection.path.extend(path.iter().map(|p|IVec2::from(*p)));
 
-                //     if let Some(path) = astar.find_path(&map.0, a.into(), b.into()) {
-                //         selection.path.extend(path.iter().map(|p| IVec2::from(*p)));
-                //         for p in path.iter() {
-                //             overlay.put_tile(*p, '*'.fg(Color::rgba_u8(0, 0, 255, 200)));
-                //         }
-                //     }
-                // }
+                }
             }
         }
     }
@@ -146,10 +163,8 @@ fn choose_target(
                 return;
             } else {
                 if let Some(unit) = selection.selected_unit {
-                    if let Ok((entity, pos, mut movement, mut path)) =
-                        q_units.get_mut(selection.selected_unit.unwrap())
+                    if let Ok((entity, pos)) = q_units.get_mut(unit)
                     {
-                        commands.entity(unit).insert(MoveUnit);
                         let mut cmd = UnitCommands::new(
                             settings.map_move_speed,
                             settings.map_move_wait,
@@ -173,44 +188,9 @@ fn choose_target(
     }
 }
 
-// fn on_exit_choose_target(mut q_overlay: Query<&mut Terminal, With<MapOverlayTerminal>>) {
-//     if let Ok(mut overlay) = q_overlay.get_single_mut() {
-//         overlay.fill('a'.fg(Color::rgba_u8(0, 0, 0, 0)));
-//     }
-// }
-
-// fn unit_moving_update(
-//     mut commands: Commands,
-//     time: Res<Time>,
-//     mut state: ResMut<State<BattleMapState>>,
-//     map: Res<Map>,
-//     mut q_unit: Query<(Entity, &mut Transform, &mut MapPosition, &mut UnitPath, &mut MapUnitMovement, &mut AnimationTimer), With<MoveUnit>>,
-// ) {
-//     for (entity, mut transform, mut pos, mut path, mut movement, timer) in q_unit.iter_mut() {
-//         let speed = movement.map_move_speed / path.path.len() as f32;
-
-//         if path.tile_changed() {
-//             movement.wait_timer.tick(time.delta());
-//             if movement.wait_timer.finished() {
-//                 path.reset_tile_check();
-//                 movement.wait_timer.reset();
-//             }
-//         }
-
-//         path.current += f32::min(speed * time.delta().as_secs_f32(), 1.0);
-
-//         // if path.current >= 1.0 {
-//         //     pos.xy = *path.path.last().unwrap() - map.size().as_ivec2() / 2;
-//         //     path.reset();
-//         //     state.set(BattleMapState::SelectUnit).unwrap();
-//         //     commands.entity(entity).remove::<MoveUnit>();
-//         // } else {
-//         //     if let Some(p) = path.path_point(path.current) {
-//         //         let p = p - map.size().as_vec2() / 2.0;
-//         //         //let p = p.floor() + Vec2::new(0.5,0.5);
-//         //         println!("Setting transform to {} with t {}", p, path.current);
-//         //         transform.translation = p.extend(transform.translation.z) + Vec3::new(0.5,0.5,0.0);
-//         //     }
-//         // }
-//     }
-// }
+fn on_exit_choose_target(
+    mut commands: Commands,
+    q_path_sprites: Query<Entity,With<PathSprite>>
+) {
+    q_path_sprites.for_each(|e|commands.entity(e).despawn());
+}

@@ -13,7 +13,7 @@ impl Plugin for LdtkMapBuilderPlugin {
 }
 
 #[derive(Default)]
-pub struct LdtkMapBuilt(pub Map);
+pub struct LdtkMapBuilt(pub LdtkMap);
 
 fn build_from_ldtk(
     ldtk_assets: Res<Assets<LdtkAsset>>,
@@ -50,23 +50,24 @@ pub struct MapLayer {
     pub tiles: Vec<MapTile>,
     pub tileset: Handle<Image>,
     pub atlas: Handle<TextureAtlas>,
+    pub name: String,
 }
 
 #[derive(Default)]
-pub struct Map {
+pub struct LdtkMap {
     pub size: IVec2,
     pub layers: Vec<MapLayer>,
     pub tilesets: HashMap<i32, Handle<Image>>,
     pub tile_size: IVec2,
 }
 
-fn load_from_asset(asset: &LdtkAsset, atlases: &mut ResMut<Assets<TextureAtlas>>) -> Option<Map> {
+fn load_from_asset(asset: &LdtkAsset, atlases: &mut ResMut<Assets<TextureAtlas>>) -> Option<LdtkMap> {
     let p = &asset.project;
 
     let mut map = None;
 
     for level in p.levels.iter() {
-        let map = map.get_or_insert(Map::default());
+        let map = map.get_or_insert(LdtkMap::default());
         let tilesets = &mut map.tilesets;
         for (id,handle) in asset.tilesets.iter() {
             tilesets.insert(*id as i32, handle.clone());
@@ -80,6 +81,7 @@ fn load_from_asset(asset: &LdtkAsset, atlases: &mut ResMut<Assets<TextureAtlas>>
             map.tile_size = IVec2::splat(max_tile_size);
             for layer in layers.iter() {
                 let mut map_layer = MapLayer::default();
+                map_layer.name = layer.identifier.clone();
 
                 if let Some(id) = layer.tileset_def_uid {
                     if let Some(handle) = asset.tilesets.get(&id) {

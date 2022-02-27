@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, ecs::system::EntityCommands};
 use bevy_ascii_terminal::Point2d;
 use bevy_easings::*;
 
@@ -27,15 +27,27 @@ impl Plugin for UnitsPlugin {
 #[derive(Component, Default)]
 pub struct MapUnit;
 
-#[derive(Bundle)]
+#[derive(Component, Default)]
+pub struct MapUnitMovement {
+
+}
+
+#[derive(Bundle, Default)]
 pub struct MapUnitBundle {
-    #[bundle]
-    sprite_bundle: SpriteBundle,
     map_unit: MapUnit,
     pos: MapPosition,
     path: UnitPath,
-    movement: MapUnitMovement,
-    anim_timer: AnimationTimer,
+}
+
+impl MapUnitBundle {
+    pub fn new(xy: IVec2) -> Self {
+        Self {
+            pos: MapPosition {
+                xy
+            },
+            ..Default::default()
+        }
+    }
 }
 
 #[derive(Component, Default)]
@@ -71,38 +83,6 @@ impl UnitPath {
         self.curr_index == self.path.len() - 1
     }
 }
-
-#[derive(Component, Default)]
-pub struct MoveUnit;
-
-#[derive(Component)]
-pub struct MapUnitMovement {
-    pub range: i32,
-    pub map_move_speed: f32,
-    pub map_move_pause: f32,
-    pub wait_timer: Timer,
-}
-
-impl Default for MapUnitMovement {
-    fn default() -> Self {
-        let pause = 0.05;
-        Self {
-            range: 5,
-            map_move_speed: 10.0,
-            map_move_pause: pause,
-            wait_timer: Timer::from_seconds(pause, false),
-        }
-    }
-}
-
-impl MapUnitMovement {
-    pub fn reset_timer(&mut self, p: IVec2) {
-        self.wait_timer.reset();
-    }
-}
-
-#[derive(Default, Component)]
-pub struct AnimationTimer(Timer);
 
 impl UnitPath {
     pub fn path_point(&self, t: f32) -> Option<Vec2> {
@@ -189,7 +169,7 @@ fn process_commands(
 
                     let a = unit_commands.pos;
                     let b = b - map.size().as_ivec2() / 2;
-                    let p = a.as_vec2().lerp(b.as_vec2(), t) + Vec2::new(0.5, 0.5);
+                    let p = a.as_vec2().lerp(b.as_vec2(), t) + map.axis_offset();
                     let p = p.extend(transform.translation.z);
                     transform.translation = p;
                     if t >= 1.0 {
@@ -221,54 +201,43 @@ fn process_commands(
     }
 }
 
-#[test]
-fn testa() {
-    let path: Vec<IVec2> = vec![[3, 3], [3, 4], [3, 5], [3, 6], [3, 7]]
-        .iter()
-        .map(|p| IVec2::from(*p))
-        .collect();
+// fn make_map_unit(pos: impl Point2d, color: Color) -> MapUnitBundle {
+//     let sprite_bundle = SpriteBundle {
+//         sprite: Sprite {
+//             color: color,
+//             custom_size: Some(Vec2::ONE),
+//             ..Default::default()
+//         },
+//         ..Default::default()
+//     };
+//     MapUnitBundle {
+//         sprite_bundle,
+//         pos: pos.xy().into(),
+//         map_unit: Default::default(),
+//         path: Default::default(),
+//     }
+// }
 
-    let path = UnitPath {
-        path: path,
-        ..Default::default()
-    };
-
-    let a = path.path_point(0.166).unwrap();
-    let b = path.path_point(0.2001).unwrap();
-
-    println!("A {} b {}", a, b);
-}
-
-fn make_map_unit(pos: impl Point2d, color: Color) -> MapUnitBundle {
-    let sprite_bundle = SpriteBundle {
-        sprite: Sprite {
-            color: color,
-            custom_size: Some(Vec2::ONE),
-            ..Default::default()
-        },
-        ..Default::default()
-    };
-    MapUnitBundle {
-        sprite_bundle,
-        pos: pos.xy().into(),
-        map_unit: Default::default(),
-        path: Default::default(),
-        movement: Default::default(),
-        anim_timer: Default::default(),
-    }
-}
 
 fn spawn_units(mut commands: Commands) {
-    commands.spawn_bundle(make_map_unit([-5, -5], Color::RED));
-    commands.spawn_bundle(make_map_unit([5, 5], Color::BLUE));
+    //commands.spawn_bundle(make_map_unit([-5, -5], Color::RED));
+    //commands.spawn_bundle(make_map_unit([5, 5], Color::BLUE));
 }
 
+/// Offset a given axis based on whether it's even or odd.
+/// Allows for a nicely centered map even with odd numbered tiles.
+fn axis_offset(size: IVec2) -> Vec2 {
+    let cmp = (size % 2).cmpeq(IVec2::ZERO);
+    Vec2::select(cmp, Vec2::new(0.5,0.5), Vec2::ZERO)
+}
 fn update_sprite_position(
+    map: Res<Map>,
     mut q_sprites: Query<(&mut Transform, &MapPosition), (Changed<MapPosition>, With<MapUnit>)>,
 ) {
+    let offset = axis_offset(map.size().as_ivec2());
     for (mut t, p) in q_sprites.iter_mut() {
         //println!("Updating sprite pos");
-        t.translation = p.xy.extend(5).as_vec3() + Vec3::new(0.5, 0.5, 0.0);
+        t.translation = p.xy.extend(5).as_vec3() + offset.extend(0.0);
     }
 }
 
@@ -280,9 +249,10 @@ fn update_map_units(
     if q_moved_units.is_empty() {
         return;
     }
-    units.clear();
+    units.0.iter_mut().for_each(|f| *f = None);
     for (entity, pos) in q_units.iter() {
-        units.set(pos.xy(), Some(entity));
+        let xy = pos.xy() + units.size().as_ivec2() / 2;
+        units.0[xy] = Some(entity);
     }
 }
 
@@ -352,4 +322,23 @@ mod test {
         assert_eq!([12.0, 3.0], path.path_point(0.9).unwrap().to_array());
         assert_eq!([13.0, 3.0], path.path_point(1.0).unwrap().to_array());
     }
+    
+    #[test]
+    fn testa() {
+        let path: Vec<IVec2> = vec![[3, 3], [3, 4], [3, 5], [3, 6], [3, 7]]
+            .iter()
+            .map(|p| IVec2::from(*p))
+            .collect();
+
+        let path = UnitPath {
+            path: path,
+            ..Default::default()
+        };
+
+        let a = path.path_point(0.166).unwrap();
+        let b = path.path_point(0.2001).unwrap();
+
+        println!("A {} b {}", a, b);
+    }
+
 }
