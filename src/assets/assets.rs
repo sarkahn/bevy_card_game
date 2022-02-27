@@ -3,8 +3,6 @@ use bevy::{
     prelude::*,
     reflect::TypeUuid,
 };
-use ron::*;
-use serde::{Deserialize, Serialize};
 
 #[derive(Default)]
 pub struct PrefabLoaded {
@@ -17,14 +15,15 @@ impl Plugin for GameAssetsPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_asset::<Prefab>()
             .add_asset_loader(PrefabAssetLoader)
-            .add_system(load_event);
+            //.add_system(load_event)
+            ;
     }
 }
 
 #[derive(TypeUuid)]
 #[uuid = "dc21ad52-5293-4abe-578f-12c412aaa0eb"]
 pub struct Prefab {
-    pub prefab_string: String,
+    pub string: String,
 }
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -40,7 +39,7 @@ impl AssetLoader for PrefabAssetLoader {
             let str = std::str::from_utf8(bytes)?;
 
             let asset = LoadedAsset::new(Prefab {
-                prefab_string: str.to_string(),
+                string: str.to_string(),
             });
 
             load_context.set_default_asset(asset);
@@ -54,20 +53,20 @@ impl AssetLoader for PrefabAssetLoader {
     }
 }
 
-fn load_event(
-    prefabs: Res<Assets<Prefab>>,
-    mut ev_config: EventReader<AssetEvent<Prefab>>,
-    mut ev_loaded: EventWriter<PrefabLoaded>,
-) {
-    for ev in ev_config.iter() {
-        match ev {
-            AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
-                let prefab = prefabs.get(handle).unwrap();
-                ev_loaded.send(PrefabLoaded {
-                    content: prefab.prefab_string.clone(),
-                });
-            }
-            _ => {}
-        }
-    }
-}
+// fn load_event(
+//     prefabs: Res<Assets<Prefab>>,
+//     mut ev_config: EventReader<AssetEvent<Prefab>>,
+//     mut ev_loaded: EventWriter<PrefabLoaded>,
+// ) {
+//     for ev in ev_config.iter() {
+//         match ev {
+//             AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
+//                 // let prefab = prefabs.get(handle).unwrap();
+//                 // ev_loaded.send(PrefabLoaded {
+//                 //     content: prefab.prefab_string.clone(),
+//                 // });
+//             }
+//             _ => {}
+//         }
+//     }
+// }

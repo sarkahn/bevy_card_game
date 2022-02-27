@@ -1,8 +1,11 @@
 [package]
 name = "bevy_card_game"
-version = "0.1.0"
+version = "0.5.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
+authors = ["sark", "drtan"]
+description = "A game for the bevy 2022 jam"
+repository = "https://github.com/sarkahn/bevy_card_game"
 
 [dependencies]
 bevy = { version="0.6", default-features=false, features=["bevy_winit", "bevy_render", "png"] }

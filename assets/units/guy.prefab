@@ -1,0 +1,29 @@
+#![enable(implicit_some)] // Required in all unit prefabs
+(
+    stats: (max_hp: 15), // Optional
+    arena_sprite: (
+        image: "test_tileset.png",
+        index: 3, // Initial sprite index (top left == 0),
+        animations: // Optional
+		{	"idle": (
+                frames: [2,3,4],
+                speed: 1.5, // Frames per second,
+			),
+        },
+    ),    
+    map_sprite: (
+        image: "test_tileset.png",
+        index: 8, // Initial sprite index (top left == 0),
+        animations: // Optional
+		{	
+			"idle": (
+                frames: [8,9],
+                speed: 1.5, // Frames per second,
+			),
+			"attacking": (
+				frames: [10,11],
+				speed: 1.5,
+			),
+        },
+    ),
+)

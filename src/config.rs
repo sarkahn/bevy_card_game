@@ -1,21 +1,21 @@
 use std::string;
 
-use crate::GameState;
 use bevy::{
     asset::{AssetLoader, BoxedFuture, LoadedAsset},
     prelude::*,
-    reflect::TypeUuid,
-    utils::HashMap,
+    reflect::TypeUuid, utils::HashMap,
 };
 use serde::{Deserialize, Serialize};
+use crate::GameState;
 
 pub struct ConfigPlugin;
 
 impl Plugin for ConfigPlugin {
     fn build(&self, app: &mut App) {
-        app.add_asset::<ConfigAsset>()
-            .add_asset::<ConfigAsset2>()
-            .add_asset_loader(ConfigAssetLoader);
+        app
+        .add_asset::<ConfigAsset>()
+        .add_asset::<ConfigAsset2>()
+        .add_asset_loader(ConfigAssetLoader);
     }
 }
 
@@ -30,6 +30,7 @@ pub struct GameSettings {
     #[serde(default)]
     pub map_file: String,
 }
+
 
 #[derive(TypeUuid)]
 #[uuid = "dc21ad42-5111-4aba-578f-11c412aaa0eb"]
@@ -65,7 +66,7 @@ impl AssetLoader for ConfigAssetLoader {
             //     println!("Setting config asset for {}", header);
             //     load_context.set_labeled_asset(header, asset);
             // } else {
-            //     panic!("Error loading config asset {}, couldn't find header",
+            //     panic!("Error loading config asset {}, couldn't find header", 
             //         load_context.path().to_str().unwrap());
             // }
 

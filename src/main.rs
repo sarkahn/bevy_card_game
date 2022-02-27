@@ -1,10 +1,9 @@
 use arena::ArenaPlugin;
+use assets::AssetsPlugin;
 use bevy::{asset::LoadState, prelude::*};
-use bevy_ascii_terminal::TerminalBundle;
 use bevy_easings::EasingsPlugin;
-use bevy_tiled_camera::TiledCameraBundle;
 use camera::GameCameraPlugin;
-use config::{ConfigAsset, ConfigAsset2, ConfigPlugin, GameSettings};
+use config::{ConfigAsset, ConfigPlugin,};
 use ldtk_loader::LdtkPlugin;
 use serde::{Deserialize, Serialize};
 
@@ -33,6 +32,7 @@ pub enum GameState {
     BattleMap,
     LoadArena,
     Arena,
+    AssetTest,
 }
 
 impl Default for GameState {
@@ -54,6 +54,7 @@ pub fn main() {
         .add_plugin(ConfigPlugin)
         .add_plugin(ArenaPlugin)
         .add_plugin(LdtkPlugin)
+        .add_plugin(AssetsPlugin)
         .add_state(GameState::StartScreen)
         .add_startup_system(start)
         .add_system(load_config)
