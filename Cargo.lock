@@ -229,9 +229,11 @@ dependencies = [
  "bevy_ascii_terminal",
  "bevy_easings",
  "bevy_tiled_camera",
+ "ldtk_rust",
  "ron 0.7.0",
  "sark_pathfinding",
  "serde",
+ "serde_json",
 ]
 
 [[package]]

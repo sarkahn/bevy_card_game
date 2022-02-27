@@ -8,17 +8,11 @@ pub struct RenderPlugin;
 
 impl Plugin for RenderPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(
-            SystemSet::on_enter(GameState::Arena)
-            .with_system(setup)
-        );
+        app.add_system_set(SystemSet::on_enter(GameState::Arena).with_system(setup));
     }
 }
 
-fn setup(
-    asset_server: Res<AssetServer>,
-    mut commands: Commands,
-) {
+fn setup(asset_server: Res<AssetServer>, mut commands: Commands) {
     println!("Spawning bg");
     let bg = asset_server.load("arena_bg.png");
     let bg = SpriteBundle {

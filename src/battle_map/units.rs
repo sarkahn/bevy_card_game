@@ -6,24 +6,21 @@ use bevy_easings::*;
 
 use crate::GameState;
 
-use super::{components::MapPosition, MapUnits, BattleMapState, Map};
+use super::{components::MapPosition, BattleMapState, Map, MapUnits};
 
 pub struct UnitsPlugin;
 
 impl Plugin for UnitsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::BattleMap)
-            .with_system(spawn_units))
-        .add_system_set(
-            SystemSet::on_update(GameState::BattleMap)
-            .with_system(update_sprite_position)
-            .with_system(update_map_units),
-        )
-        .add_system_set(
-            SystemSet::on_update(BattleMapState::UnitMoving)
-            .with_system(process_commands)
-        )
-        ;
+        app.add_system_set(SystemSet::on_enter(GameState::BattleMap).with_system(spawn_units))
+            .add_system_set(
+                SystemSet::on_update(GameState::BattleMap)
+                    .with_system(update_sprite_position)
+                    .with_system(update_map_units),
+            )
+            .add_system_set(
+                SystemSet::on_update(BattleMapState::UnitMoving).with_system(process_commands),
+            );
     }
 }
 
@@ -65,7 +62,7 @@ impl UnitPath {
 
     pub fn tile_changed(&self) -> bool {
         if let Some(next) = self.next_index {
-            return self.curr_index == next
+            return self.curr_index == next;
         }
         false
     }
@@ -89,8 +86,8 @@ pub struct MapUnitMovement {
 impl Default for MapUnitMovement {
     fn default() -> Self {
         let pause = 0.05;
-        Self { 
-            range: 5, 
+        Self {
+            range: 5,
             map_move_speed: 10.0,
             map_move_pause: pause,
             wait_timer: Timer::from_seconds(pause, false),
@@ -104,7 +101,7 @@ impl MapUnitMovement {
     }
 }
 
-#[derive(Default,Component)]
+#[derive(Default, Component)]
 pub struct AnimationTimer(Timer);
 
 impl UnitPath {
@@ -118,16 +115,16 @@ impl UnitPath {
         let max = (self.path.len() - 1) as f32;
         let next = (t * max).ceil() as usize;
         let curr = (t * max).floor() as usize;
-        
+
         let curr_p = self.path[curr].as_vec2();
         let next_p = self.path[next].as_vec2();
 
         //println!("Curri {}, nexti {}", curr, next);
-        
+
         // println!("Currp {}, nextp {}", curr, next);
-         let v = t * max;
+        let v = t * max;
         // println!("V {}", v);
-         let v = v - v.floor();
+        let v = v - v.floor();
         // println!("V floored {}", v);
         let p = curr_p.lerp(next_p, v);
 
@@ -192,7 +189,7 @@ fn process_commands(
 
                     let a = unit_commands.pos;
                     let b = b - map.size().as_ivec2() / 2;
-                    let p = a.as_vec2().lerp(b.as_vec2(), t) + Vec2::new(0.5,0.5);
+                    let p = a.as_vec2().lerp(b.as_vec2(), t) + Vec2::new(0.5, 0.5);
                     let p = p.extend(transform.translation.z);
                     transform.translation = p;
                     if t >= 1.0 {
@@ -203,7 +200,7 @@ fn process_commands(
                         continue;
                     }
                     return;
-                },
+                }
                 UnitCommand::Wait(_) => {
                     unit_commands.wait_timer.tick(time.delta());
                     if unit_commands.wait_timer.finished() {
@@ -212,10 +209,10 @@ fn process_commands(
                         continue;
                     }
                     return;
-                },
+                }
             }
-        } 
-        
+        }
+
         if unit_commands.current.is_none() {
             commands.entity(entity).remove::<UnitCommands>();
             println!("Exiting commands state");
@@ -226,9 +223,10 @@ fn process_commands(
 
 #[test]
 fn testa() {
-    let path: Vec<IVec2> = vec![
-        [3,3], [3,4], [3,5], [3,6], [3,7],
-    ].iter().map(|p| IVec2::from(*p)).collect();
+    let path: Vec<IVec2> = vec![[3, 3], [3, 4], [3, 5], [3, 6], [3, 7]]
+        .iter()
+        .map(|p| IVec2::from(*p))
+        .collect();
 
     let path = UnitPath {
         path: path,
@@ -240,8 +238,6 @@ fn testa() {
 
     println!("A {} b {}", a, b);
 }
-
-
 
 fn make_map_unit(pos: impl Point2d, color: Color) -> MapUnitBundle {
     let sprite_bundle = SpriteBundle {
@@ -278,7 +274,7 @@ fn update_sprite_position(
 
 fn update_map_units(
     mut units: ResMut<MapUnits>,
-    q_moved_units: Query<(Entity,&MapPosition), (With<MapUnit>, Changed<MapPosition>)>,
+    q_moved_units: Query<(Entity, &MapPosition), (With<MapUnit>, Changed<MapPosition>)>,
     q_units: Query<(Entity, &MapPosition), With<MapUnit>>,
 ) {
     if q_moved_units.is_empty() {
@@ -299,11 +295,9 @@ mod test {
 
     #[test]
     fn move_test() {
-        let path: Vec<[i32;2]> = vec![
-            [0,0], [0,1], [1,1], [2,1]
-        ];
+        let path: Vec<[i32; 2]> = vec![[0, 0], [0, 1], [1, 1], [2, 1]];
         let path = UnitPath {
-            path: path.iter().map(|p|IVec2::from(*p)).collect(),
+            path: path.iter().map(|p| IVec2::from(*p)).collect(),
             ..Default::default()
         };
 
@@ -315,40 +309,47 @@ mod test {
 
     #[test]
     fn limits() {
-        let path: Vec<[i32;2]> = vec![
-            [0,0], [0,1], [1,1], [2,1]
-        ];
+        let path: Vec<[i32; 2]> = vec![[0, 0], [0, 1], [1, 1], [2, 1]];
         let path = UnitPath {
-            path: path.iter().map(|p|IVec2::from(*p)).collect(),
+            path: path.iter().map(|p| IVec2::from(*p)).collect(),
             ..Default::default()
         };
         let p = path.path_point(1.0).unwrap();
-        assert_eq!([2.0,1.0], p.to_array());
-        
+        assert_eq!([2.0, 1.0], p.to_array());
+
         let p = path.path_point(0.0).unwrap();
-        assert_eq!([0.0,0.0], p.to_array());
+        assert_eq!([0.0, 0.0], p.to_array());
     }
 
     #[test]
     fn limits2() {
-        let path: Vec<[i32;2]> = vec![
-            [3,3], [4,3], [5,3], [6,3], [7,3], [8,3], [9,3], [10,3], [11,3], [12,3], [13,3],
+        let path: Vec<[i32; 2]> = vec![
+            [3, 3],
+            [4, 3],
+            [5, 3],
+            [6, 3],
+            [7, 3],
+            [8, 3],
+            [9, 3],
+            [10, 3],
+            [11, 3],
+            [12, 3],
+            [13, 3],
         ];
         let path = UnitPath {
-            path: path.iter().map(|p|IVec2::from(*p)).collect(),
+            path: path.iter().map(|p| IVec2::from(*p)).collect(),
             ..Default::default()
         };
 
-        assert_eq!([4.0,3.0], path.path_point(0.1).unwrap().to_array());
-        assert_eq!([5.0,3.0], path.path_point(0.2).unwrap().to_array());
-        assert_eq!([6.0,3.0], path.path_point(0.3).unwrap().to_array());
-        assert_eq!([7.0,3.0], path.path_point(0.4).unwrap().to_array());
-        assert_eq!([8.0,3.0], path.path_point(0.5).unwrap().to_array());
-        assert_eq!([9.0,3.0], path.path_point(0.6).unwrap().to_array());
-        assert_eq!([10.0,3.0], path.path_point(0.7).unwrap().to_array());
-        assert_eq!([11.0,3.0], path.path_point(0.8).unwrap().to_array());
-        assert_eq!([12.0,3.0], path.path_point(0.9).unwrap().to_array());
-        assert_eq!([13.0,3.0], path.path_point(1.0).unwrap().to_array());
+        assert_eq!([4.0, 3.0], path.path_point(0.1).unwrap().to_array());
+        assert_eq!([5.0, 3.0], path.path_point(0.2).unwrap().to_array());
+        assert_eq!([6.0, 3.0], path.path_point(0.3).unwrap().to_array());
+        assert_eq!([7.0, 3.0], path.path_point(0.4).unwrap().to_array());
+        assert_eq!([8.0, 3.0], path.path_point(0.5).unwrap().to_array());
+        assert_eq!([9.0, 3.0], path.path_point(0.6).unwrap().to_array());
+        assert_eq!([10.0, 3.0], path.path_point(0.7).unwrap().to_array());
+        assert_eq!([11.0, 3.0], path.path_point(0.8).unwrap().to_array());
+        assert_eq!([12.0, 3.0], path.path_point(0.9).unwrap().to_array());
+        assert_eq!([13.0, 3.0], path.path_point(1.0).unwrap().to_array());
     }
-
 }

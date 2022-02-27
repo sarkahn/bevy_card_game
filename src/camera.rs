@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_tiled_camera::{TiledCameraBundle, TiledProjection, TiledCameraPlugin};
+use bevy_tiled_camera::{TiledCameraBundle, TiledCameraPlugin, TiledProjection};
 
 use crate::ResizeCamera;
 
@@ -8,19 +8,15 @@ pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(spawn)
-        .add_plugin(TiledCameraPlugin)
-        .add_system(resize);
+            .add_plugin(TiledCameraPlugin)
+            .add_system(resize);
     }
 }
 
-
-fn spawn(
-    mut commands: Commands,
-) {
+fn spawn(mut commands: Commands) {
     println!("Spawning camera");
-    commands.spawn_bundle(TiledCameraBundle::new()
-    .with_tile_count([16,16])
-    //.with_pixels_per_tile(16)
+    commands.spawn_bundle(
+        TiledCameraBundle::new().with_tile_count([16, 16]), //.with_pixels_per_tile(16)
     );
     //commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }

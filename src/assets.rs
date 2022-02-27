@@ -3,9 +3,8 @@ use bevy::{
     prelude::*,
     reflect::TypeUuid,
 };
-use serde::{Serialize,Deserialize};
 use ron::*;
-
+use serde::{Deserialize, Serialize};
 
 #[derive(Default)]
 pub struct PrefabLoaded {
@@ -18,8 +17,7 @@ impl Plugin for GameAssetsPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_asset::<Prefab>()
             .add_asset_loader(PrefabAssetLoader)
-            .add_system(load_event)
-            ;
+            .add_system(load_event);
     }
 }
 
@@ -63,7 +61,7 @@ fn load_event(
 ) {
     for ev in ev_config.iter() {
         match ev {
-            AssetEvent::Created { handle } | AssetEvent::Modified { handle} => {
+            AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
                 let prefab = prefabs.get(handle).unwrap();
                 ev_loaded.send(PrefabLoaded {
                     content: prefab.prefab_string.clone(),

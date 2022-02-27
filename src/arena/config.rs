@@ -1,5 +1,5 @@
 use bevy::{prelude::*, reflect::TypeUuid};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use super::ArenaState;
 
@@ -11,12 +11,9 @@ impl Plugin for ArenaConfigPlugin {
     }
 }
 
-
 #[derive(TypeUuid)]
 #[uuid = "ac11ad22-5011-2aba-578f-12c512aaa0eb"]
-pub struct ArenaConfig {
-
-}
+pub struct ArenaConfig {}
 
 #[derive(Serialize, Deserialize)]
 pub struct ArenaLayout {
@@ -24,11 +21,7 @@ pub struct ArenaLayout {
     enemies: Vec<Vec2>,
 }
 
-fn load_assets(
-    asset_server: Res<AssetServer>,
-) {
-
-}
+fn load_assets(asset_server: Res<AssetServer>) {}
 
 // fn on_enter(
 //     mut state: ResMut<State<ArenaState::LoadArena

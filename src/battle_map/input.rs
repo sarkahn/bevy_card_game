@@ -3,7 +3,7 @@ use bevy_tiled_camera::TiledProjection;
 
 use crate::GameState;
 
-use super::{MapUnits, MapPosition};
+use super::{MapPosition, MapUnits};
 
 pub struct InputPlugin;
 
@@ -35,18 +35,17 @@ fn on_enter(mut commands: Commands) {
         transform: Transform::from_xyz(0.0, 0.0, 2.0),
         ..Default::default()
     };
-    commands.spawn_bundle(cursor).insert(Cursor).insert(MapPosition::default());
+    commands
+        .spawn_bundle(cursor)
+        .insert(Cursor)
+        .insert(MapPosition::default());
 }
 
-fn on_exit(
-    mut commands: Commands,
-    q_cursor: Query<Entity, With<Cursor>>,
-) {
+fn on_exit(mut commands: Commands, q_cursor: Query<Entity, With<Cursor>>) {
     for entity in q_cursor.iter() {
         commands.entity(entity).despawn();
     }
 }
-
 
 fn cursor_system(
     input: Res<Input<MouseButton>>,

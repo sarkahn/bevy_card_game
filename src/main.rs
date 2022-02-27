@@ -1,21 +1,26 @@
 use arena::ArenaPlugin;
-use bevy::{prelude::*, asset::LoadState};
+use bevy::{asset::LoadState, prelude::*};
 use bevy_ascii_terminal::TerminalBundle;
 use bevy_easings::EasingsPlugin;
 use bevy_tiled_camera::TiledCameraBundle;
 use camera::GameCameraPlugin;
-use config::{ConfigPlugin, ConfigAsset, ConfigAsset2, GameSettings};
+use config::{ConfigAsset, ConfigAsset2, ConfigPlugin, GameSettings};
+use ldtk_loader::LdtkPlugin;
 use serde::{Deserialize, Serialize};
 
-use self::{
-    battle_map::BattleMapPlugin,
-};
+use self::battle_map::BattleMapPlugin;
 
+mod arena;
 mod assets;
 mod battle_map;
-mod config;
-mod arena;
 mod camera;
+mod config;
+mod ldtk_loader;
+mod grid;
+
+pub use grid::*;
+
+pub const SETTINGS_PATH: &str = "game_settings.config";
 
 #[derive(Component)]
 pub struct ResizeCamera(pub IVec2);
@@ -38,21 +43,22 @@ impl Default for GameState {
 
 pub fn main() {
     App::new()
-    .insert_resource(WindowDescriptor {
-        title: "Bevy Card Game".to_string(),
-        ..Default::default()
-    })
-    .add_plugins(DefaultPlugins)
-    .add_plugin(GameCameraPlugin)
-    .add_plugin(BattleMapPlugin)
-    .add_plugin(EasingsPlugin)
-    .add_plugin(ConfigPlugin)
-    .add_plugin(ArenaPlugin)
-    .add_state(GameState::StartScreen)
-    .add_startup_system(start)
-    .add_system(load_config)
-    //.add_startup_system(test_start)
-    .run();
+        .insert_resource(WindowDescriptor {
+            title: "Bevy Card Game".to_string(),
+            ..Default::default()
+        })
+        .add_plugins(DefaultPlugins)
+        .add_plugin(GameCameraPlugin)
+        .add_plugin(BattleMapPlugin)
+        .add_plugin(EasingsPlugin)
+        .add_plugin(ConfigPlugin)
+        .add_plugin(ArenaPlugin)
+        .add_plugin(LdtkPlugin)
+        .add_state(GameState::StartScreen)
+        .add_startup_system(start)
+        .add_system(load_config)
+        //.add_startup_system(test_start)
+        .run();
 }
 
 // fn test_start(mut commands: Commands) {
