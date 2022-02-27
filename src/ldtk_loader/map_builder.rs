@@ -1,4 +1,5 @@
 use bevy::{prelude::*, utils::HashMap};
+use ldtk_rust::TilesetDefinition;
 
 use super::{asset::LdtkAsset, LoadingMaps};
 
@@ -46,10 +47,36 @@ pub struct MapTile {
 }
 
 #[derive(Default)]
+pub struct MapTileset {
+    // Maps tile ids to their custom data
+    pub tile_data: HashMap<i32, String>,
+    pub tile_size: i32,
+    pub tile_count: IVec2,
+}
+
+impl From<&TilesetDefinition> for MapTileset {
+    fn from(def: &TilesetDefinition) -> Self {
+        let mut tile_data = HashMap::default();
+        for data in def.custom_data.iter() {
+            let id = data["tileId"].as_ref().unwrap().as_i64().unwrap() as i32;
+            let data = data["data"].as_ref().unwrap().as_str().unwrap().to_string();
+            tile_data.insert(id,data);
+        }
+
+        Self {
+            tile_count: IVec2::new(def.c_wid as i32, def.c_hei as i32),
+            tile_size: def.tile_grid_size as i32,
+            tile_data
+        }
+    }
+}
+
+#[derive(Default)]
 pub struct MapLayer {
     pub tiles: Vec<MapTile>,
-    pub tileset: Handle<Image>,
+    pub image: Handle<Image>,
     pub atlas: Handle<TextureAtlas>,
+    pub tileset_id: i32,
     pub name: String,
 }
 
@@ -57,7 +84,10 @@ pub struct MapLayer {
 pub struct LdtkMap {
     pub size: IVec2,
     pub layers: Vec<MapLayer>,
-    pub tilesets: HashMap<i32, Handle<Image>>,
+    // Map of bevy textures corresponding to their tileset
+    pub images: HashMap<i32, Handle<Image>>,
+    // Map of tileset data
+    pub tilesets: HashMap<i32, MapTileset>,
     pub tile_size: IVec2,
 }
 
@@ -68,9 +98,14 @@ fn load_from_asset(asset: &LdtkAsset, atlases: &mut ResMut<Assets<TextureAtlas>>
 
     for level in p.levels.iter() {
         let map = map.get_or_insert(LdtkMap::default());
-        let tilesets = &mut map.tilesets;
+
+        for def in p.defs.tilesets.iter() {
+            map.tilesets.insert(def.uid as i32, def.into());
+        }
+
+        let images = &mut map.images;
         for (id,handle) in asset.tilesets.iter() {
-            tilesets.insert(*id as i32, handle.clone());
+            images.insert(*id as i32, handle.clone());
         }
         if let Some(layers) = &level.layer_instances {
             let max_width = layers.iter().map(|l| l.c_wid as i32).max().unwrap();
@@ -84,17 +119,16 @@ fn load_from_asset(asset: &LdtkAsset, atlases: &mut ResMut<Assets<TextureAtlas>>
                 map_layer.name = layer.identifier.clone();
 
                 if let Some(id) = layer.tileset_def_uid {
-                    if let Some(handle) = asset.tilesets.get(&id) {
-                        if let Some(tsdef) = p.defs.tilesets.iter().find(|t|t.uid == id) {
-                            map_layer.tileset = handle.clone();
+                    map_layer.tileset_id = id as i32;
+
+                    if let Some(image) = asset.tilesets.get(&id) {
+                        if let Some(tileset) = map.tilesets.get(&(id as i32)) {
+                            map_layer.image = image.clone();
                             let tile_size = layer.grid_size as f32;
-    
-                            let ts_width = tsdef.c_wid as usize;
-                            let ts_height = tsdef.c_hei as usize;
                             let atlas = TextureAtlas::from_grid(
-                                handle.clone(),
+                                image.clone(),
                                 Vec2::splat(tile_size),
-                                ts_width, ts_height);
+                                tileset.tile_count.x as usize, tileset.tile_count.y as usize);
                             map_layer.atlas = atlases.add(atlas);
                         }
                     }

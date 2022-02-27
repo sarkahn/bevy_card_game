@@ -93,6 +93,15 @@ impl Default for CollisionMap {
     }
 }
 
+impl CollisionMap {
+    pub fn set_collidable(&mut self, pos: impl Point2d) {
+        let xy = pos.xy().to_array();
+        if !self.0.is_obstacle(xy) {
+            let i = self.0.to_index(xy.into());
+            self.0.toggle_obstacle_index(i);
+        }
+    }
+}
 
 fn setup(
     configs: Res<Assets<ConfigAsset>>,
@@ -121,8 +130,8 @@ fn build_map(
     mut commands: Commands,
     mut ev_reader: EventReader<LdtkMapBuilt>,
     mut q_cam: Query<&mut TiledProjection>,
-    mut map: ResMut<Map>,
     mut collision_map: ResMut<CollisionMap>,
+    mut map: ResMut<Map>,
     mut units: ResMut<MapUnits>,
     mut battle_map_state: ResMut<State<BattleMapState>>,
     mut game_state: ResMut<State<GameState>>,
@@ -144,6 +153,7 @@ fn build_map(
         for (depth, layer) in ldtk_map.layers.iter().rev().enumerate() {
             let atlas = &layer.atlas;
             let layer_name = &layer.name;
+            let tileset = &ldtk_map.tilesets.get(&layer.tileset_id).expect("No tileset for layer");
             for tile in layer.tiles.iter() {
                 let xy = tile.xy.as_vec2() + axis_offset;
 
@@ -162,13 +172,17 @@ fn build_map(
 
                 let mut entity = commands.spawn_bundle(sprite);
                 match layer_name.to_lowercase().as_str() {
-                    "tiles" => {
-                    },
                     "units" => {
                         entity.insert_bundle(MapUnitBundle::new(xy.round().as_ivec2()));
                     }
                     _ => {}
                 }
+                if let Some(data) = tileset.tile_data.get(&tile.id) {
+                    if data.lines().map(|l|l.to_lowercase()).position(|s| s=="collider").is_some() {
+                        let xy = tile.xy + map.size().as_ivec2() / 2;
+                        collision_map.set_collidable(xy);
+                    }
+                } 
             }
         }
         battle_map_state.set(BattleMapState::SelectUnit).unwrap();

@@ -108,7 +108,7 @@
 			"padding": 0,
 			"tagsSourceEnumUid": null,
 			"enumTags": [],
-			"customData": [{ "tileId": 6, "data": "Water" }],
+			"customData": [ { "tileId": 3, "data": "aaa" }, { "tileId": 6, "data": "Collider" }, { "tileId": 7, "data": "Collider" } ],
 			"savedSelections": [],
 			"cachedPixelData": {
 				"opaqueTiles": "1111000011100000101100000111000000000000000000000000000000000000",
