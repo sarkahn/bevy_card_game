@@ -1,5 +1,5 @@
 use arena::ArenaPlugin;
-use bevy::{prelude::*};
+use bevy::{prelude::*, asset::LoadState};
 use bevy_ascii_terminal::TerminalBundle;
 use bevy_easings::EasingsPlugin;
 use bevy_tiled_camera::TiledCameraBundle;
@@ -96,13 +96,17 @@ fn load_config(
 // fn load_config(
 //     mut game_state: ResMut<State<GameState>>,
 //     asset_server: Res<AssetServer>,
-//     //configs: Res<Assets<ConfigAsset2>>,
+//     configs: Res<Assets<ConfigAsset2>>,
 // ) {
-//     if let Some(config) = asset_server.load("settings") {
-//         println!("Found settings");
-//         if let Ok(settings) = ron::de::from_str::<GameSettings>(config.prefab_string.as_str()) {
-//             println!("Setting state");
-//             game_state.set(settings.begin_state).unwrap();
-//         }
+//     let handle: Handle<ConfigAsset2> = asset_server.load("settings");
+//     if asset_server.get_load_state(handle) == LoadState::Loaded {
+//         println!("Settings is loaded")
 //     }
+//     // if let Some(config) = asset_server.load("settings") {
+//     //     println!("Found settings");
+//     //     if let Ok(settings) = ron::de::from_str::<GameSettings>(config.prefab_string.as_str()) {
+//     //         println!("Setting state");
+//     //         game_state.set(settings.begin_state).unwrap();
+//     //     }
+//     // }
 // }

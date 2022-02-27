@@ -77,6 +77,7 @@ fn render(
 
         if term.size() != map.size() {
             term.resize(map.size());
+            term.fill(0);
             commands.spawn().insert(ResizeCamera(map.size().as_ivec2()));
             if let Ok(mut overlay) = q_overlay.get_single_mut() {
                 overlay.resize(map.size());
@@ -85,10 +86,11 @@ fn render(
         }
 
         for (i, tile) in map.iter().enumerate() {
-            let id = map.tile_id(*tile).unwrap();
-            let id = *id as u16;
-            let xy = term.to_xy(i);
-            term.put_tile(xy, id);
+            if let Some(id) = map.tile_id(*tile) {
+                println!("Putting tile {:?}", tile);
+                let xy = term.to_xy(i);
+                term.put_tile(xy, *id as u16);
+            }
         }
     }
 }

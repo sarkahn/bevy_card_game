@@ -94,7 +94,7 @@ impl MapUnits {
     pub fn set(&mut self, xy: impl Point2d, unit: Option<Entity>) {
         let i = self.world_to_index(&xy);
         //println!("Putting unit at {}, I {}", xy.xy(), i);
-        self.units[i] = unit;
+        //self.units[i] = unit;
 
         //println!("Unit in vec: {:?}", self.units[i]);
     }
@@ -182,6 +182,7 @@ fn build_from_ldtk(
                                 let id = id.as_i64().unwrap() as i32;
                                 let tile = data.get("data").unwrap().as_ref().unwrap();
                                 let tile = tile.as_str().unwrap();
+                                println!("Mapping tile {} to {}", tile, id);
                                 map.map_tile(id, name_to_tile(tile));
                             };
                         
@@ -211,7 +212,9 @@ fn build_from_ldtk(
                                             let i = xy.y as usize * h as usize + xy.x as usize;
     
                                             let id = tile.t as i32;
-                                            map.tiles[i] = map.id_to_tile[&id];
+                                            if let Some(tile) = map.id_to_tile.get(&id) {
+                                                map.tiles[i] = *tile;
+                                            }
                                         }
                                         for tile in layer.auto_layer_tiles.iter() {
                                             let xy = IVec2::new(tile.px[0] as i32, tile.px[1] as i32);
@@ -220,7 +223,9 @@ fn build_from_ldtk(
                                             let i = xy.y as usize * h as usize + xy.x as usize;
     
                                             let id = tile.t as i32;
-                                            map.tiles[i] = map.id_to_tile[&id];
+                                            if let Some(tile) = map.id_to_tile.get(&id) {
+                                                map.tiles[i] = *tile;
+                                            }
                                         }
                                     }
     

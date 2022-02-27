@@ -12,7 +12,8 @@ pub struct ConfigPlugin;
 
 impl Plugin for ConfigPlugin {
     fn build(&self, app: &mut App) {
-        app.add_asset::<ConfigAsset>()
+        app
+        .add_asset::<ConfigAsset>()
         .add_asset::<ConfigAsset2>()
         .add_asset_loader(ConfigAssetLoader);
     }
@@ -68,14 +69,10 @@ impl AssetLoader for ConfigAssetLoader {
             //     panic!("Error loading config asset {}, couldn't find header", 
             //         load_context.path().to_str().unwrap());
             // }
-            // let mut split = string.split('(');
-            // let header = split.next().unwrap();
-            // let content = split.next().unwrap();
-            // let mut content = content.to_string();
+
             let settings: GameSettings = ron::de::from_bytes(bytes).unwrap();
 
             let asset = LoadedAsset::new(ConfigAsset { settings });
-            
 
             load_context.set_default_asset(asset);
 
