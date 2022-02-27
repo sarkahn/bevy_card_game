@@ -32,12 +32,12 @@ fn setup(mut commands: Commands) {
         .spawn_bundle(TerminalBundle::new())
         .insert(MapTerminal);
 
-    commands
-        .spawn_bundle(TerminalBundle {
-            transform: Transform::from_xyz(0.0, 0.0, 15.0),
-            ..Default::default()
-        })
-        .insert(MapOverlayTerminal);
+    // commands
+    //     .spawn_bundle(TerminalBundle {
+    //         transform: Transform::from_xyz(0.0, 0.0, 15.0),
+    //         ..Default::default()
+    //     })
+    //     .insert(MapOverlayTerminal);
 }
 
 pub struct LdtkRebuild {
