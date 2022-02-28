@@ -2,17 +2,20 @@
 (
     stats: (max_hp: 15), // Optional
     arena_sprite: (
-        image: "test_tileset.png",
+        ldtk_file: "test_tileset.ldtk",
+        tileset_name: "Test_blocks",
         index: 3, // Initial sprite index (top left == 0),
         animations: // Optional
 		{	"idle": (
-                frames: [2,3,4],
+                frames: [2,3,4,3],
                 speed: 1.5, // Frames per second,
 			),
         },
+        default_animation: "idle",
     ),    
     map_sprite: (
-        image: "test_tileset.png",
+        ldtk_file: "test_tileset.ldtk",
+        tileset_name: "Test_blocks",
         index: 8, // Initial sprite index (top left == 0),
         animations: // Optional
 		{	

@@ -1,6 +1,7 @@
+use animation::AnimationPlugin;
 use arena::ArenaPlugin;
 use assets::AssetsPlugin;
-use bevy::{asset::LoadState, prelude::*};
+use bevy::{asset::LoadState, prelude::*, utils::HashMap};
 use bevy_easings::EasingsPlugin;
 use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
@@ -17,10 +18,13 @@ mod camera;
 mod config;
 mod ldtk_loader;
 mod grid;
+mod animation;
 
 pub use grid::*;
 
 pub const SETTINGS_PATH: &str = "game_settings.config";
+
+pub use animation::{AnimationController, UnitAnimation};
 
 #[derive(Component)]
 pub struct ResizeCamera(pub IVec2);
@@ -48,6 +52,7 @@ pub fn main() {
             title: "Bevy Card Game".to_string(),
             ..Default::default()
         })
+        .init_resource::<AtlasHandles>()
         .add_plugins(DefaultPlugins)
         .add_plugin(GameCameraPlugin)
         .add_plugin(BattleMapPlugin)
@@ -57,6 +62,7 @@ pub fn main() {
         .add_plugin(LdtkPlugin)
         .add_plugin(AssetsPlugin)
         .add_plugin(EguiPlugin)
+        .add_plugin(AnimationPlugin)
         .add_state(GameState::StartScreen)
         .add_startup_system(start)
         .add_system(load_config)
@@ -101,6 +107,9 @@ fn load_config(
         }
     }
 }
+
+#[derive(Default)]
+pub struct AtlasHandles(HashMap<String,Handle<TextureAtlas>>);
 
 // fn load_config(
 //     mut game_state: ResMut<State<GameState>>,

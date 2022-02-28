@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_tiled_camera::TiledProjection;
 use serde::{Deserialize, Serialize};
 
-use crate::{GameState, ldtk_loader::{LoadLdtkMap, LdtkMapBuilt}, grid::*, config::{GameSettings, ConfigAsset}, SETTINGS_PATH};
+use crate::{GameState, grid::*, config::{GameSettings, ConfigAsset}, SETTINGS_PATH};
 
 use self::{
     input::InputPlugin, map::MapPlugin, states::BattleMapSelectionPlugin,
