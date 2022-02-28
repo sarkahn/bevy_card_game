@@ -1,4 +1,4 @@
-use bevy::{prelude::*, math::Vec3Swizzles};
+use bevy::{math::Vec3Swizzles, prelude::*};
 
 pub trait GridPosition {
     fn grid_pos(&self) -> IVec2;
@@ -7,7 +7,7 @@ pub trait GridPosition {
 
 impl GridPosition for Transform {
     fn grid_pos(&self) -> IVec2 {
-        let p = self.translation.xy().floor() + Vec2::new(0.5,0.5);
+        let p = self.translation.xy().floor() + Vec2::new(0.5, 0.5);
         p.as_ivec2()
     }
 
@@ -30,7 +30,7 @@ impl GridPosition for IVec2 {
     }
 }
 
-impl GridPosition for [i32;2] {
+impl GridPosition for [i32; 2] {
     fn grid_pos(&self) -> IVec2 {
         IVec2::from(*self)
     }

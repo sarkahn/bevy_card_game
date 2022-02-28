@@ -8,8 +8,9 @@ use super::{
     input::{Cursor, TileClickedEvent},
     map::*,
     //render::MapOverlayTerminal,
-    units::{ MapUnit, UnitPath, MapUnitMovement},
-    BattleMapState, Map,
+    units::{MapUnit, MapUnitMovement, UnitPath},
+    BattleMapState,
+    Map,
 };
 use crate::{
     battle_map::units::{UnitCommand, UnitCommands},
@@ -17,9 +18,9 @@ use crate::{
     GameState,
 };
 
-pub struct BattleMapSelectionPlugin;
+pub struct BattleMapStatesPlugin;
 
-impl Plugin for BattleMapSelectionPlugin {
+impl Plugin for BattleMapStatesPlugin {
     fn build(&self, app: &mut App) {
         app
             .init_resource::<SelectionState>()
@@ -101,23 +102,23 @@ fn select_unit(
 #[derive(Component)]
 struct PathSprite;
 fn make_path_sprite(commands: &mut Commands, xy: Vec2) {
-    commands.spawn_bundle(SpriteBundle {
-        sprite: Sprite {
-            color: Color::rgba_u8(200, 200, 200, 200),
-            custom_size: Some(Vec2::ONE),
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgba_u8(200, 200, 200, 200),
+                custom_size: Some(Vec2::ONE),
+                ..Default::default()
+            },
+            transform: Transform::from_xyz(xy.x, xy.y, 2.0),
             ..Default::default()
-        },
-        transform: Transform::from_xyz(
-            xy.x, xy.y, 2.0
-        ),
-        ..Default::default()
-    }).insert(PathSprite);
+        })
+        .insert(PathSprite);
 }
 /// Offset a given axis based on whether it's even or odd.
 /// Allows for a nicely centered map even with odd numbered tiles.
 fn axis_offset(size: IVec2) -> Vec2 {
     let cmp = (size % 2).cmpeq(IVec2::ZERO);
-    Vec2::select(cmp, Vec2::new(0.5,0.5), Vec2::ZERO)
+    Vec2::select(cmp, Vec2::new(0.5, 0.5), Vec2::ZERO)
 }
 fn choose_target(
     mut commands: Commands,
@@ -131,7 +132,7 @@ fn choose_target(
     q_path_sprites: Query<Entity, With<PathSprite>>,
     map: ResMut<CollisionMap>,
 ) {
-    q_path_sprites.for_each(|e|commands.entity(e).despawn());
+    q_path_sprites.for_each(|e| commands.entity(e).despawn());
     if let Some(unit) = selection.selected_unit {
         if let Ok(cursor_pos) = q_cursor.get_single() {
             if let Ok((_, unit_pos)) = q_units.get(unit) {
@@ -142,12 +143,11 @@ fn choose_target(
                 if let Some(path) = astar.find_path(&map.0, a.into(), b.into()) {
                     for p in path {
                         let xy = IVec2::from(*p).as_vec2() - map.size().as_vec2() / 2.0;
-                        let xy = xy + Vec2::new(0.5,0.5);
+                        let xy = xy + Vec2::new(0.5, 0.5);
                         make_path_sprite(&mut commands, xy);
                     }
                     //println!("Path length {}", path.len());
-                    selection.path.extend(path.iter().map(|p|IVec2::from(*p)));
-
+                    selection.path.extend(path.iter().map(|p| IVec2::from(*p)));
                 }
             }
         }
@@ -163,8 +163,7 @@ fn choose_target(
                 return;
             } else {
                 if let Some(unit) = selection.selected_unit {
-                    if let Ok((entity, pos)) = q_units.get_mut(unit)
-                    {
+                    if let Ok((entity, pos)) = q_units.get_mut(unit) {
                         let mut cmd = UnitCommands::new(
                             settings.map_move_speed,
                             settings.map_move_wait,
@@ -188,9 +187,6 @@ fn choose_target(
     }
 }
 
-fn on_exit_choose_target(
-    mut commands: Commands,
-    q_path_sprites: Query<Entity,With<PathSprite>>
-) {
-    q_path_sprites.for_each(|e|commands.entity(e).despawn());
+fn on_exit_choose_target(mut commands: Commands, q_path_sprites: Query<Entity, With<PathSprite>>) {
+    q_path_sprites.for_each(|e| commands.entity(e).despawn());
 }

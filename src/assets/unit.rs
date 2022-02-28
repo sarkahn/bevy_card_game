@@ -1,4 +1,9 @@
-use bevy::{utils::HashMap, asset::{AssetLoader, LoadedAsset, AssetPath}, prelude::*, reflect::TypeUuid};
+use bevy::{
+    asset::{AssetLoader, AssetPath, LoadedAsset},
+    prelude::*,
+    reflect::TypeUuid,
+    utils::HashMap,
+};
 use bevy_ascii_terminal::ldtk::LdtkAsset;
 use serde::{Deserialize, Serialize};
 
@@ -8,18 +13,18 @@ pub struct UnitAssetPlugin;
 
 impl Plugin for UnitAssetPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_asset::<UnitAsset>()
-        .add_asset_loader(UnitAssetLoader);
+        app.add_asset::<LoadUnitPrefab>()
+            .add_asset_loader(UnitAssetLoader);
     }
 }
 
-#[derive(Default,Debug,Serialize,Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct SpriteData {
     pub ldtk_file: String,
     pub tileset_name: String,
     pub index: i32,
     #[serde(default)]
-    pub animations: Option<HashMap<String,UnitAnimation>>,
+    pub animations: Option<HashMap<String, UnitAnimation>>,
     #[serde(default)]
     pub default_animation: Option<String>,
 }
@@ -37,8 +42,7 @@ pub struct UnitComponents {
     pub stats: Option<Stats>,
     #[serde(default)]
     pub abilities: Option<Vec<String>>,
-    pub arena_sprite: SpriteData,
-    pub map_sprite: SpriteData,
+    pub sprite_data: SpriteData,
 }
 
 #[cfg(test)]
@@ -53,18 +57,14 @@ mod test {
             "
             #![enable(implicit_some)]
             (
-                arena_sprite: (
+                sprite_data: (
                     ldtk_file: \"poop.ldtk\",
                     tileset_name: \"Whoa\",
                     index: 0,
                 ),
-                map_sprite: (
-                    ldtk_file: \"bevy.ldtk\",
-                    tileset_name: \"hi\",
-                    index: 1,
-                ),
-            )"
-        ).unwrap();
+            )",
+        )
+        .unwrap();
     }
 
     #[test]
@@ -77,8 +77,8 @@ mod test {
                 tileset_name: \"hi\",
                 index: 2,
             )",
-            
-        ).unwrap();
+        )
+        .unwrap();
     }
 
     #[test]
@@ -86,20 +86,16 @@ mod test {
         let file = fs::read_to_string("assets/units/guy.unit").unwrap();
         let unit: UnitComponents = ron::de::from_str(&file).unwrap();
 
-        let anims = unit.arena_sprite.animations.unwrap();
+        let anims = unit.sprite_data.animations.unwrap();
         assert!(anims.contains_key("idle"));
-
-        let anims = unit.map_sprite.animations.unwrap();
-        assert!(anims.contains_key("attacking"));
     }
 }
 
 #[derive(TypeUuid)]
 #[uuid = "da21ab52-5193-3abe-478f-10c412aaa0eb"]
-pub struct UnitAsset {  
+pub struct LoadUnitPrefab {
     pub components: UnitComponents,
-    pub map_ldtk_file: Handle<LdtkAsset>,
-    pub arena_ldtk_file: Handle<LdtkAsset>,
+    pub ldtk_file: Handle<LdtkAsset>,
 }
 
 struct UnitAssetLoader;
@@ -113,23 +109,24 @@ impl AssetLoader for UnitAssetLoader {
             let str = std::str::from_utf8(bytes)?;
             let components: UnitComponents = ron::de::from_str(str)?;
 
-            let root = load_context.path().parent().unwrap().parent().unwrap().clone();
-            
-            let map_ldtk_path:AssetPath = root.join(&components.map_sprite.ldtk_file).into();
-            let arena_ldtk_path:AssetPath = root.join(&components.arena_sprite.ldtk_file).into();
+            let root = load_context
+                .path()
+                .parent()
+                .unwrap()
+                .parent()
+                .unwrap()
+                .clone();
 
-            let map_ldtk_handle: Handle<LdtkAsset> = load_context.get_handle(map_ldtk_path.clone());
-            let arena_ldtk_handle: Handle<LdtkAsset> = load_context.get_handle(arena_ldtk_path.clone());
+            let ldtk_path: AssetPath = root.join(&components.sprite_data.ldtk_file).into();
 
-            let asset = LoadedAsset::new(UnitAsset {
+            let arena_ldtk_handle: Handle<LdtkAsset> = load_context.get_handle(ldtk_path.clone());
+
+            let asset = LoadedAsset::new(LoadUnitPrefab {
                 components,
-                map_ldtk_file: map_ldtk_handle.clone(),
-                arena_ldtk_file: arena_ldtk_handle.clone(),
+                ldtk_file: arena_ldtk_handle.clone(),
             });
-            
-            load_context.set_default_asset(
-                asset.with_dependencies(vec![map_ldtk_path, arena_ldtk_path]),
-            );
+
+            load_context.set_default_asset(asset.with_dependency(ldtk_path));
             Ok(())
         })
     }

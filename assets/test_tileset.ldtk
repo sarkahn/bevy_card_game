@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 4,
+	"nextUid": 18,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -31,6 +31,25 @@
 	"flags": [],
 	"defs": { "layers": [
 		{
+			"__type": "Entities",
+			"identifier": "Units",
+			"type": "Entities",
+			"uid": 8,
+			"gridSize": 16,
+			"displayOpacity": 1,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"requiredTags": [],
+			"excludedTags": [],
+			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"autoTilesetDefUid": null,
+			"autoRuleGroups": [],
+			"autoSourceLayerDefUid": null,
+			"tilesetDefUid": null,
+			"tilePivotX": 0,
+			"tilePivotY": 0
+		},
+		{
 			"__type": "Tiles",
 			"identifier": "Blocks",
 			"type": "Tiles",
@@ -49,7 +68,128 @@
 			"tilePivotX": 0,
 			"tilePivotY": 0
 		}
-	], "entities": [], "tilesets": [
+	], "entities": [
+		{
+			"identifier": "Soldier",
+			"uid": 6,
+			"tags": [],
+			"width": 16,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 1,
+			"tileId": 2,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "Animations",
+					"__type": "Array<String>",
+					"uid": 12,
+					"type": "F_Text",
+					"isArray": true,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": [
+							"{     \"idle\": (         frames: [2,3,4,3],         speed: 0.2,  ),     \"farting\": (         frames: [2,4],         speed: 0.05,     ), }"
+						]
+					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "String",
+					"__type": "Array<String>",
+					"uid": 16,
+					"type": "F_String",
+					"isArray": true,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "Bishop",
+			"uid": 7,
+			"tags": [],
+			"width": 16,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 1,
+			"tileId": 8,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "Animations",
+					"__type": "String",
+					"uid": 15,
+					"type": "F_Text",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["{     \"idle\": (         frames: [8,9],         speed: 0.35,  ), }"]
+					},
+					"textLanguageMode": null
+				}
+			]
+		}
+	], "tilesets": [
 		{
 			"__cWid": 6,
 			"__cHei": 4,
@@ -76,7 +216,28 @@
 				"averageColors": "f863f7533000300020000000f532f7634000600000000000f682a49b0000000000000000f87600000000000000000000"
 			}
 		}
-	], "enums": [], "externalEnums": [], "levelFields": [] },
+	], "enums": [], "externalEnums": [], "levelFields": [
+		{
+			"identifier": "Animation",
+			"__type": "String",
+			"uid": 14,
+			"type": "F_Text",
+			"isArray": false,
+			"canBeNull": true,
+			"arrayMinLength": null,
+			"arrayMaxLength": null,
+			"editorDisplayMode": "Hidden",
+			"editorDisplayPos": "Above",
+			"editorAlwaysShow": false,
+			"editorCutLongValues": true,
+			"min": null,
+			"max": null,
+			"regex": null,
+			"acceptFileTypes": null,
+			"defaultOverride": null,
+			"textLanguageMode": null
+		}
+	] },
 	"levels": [
 		{
 			"identifier": "Level_0",
@@ -94,8 +255,158 @@
 			"bgPivotY": 0.5,
 			"__bgPos": null,
 			"externalRelPath": null,
-			"fieldInstances": [],
+			"fieldInstances": [{
+				"__identifier": "Animation",
+				"__value": "(\n \"idle\": (\n     frames: [2,3,4,3],\n     speed: 0.2,\n    ),\n)",
+				"__type": "String",
+				"defUid": 14,
+				"realEditorValues": [{
+					"id": "V_String",
+					"params": ["(\n \"idle\": (\n     frames: [2,3,4,3],\n     speed: 0.2,\n    ),\n)"]
+				}]
+			}],
 			"layerInstances": [
+				{
+					"__identifier": "Units",
+					"__type": "Entities",
+					"__cWid": 16,
+					"__cHei": 16,
+					"__gridSize": 16,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"levelId": 0,
+					"layerDefUid": 8,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGrid": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 2136126,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": [
+						{
+							"__identifier": "Soldier",
+							"__grid": [3,5],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 1, "srcRect": [32,0,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 6,
+							"px": [48,80],
+							"fieldInstances": [
+								{ "__identifier": "Animations", "__value": [], "__type": "Array<String>", "defUid": 12, "realEditorValues": [] },
+								{ "__identifier": "String", "__value": [], "__type": "Array<String>", "defUid": 16, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "Bishop",
+							"__grid": [12,3],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 1, "srcRect": [32,16,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 7,
+							"px": [192,48],
+							"fieldInstances": [{
+								"__identifier": "Animations",
+								"__value": "{\n    \"idle\": (\n        frames: [8,9],\n        speed: 0.35,\n ),\n}",
+								"__type": "String",
+								"defUid": 15,
+								"realEditorValues": []
+							}]
+						},
+						{
+							"__identifier": "Soldier",
+							"__grid": [6,14],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 1, "srcRect": [32,0,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 6,
+							"px": [96,224],
+							"fieldInstances": [
+								{
+									"__identifier": "Animations",
+									"__value": [
+										"{\n    \"idle\": (\n        frames: [2,3,4,3],\n        speed: 0.2,\n ),\n    \"farting\": (\n        frames: [2,4],\n        speed: 0.05,\n    ),\n}"
+									],
+									"__type": "Array<String>",
+									"defUid": 12,
+									"realEditorValues": [null]
+								},
+								{ "__identifier": "String", "__value": [], "__type": "Array<String>", "defUid": 16, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "Soldier",
+							"__grid": [11,12],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 1, "srcRect": [32,0,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 6,
+							"px": [176,192],
+							"fieldInstances": [
+								{ "__identifier": "Animations", "__value": [], "__type": "Array<String>", "defUid": 12, "realEditorValues": [] },
+								{ "__identifier": "String", "__value": [], "__type": "Array<String>", "defUid": 16, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "Soldier",
+							"__grid": [3,15],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 1, "srcRect": [32,0,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 6,
+							"px": [48,240],
+							"fieldInstances": [
+								{ "__identifier": "Animations", "__value": [], "__type": "Array<String>", "defUid": 12, "realEditorValues": [] },
+								{ "__identifier": "String", "__value": [], "__type": "Array<String>", "defUid": 16, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "Bishop",
+							"__grid": [6,11],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 1, "srcRect": [32,16,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 7,
+							"px": [96,176],
+							"fieldInstances": [{
+								"__identifier": "Animations",
+								"__value": "{\n    \"idle\": (\n        frames: [8,9],\n        speed: 0.35,\n ),\n}",
+								"__type": "String",
+								"defUid": 15,
+								"realEditorValues": []
+							}]
+						},
+						{
+							"__identifier": "Bishop",
+							"__grid": [6,1],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 1, "srcRect": [32,16,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 7,
+							"px": [96,16],
+							"fieldInstances": [{
+								"__identifier": "Animations",
+								"__value": "{\n    \"idle\": (\n        frames: [8,9],\n        speed: 0.35,\n ),\n}",
+								"__type": "String",
+								"defUid": 15,
+								"realEditorValues": []
+							}]
+						}
+					]
+				},
 				{
 					"__identifier": "Blocks",
 					"__type": "Tiles",

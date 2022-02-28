@@ -2,55 +2,16 @@
 // https://github.com/Trouv/bevy_ecs_ldtk
 
 mod asset;
-//mod map_builder;
 
-use std::borrow::Cow;
+use bevy::prelude::*;
 
-use bevy::{prelude::*, utils::HashMap};
+pub use asset::*;
 
-use self::{
-    asset::{LdtkAssetPlugin}, 
-    //map_builder::LdtkMapBuilderPlugin
-};
-
-pub use asset::LdtkMap;
-
-//pub use map_builder::LdtkMapBuilt;
-// pub use asset::LdtkAsset;
-
+use self::asset::LdtkAssetPlugin;
 pub struct LdtkPlugin;
 
 impl Plugin for LdtkPlugin {
     fn build(&self, app: &mut App) {
-        app
-            //.init_resource::<LoadingMaps>()
-            //.add_event::<LoadLdtkMap>()
-            .add_plugin(LdtkAssetPlugin)
-            //.add_plugin(LdtkMapBuilderPlugin)
-            //.add_system(load)
-            ;
+        app.add_plugin(LdtkAssetPlugin);
     }
 }
-
-// // // #[derive(Default)]
-// // // pub(crate) struct LoadingMaps(pub(crate) Vec<Handle<LdtkAsset>>);
-
-// // #[derive(Default)]
-// // pub struct LoadLdtkMap(Cow<'static, str>);
-
-// // impl LoadLdtkMap {
-// //     pub fn from_path(string: impl Into<Cow<'static, str>>) -> Self {
-// //         let path = string.into();
-// //         LoadLdtkMap(path)
-// //     }
-// // }
-
-// // fn load(
-// //     asset_server: Res<AssetServer>,
-// //     mut ev_reader: EventReader<LoadLdtkMap>,
-// //     mut loading: ResMut<LoadingMaps>,
-// // ) {
-// //     for ev in ev_reader.iter() {
-// //         loading.0.push(asset_server.load(&*ev.0));
-// //     }
-// // }

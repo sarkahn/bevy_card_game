@@ -2,22 +2,20 @@ use bevy::{
     asset::{AssetLoader, AssetPath, BoxedFuture, LoadedAsset},
     prelude::*,
     reflect::TypeUuid,
-    utils::HashMap,
+    utils::{HashMap, HashSet},
 };
-use ldtk_rust::{Project, TilesetDefinition};
+use ldtk_rust::{Project, TilesetDefinition, LayerInstance, EntityDefinition};
+use serde_json::Value;
 
-//use super::map_builder::{MapTileset, MapLayer, MapTile};
+use crate::UnitAnimation;
 
-pub(crate) struct LdtkAssetPlugin;
+pub struct LdtkAssetPlugin;
 
 impl Plugin for LdtkAssetPlugin {
     fn build(&self, app: &mut App) {
-        app.add_asset_loader(LdtkAssetLoader)
-            .add_asset::<LdtkMap>();
+        app.add_asset_loader(LdtkAssetLoader).add_asset::<LdtkMap>();
     }
 }
-
-
 
 #[derive(TypeUuid, Default, Debug)]
 #[uuid = "ac23ab52-5393-4bbe-178f-16c414aaa0eb"]
@@ -35,29 +33,28 @@ pub struct LdtkMap {
 }
 
 impl LdtkMap {
-    pub fn image(&self, layer: &MapLayer) -> &Handle<Image> {
-        self.images.get(&layer.tileset_id).unwrap()
+    pub fn image(&self, id: i32) -> &Handle<Image> {
+        self.images.get(&id).unwrap()
     }
-    
-    pub fn tileset(&self, layer: &MapLayer) -> &MapTileset {
-        self.tilesets.get(&layer.tileset_id).unwrap()
+
+    pub fn tileset(&self, id: i32) -> &MapTileset {
+        self.tilesets.get(&id).unwrap()
     }
 
     pub fn tileset_from_name(&self, name: &str) -> Option<&MapTileset> {
         if let Some(id) = self.id_map.get(&name.to_lowercase()) {
-            return self.tilesets.get(&id)
+            return self.tilesets.get(&id);
         }
         None
     }
+
     pub fn image_from_name(&self, name: &str) -> Option<&Handle<Image>> {
         if let Some(id) = self.id_map.get(&name.to_lowercase()) {
-            return self.images.get(&id)
+            return self.images.get(&id);
         }
         None
     }
-
 }
-
 
 #[derive(Copy, Clone, Debug, Default)]
 struct LdtkAssetLoader;
@@ -77,16 +74,19 @@ impl AssetLoader for LdtkAssetLoader {
             let mut id_map = HashMap::default();
 
             let path = load_context.path().parent().unwrap();
-            let mut dep_paths = Vec::new(); 
+            let mut dep_paths = Vec::new();
 
             for def in project.defs.tilesets.iter() {
-                let path:AssetPath = path.join(&def.rel_path).into();
+                let path: AssetPath = path.join(&def.rel_path).into();
                 dep_paths.push(path.clone());
                 let image: Handle<Image> = load_context.get_handle(path);
-                let ts = build_tileset(def);
+                let ts = build_tileset(def, image.clone());
                 let tile_size = Vec2::splat(def.tile_grid_size as f32);
                 let atlas = TextureAtlas::from_grid(
-                    image.clone(), tile_size, def.c_wid as usize, def.c_hei as usize
+                    image.clone(),
+                    tile_size,
+                    def.c_wid as usize,
+                    def.c_hei as usize,
                 );
 
                 let id = def.uid as i32;
@@ -97,44 +97,41 @@ impl AssetLoader for LdtkAssetLoader {
                 atlases.insert(id, atlas);
             }
 
+            let mut entity_defs = HashMap::default();
+            for def in project.defs.entities.iter() {
+                entity_defs.insert(def.uid, def);
+            }
+
             let mut map_layers = Vec::new();
             for level in project.levels.iter() {
                 if let Some(layers) = &level.layer_instances {
                     for layer in layers {
-                        let ts_id = layer.tileset_def_uid.unwrap() as i32;
+                        let name = layer.identifier.clone();
+                        match layer.layer_instance_type.as_str() {
+                            "IntGrid" => {
 
-                        let layer_height = layer.c_hei;
-                        let layer_width = layer.c_wid;
-                        let tile_size = layer.grid_size;
-                        let pixel_height = layer_height * tile_size;
-                        let y_flip = pixel_height - tile_size;
-                        let center_offset = IVec2::new(layer_width as i32, layer_height as i32) / 2;
-
-                        let mut map_tiles = Vec::new();
-                        for tile in layer.grid_tiles.iter() {
-
-                            let [x, y] = [tile.px[0], tile.px[1]];
-                            let y = y_flip - y;
-                            let gx = x / tile_size;
-                            let gy = y / tile_size;
-                    
-                            let id = tile.t as i32;
-                            let xy = IVec2::new(gx as i32, gy as i32) - center_offset;
-
-                            map_tiles.push(MapTile { id, xy, });
+                            },
+                            "Entities" => {
+                                let entities = build_entities(layer, &entity_defs);
+                                map_layers.push(MapLayer::Entities(entities));
+                            },
+                            "Tiles" => {
+                                let tiles = build_tiles(layer);
+                                map_layers.push(MapLayer::Tiles(tiles));
+                            },
+                            "AutoLayer" => {
+                                let tiles = build_tiles(layer);
+                                map_layers.push(MapLayer::Tiles(tiles));
+                            },
+                            _ => {}
                         }
-                        map_layers.push(MapLayer {
-                            tiles: map_tiles,
-                            tileset_id: ts_id,
-                            name: layer.identifier.clone(),
-                        });
                     }
                 }
             }
             let layers = project.levels[0].layer_instances.as_ref().unwrap();
             let max_width = layers.iter().map(|l| l.c_wid as i32).max().unwrap();
             let max_height = layers.iter().map(|l| l.c_hei as i32).max().unwrap();
-            let max_tile_size = layers.iter().map(|l|l.grid_size as i32).max().unwrap();
+            let max_tile_size = layers.iter().map(|l| l.grid_size as i32).max().unwrap();
 
             let map = LdtkMap {
                 size: IVec2::new(max_width, max_height),
@@ -146,9 +143,7 @@ impl AssetLoader for LdtkAssetLoader {
             };
 
             let asset = LoadedAsset::new(map);
-            load_context.set_default_asset(
-                asset.with_dependencies(dep_paths)
-            );
+            load_context.set_default_asset(asset.with_dependencies(dep_paths));
             Ok(())
         })
     }
@@ -158,22 +153,136 @@ impl AssetLoader for LdtkAssetLoader {
     }
 }
 
-fn build_tileset(def: &TilesetDefinition) -> MapTileset {
+fn build_tiles(layer: &LayerInstance) -> TilesLayer {
+    let ts_id = layer.tileset_def_uid.expect("Error loading tile layer, no tileset id");
+    let mut map_tiles = Vec::new();
+
+    let layer_height = layer.c_hei;
+    let layer_width = layer.c_wid;
+    let tile_size = layer.grid_size;
+    let pixel_height = layer_height * tile_size;
+    let y_flip = pixel_height - tile_size;
+    let center_offset = IVec2::new(layer_width as i32, layer_height as i32) / 2;
+
+    for tile in layer.grid_tiles.iter() {
+        let [x, y] = [tile.px[0], tile.px[1]];
+        let y = y_flip - y;
+        let gx = x / tile_size;
+        let gy = y / tile_size;
+
+        let id = tile.t as i32;
+        let xy = IVec2::new(gx as i32, gy as i32) - center_offset;
+
+        map_tiles.push(MapTile { id, xy });
+    }
+    TilesLayer {
+        tiles: map_tiles,
+        tileset_id: ts_id as i32,
+        name: layer.identifier.clone(),
+    }
+}
+
+fn build_tileset(def: &TilesetDefinition, image:Handle<Image>) -> MapTileset {
     let mut tile_data = HashMap::default();
     for data in def.custom_data.iter() {
         let id = data["tileId"].as_ref().unwrap().as_i64().unwrap() as i32;
         let data = data["data"].as_ref().unwrap().as_str().unwrap().to_string();
-        tile_data.insert(id,data);
+        tile_data.insert(id, data);
     }
 
     MapTileset {
         tile_count: IVec2::new(def.c_wid as i32, def.c_hei as i32),
         tile_size: def.tile_grid_size as i32,
         tile_data,
-        name: def.identifier.clone()
+        name: def.identifier.clone(),
+        image: image,
     }
 }
 
+fn build_entities(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefinition>) -> EntitiesLayer {
+    let layer_height = layer.c_hei;
+    let layer_width = layer.c_wid;
+    let layer_size = IVec2::new(layer_width as i32, layer_height as i32);
+
+    let mut entity_def_ids = HashSet::default();
+
+    let mut entities = Vec::new();
+    for entity in layer.entity_instances.iter() {
+        entity_def_ids.insert(entity.def_uid);
+        let mut tileset_id = None;
+        let mut tile_id = None;
+        if let Some(def) = defs.get(&entity.def_uid) {
+            if let Some(tid) = def.tile_id {
+                tile_id = Some(tid as i32);
+            }
+            if let Some(tsid) = def.tileset_id {
+                tileset_id = Some(tsid as i32);
+            }
+        }
+        let mut fields = HashMap::default();
+
+        for field in entity.field_instances.iter() {
+            if let Some(value) = &field.value {
+                let name = field.identifier.clone();
+                fields.insert(name, value.clone());
+            }
+        }
+
+        let [x,y] = [entity.grid[0], entity.grid[1]];
+        let y = layer_height - y;
+        let xy = IVec2::new(x as i32, y as i32);
+        let xy = xy - layer_size / 2;
+
+        entities.push(MapEntity {
+            name: entity.identifier.to_string(),
+            fields,
+            xy,
+            def_id: entity.def_uid as i32,
+            tile_id,
+            tileset_id,
+        });
+    }
+
+    let mut animations = HashMap::default();
+
+    for id in entity_def_ids {
+        let def = defs.get(&id).expect("Error getting defintion");
+        for field in def.field_defs.iter() {
+            if field.identifier.to_lowercase() != "animations" {
+                continue;
+            }
+            println!("Attempting to load animations for {}", def.identifier);
+            if let Some(content) = &field.default_override {
+                match content {
+                    Value::Object(o) => {
+                        let content = o.get("params").expect("Error loading animations, unexpected format");
+                        match content {
+                            Value::Array(arr) => {
+                                let value = arr[0].as_str().unwrap();
+                                //println!("Value {}", value);
+                                let anims: HashMap<String,UnitAnimation> = 
+                                    ron::de::from_str(value).unwrap();
+
+                                for (name,_) in anims.iter() {
+                                    println!("Found anim! {}", name);
+                                }
+                                animations.insert(id as i32, anims);
+                            },
+                            _ => { panic!("Error loading animations array for {}, unexpected format: {:#?}", id, content) }
+                        }
+                    },
+                    _ => { panic!("Error loading animations for {}, unexpected format {:#?}", id, content) }
+                }
+            }
+        }
+    }
+
+    EntitiesLayer {
+        entities,
+        name: layer.identifier.to_string(),
+        animations,
+    }
+}
 
 #[derive(Debug, Default)]
 pub struct MapTile {
@@ -188,19 +297,38 @@ pub struct MapTileset {
     pub tile_size: i32,
     pub tile_count: IVec2,
     pub name: String,
+    pub image: Handle<Image>,
+}
+
+#[derive(Debug)]
+pub enum MapLayer {
+    Tiles(TilesLayer),
+    Entities(EntitiesLayer,)
 }
 
 #[derive(Debug, Default)]
-pub struct MapLayer {
+pub struct TilesLayer {
     pub tiles: Vec<MapTile>,
     pub tileset_id: i32,
     pub name: String,
 }
-// impl LdtkMap {
-//     pub fn get_tileset(&self, name: &str) -> Option<&MapTileset> {
-//         if let Some(id) = self.tileset_name_map.get(name) {
-//             return self.tilesets.get(id);
-//         }  
-//         None
-//     }
-// }
+
+
+#[derive(Default, Debug)]
+pub struct MapEntity {
+    pub name: String,
+    pub fields: HashMap<String,Value>,
+    pub xy: IVec2,
+    pub def_id: i32,
+    pub tile_id: Option<i32>,
+    pub tileset_id: Option<i32>,
+}
+
+#[derive(Default,Debug)]
+pub struct EntitiesLayer {
+    pub entities: Vec<MapEntity>,
+    pub name: String,
+    /// Map of entity uid to animations mapping. Each entity type
+    /// has it's own set of animations.
+    pub animations: HashMap<i32, HashMap<String,UnitAnimation>>,
+}

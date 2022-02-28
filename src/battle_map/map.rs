@@ -1,14 +1,18 @@
 use std::slice::Iter;
 
-use bevy::{prelude::*, utils::HashMap, ecs::system::EntityCommands};
+use bevy::{ecs::system::EntityCommands, prelude::*, utils::HashMap};
 use bevy_ascii_terminal::{ldtk::LdtkAsset, Point2d, Size2d};
 use bevy_tiled_camera::TiledProjection;
 use sark_grids::Grid;
-use sark_pathfinding::{AStar, PathMap2d, PathingMap, pathing_map::ArrayVec};
+use sark_pathfinding::{pathing_map::ArrayVec, AStar, PathMap2d, PathingMap};
 
-use crate::{config::{GameSettings, ConfigAsset}, GameState, SETTINGS_PATH, ldtk_loader::LdtkMap, AtlasHandles};
+use crate::{
+    config::{ConfigAsset, GameSettings},
+    ldtk_loader::{LdtkMap, MapLayer, MapEntity, MapTileset, MapTile},
+    AtlasHandles, GameState, SETTINGS_PATH, UnitAnimation, AnimationController,
+};
 
-use super::{units::{MapUnit, MapUnitBundle}, MapPosition, BattleMapState};
+use super::{units::{MapUnitBundle, MapUnit}, BattleMapState};
 
 pub struct MapPlugin;
 
@@ -18,21 +22,15 @@ impl Plugin for MapPlugin {
             .init_resource::<MapUnits>()
             .init_resource::<CollisionMap>()
             .init_resource::<LoadingMap>()
-            
+            .add_system_set(SystemSet::on_update(GameState::LoadBattleMap).with_system(setup))
             .add_system_set(
-                SystemSet::on_update(GameState::LoadBattleMap)
-                .with_system(setup)
-            )
-            .add_system_set(
-                SystemSet::on_update(BattleMapState::BuildingMap)
-                .with_system(build_map)
+                SystemSet::on_update(BattleMapState::BuildingMap).with_system(build_map),
             );
-            //.add_system_set(SystemSet::on_enter(GameState::LoadBattleMap).with_system(setup))
-            // .add_system_set(
-            //     SystemSet::on_update(GameState::BattleMap).with_system(update_collision_map),
-            // )
-            //.add_event::<LdtkRebuild>()
-            ;
+        //.add_system_set(SystemSet::on_enter(GameState::LoadBattleMap).with_system(setup))
+        // .add_system_set(
+        //     SystemSet::on_update(GameState::BattleMap).with_system(update_collision_map),
+        // )
+        //.add_event::<LdtkRebuild>()
     }
 }
 
@@ -66,7 +64,7 @@ impl Map {
     /// Allows for a nicely centered map even with odd numbered tiles.
     pub fn axis_offset(&self) -> Vec2 {
         let cmp = (self.size().as_ivec2() % 2).cmpeq(IVec2::ZERO);
-        Vec2::select(cmp, Vec2::new(0.5,0.5), Vec2::ZERO)
+        Vec2::select(cmp, Vec2::new(0.5, 0.5), Vec2::ZERO)
     }
 }
 
@@ -122,14 +120,11 @@ fn setup(
     }
 }
 
-#[derive(Component)]
-pub struct MapTile;
-
 /// Offset a given axis based on whether it's even or odd.
 /// Allows for a nicely centered map even with odd numbered tiles.
 fn axis_offset(size: IVec2) -> Vec2 {
     let cmp = (size % 2).cmpeq(IVec2::ZERO);
-    Vec2::select(cmp, Vec2::new(0.5,0.5), Vec2::ZERO)
+    Vec2::select(cmp, Vec2::new(0.5, 0.5), Vec2::ZERO)
 }
 
 fn build_map(
@@ -148,73 +143,162 @@ fn build_map(
     for ev in ev_reader.iter() {
         match ev {
             AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
-                let ldtk_map = ldtk_maps.get(handle).unwrap();
+                let ldtk = ldtk_maps.get(handle).unwrap();
 
-                if map.size().as_ivec2() != ldtk_map.size {
-                    map.0 = Grid::new(TerrainTile::default(), ldtk_map.size.as_uvec2().into());
+                if map.size().as_ivec2() != ldtk.size {
+                    map.0 = Grid::new(TerrainTile::default(), ldtk.size.as_uvec2().into());
                     collision_map.0 = PathMap2d::new(map.size().into());
                     units.0 = Grid::default(collision_map.size().into());
                 }
-                let axis_offset = axis_offset(ldtk_map.size);
                 if let Ok(mut cam) = q_cam.get_single_mut() {
-                    cam.pixels_per_tile = ldtk_map.tile_size.y as u32;
-                    cam.set_tile_count(ldtk_map.size.as_uvec2().into());
+                    cam.pixels_per_tile = ldtk.tile_size.y as u32;
+                    cam.set_tile_count(ldtk.size.as_uvec2().into());
                 }
-                for (depth, layer) in ldtk_map.layers.iter().rev().enumerate() {
-                    let atlas = match atlas_handles.0.get(&layer.name) {
-                        Some(atlas) => atlas.clone(),
-                        None => {
-                            let image = ldtk_map.image(layer);
-                            let tileset = ldtk_map.tileset(layer);
-                            let atlas = TextureAtlas::from_grid(
-                                image.clone(), IVec2::splat(tileset.tile_size).as_vec2(), 
-                                tileset.tile_count.x as usize, tileset.tile_count.y as usize
-                            );
-                            let handle = atlases.add(atlas);
-                            atlas_handles.0.insert(layer.name.clone(), handle.clone());
-                            handle
+
+                for (depth, layer) in ldtk.layers.iter().rev().enumerate() {
+                    match layer {
+                        MapLayer::Tiles(layer) => {
+                            let tileset = ldtk.tileset(layer.tileset_id);
+                            
+                            let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
+                            let axis_offset = axis_offset(ldtk.size);
+
+                            for tile in layer.tiles.iter() {
+                                spawn_tile(
+                                    &mut commands, 
+                                    tile, 
+                                    axis_offset, 
+                                    depth,
+                                    atlas.clone(), 
+                                    tileset, 
+                                    &mut collision_map
+                                );
+                            }
                         },
-                    };
-                    //let atlas = &ldtk_map.atlases.get(&layer.tileset_id).expect("No atlas for layer");
-                    let layer_name = &layer.name;
-                    let tileset = &ldtk_map.tilesets.get(&layer.tileset_id).expect("No tileset for layer");
-                    for tile in layer.tiles.iter() {
-                        let xy = tile.xy.as_vec2() + axis_offset;
-
-                        let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
-                        let sprite = TextureAtlasSprite {
-                            custom_size: Some(Vec2::ONE),
-                            index: tile.id as usize,
-                            ..Default::default()
-                        };
-                        let sprite = SpriteSheetBundle {
-                            sprite,
-                            texture_atlas: atlas.clone(),
-                            transform,
-                            ..Default::default()
-                        };
-
-                        let mut entity = commands.spawn_bundle(sprite);
-                        match layer_name.to_lowercase().as_str() {
-                            "units" => {
-                                entity.insert_bundle(MapUnitBundle::new(xy.round().as_ivec2()));
+                        MapLayer::Entities(layer) => {
+                            let animations = &layer.animations;
+                            for entity in layer.entities.iter() {
+                                spawn_entity(
+                                    &mut commands,
+                                    ldtk,
+                                    &mut atlases,
+                                    &mut atlas_handles,
+                                    entity,
+                                    &mut units,
+                                    depth,
+                                    animations,
+                                );
                             }
-                            _ => {}
-                        }
-                        if let Some(data) = tileset.tile_data.get(&tile.id) {
-                            if data.lines().map(|l|l.to_lowercase()).position(|s| s=="collider").is_some() {
-                                let xy = tile.xy + map.size().as_ivec2() / 2;
-                                collision_map.set_collidable(xy);
-                            }
-                        } 
+                        },
                     }
                 }
                 battle_map_state.set(BattleMapState::SelectUnit).unwrap();
                 game_state.set(GameState::BattleMap).unwrap();
-            },
-            AssetEvent::Removed { handle : _ } => {},
+            }
+            AssetEvent::Removed { handle: _ } => {}
         }
+    }
+}
 
-       
+fn spawn_tile(
+    commands: &mut Commands,
+    tile: &MapTile, 
+    axis_offset: Vec2, 
+    depth: usize,
+    atlas: Handle<TextureAtlas>,
+    tileset: &MapTileset,
+    collision_map: &mut CollisionMap,
+) {
+    let xy = tile.xy.as_vec2() + axis_offset;
+        
+    let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
+    let sprite = TextureAtlasSprite {
+        custom_size: Some(Vec2::ONE),
+        index: tile.id as usize,
+        ..Default::default()
+    };
+    let sprite = SpriteSheetBundle {
+        sprite,
+        texture_atlas: atlas,
+        transform,
+        ..Default::default()
+    };
+
+    commands.spawn_bundle(sprite);
+    if let Some(data) = tileset.tile_data.get(&tile.id) {
+        if data
+            .lines()
+            .map(|l| l.to_lowercase())
+            .position(|s| s == "collider")
+            .is_some()
+        {
+            let xy = tile.xy + collision_map.size().as_ivec2() / 2;
+            collision_map.set_collidable(xy);
+        }
+    }
+}
+
+fn spawn_entity(
+    commands: &mut Commands,
+    ldtk: &LdtkMap,
+    atlases: &mut Assets<TextureAtlas>,
+    atlas_handles: &mut AtlasHandles,
+    entity: &MapEntity,
+    units: &mut MapUnits,
+    depth: usize,
+    animations: &HashMap<i32, HashMap<String, UnitAnimation>>,
+) {
+    let axis_offset = axis_offset(units.size().as_ivec2());
+    if let (Some(id), Some(tileset_id)) = (entity.tile_id, entity.tileset_id) {
+        let tileset = ldtk.tileset(tileset_id);
+        let xy = entity.xy.as_vec2() + axis_offset;
+        
+        let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
+        let sprite = TextureAtlasSprite {
+            custom_size: Some(Vec2::ONE),
+            index: id as usize,
+            ..Default::default()
+        };
+        let atlas = get_atlas(atlases, atlas_handles, tileset);
+        let sprite = SpriteSheetBundle {
+            sprite,
+            texture_atlas: atlas,
+            transform,
+            ..Default::default()
+        };
+        let mut new = commands.spawn_bundle(sprite);
+        new.insert_bundle(MapUnitBundle::new(xy.as_ivec2()));
+
+        if let Some(anims) = animations.get(&entity.def_id) {
+            println!("Loading animations for {}", entity.name);
+            let mut controller = AnimationController::default();
+            for (name, anim) in anims {
+                controller.add(name, anim.clone());
+            }
+            controller.play("idle");
+            new.insert(controller);
+        }
+    }
+}
+
+fn get_atlas(
+    atlases: &mut Assets<TextureAtlas>,
+    atlas_handles: &mut AtlasHandles,
+    tileset: &MapTileset,
+) -> Handle<TextureAtlas> {
+    let name = &tileset.name;
+    match atlas_handles.0.get(name) {
+        Some(atlas) => atlas.clone(),
+        None => {
+            let atlas = TextureAtlas::from_grid(
+                tileset.image.clone(),
+                IVec2::splat(tileset.tile_size).as_vec2(),
+                tileset.tile_count.x as usize,
+                tileset.tile_count.y as usize,
+            );
+            let handle = atlases.add(atlas);
+            atlas_handles.0.insert(name.to_string(), handle.clone());
+            handle
+        }
     }
 }

@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use bevy::{prelude::*, ecs::system::EntityCommands};
+use bevy::{ecs::system::EntityCommands, prelude::*};
 use bevy_ascii_terminal::Point2d;
 use bevy_easings::*;
 
@@ -28,9 +28,7 @@ impl Plugin for UnitsPlugin {
 pub struct MapUnit;
 
 #[derive(Component, Default)]
-pub struct MapUnitMovement {
-
-}
+pub struct MapUnitMovement {}
 
 #[derive(Bundle, Default)]
 pub struct MapUnitBundle {
@@ -42,9 +40,7 @@ pub struct MapUnitBundle {
 impl MapUnitBundle {
     pub fn new(xy: IVec2) -> Self {
         Self {
-            pos: MapPosition {
-                xy
-            },
+            pos: MapPosition { xy },
             ..Default::default()
         }
     }
@@ -218,7 +214,6 @@ fn process_commands(
 //     }
 // }
 
-
 fn spawn_units(mut commands: Commands) {
     //commands.spawn_bundle(make_map_unit([-5, -5], Color::RED));
     //commands.spawn_bundle(make_map_unit([5, 5], Color::BLUE));
@@ -228,7 +223,7 @@ fn spawn_units(mut commands: Commands) {
 /// Allows for a nicely centered map even with odd numbered tiles.
 fn axis_offset(size: IVec2) -> Vec2 {
     let cmp = (size % 2).cmpeq(IVec2::ZERO);
-    Vec2::select(cmp, Vec2::new(0.5,0.5), Vec2::ZERO)
+    Vec2::select(cmp, Vec2::new(0.5, 0.5), Vec2::ZERO)
 }
 fn update_sprite_position(
     map: Res<Map>,
@@ -322,7 +317,7 @@ mod test {
         assert_eq!([12.0, 3.0], path.path_point(0.9).unwrap().to_array());
         assert_eq!([13.0, 3.0], path.path_point(1.0).unwrap().to_array());
     }
-    
+
     #[test]
     fn testa() {
         let path: Vec<IVec2> = vec![[3, 3], [3, 4], [3, 5], [3, 6], [3, 7]]
@@ -340,5 +335,4 @@ mod test {
 
         println!("A {} b {}", a, b);
     }
-
 }

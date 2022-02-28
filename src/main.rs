@@ -5,20 +5,20 @@ use bevy::{asset::LoadState, prelude::*, utils::HashMap};
 use bevy_easings::EasingsPlugin;
 use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
-use config::{ConfigAsset, ConfigPlugin,};
+use config::{ConfigAsset, ConfigPlugin};
 use ldtk_loader::LdtkPlugin;
 use serde::{Deserialize, Serialize};
 
 use self::battle_map::BattleMapPlugin;
 
+mod animation;
 mod arena;
 mod assets;
 mod battle_map;
 mod camera;
 mod config;
-mod ldtk_loader;
 mod grid;
-mod animation;
+mod ldtk_loader;
 
 pub use grid::*;
 
@@ -66,25 +66,10 @@ pub fn main() {
         .add_state(GameState::StartScreen)
         .add_startup_system(start)
         .add_system(load_config)
-        //.add_startup_system(test_start)
         .run();
 }
 
-// fn test_start(mut commands: Commands) {
-//     //commands.spawn_bundle(OrthographicCameraBundle::new_2d());
-//     println!("Spawning blue sprite");
-//     commands.spawn_bundle(SpriteBundle {
-//         sprite: Sprite {
-//             color: Color::BLUE,
-//             custom_size: Some(Vec2::new(10.0,10.0)),
-//             ..Default::default()
-//         },
-//         ..Default::default()
-//     });
-// }
-
 fn start(mut commands: Commands, asset_server: Res<AssetServer>) {
-    //let config: Handle<ConfigAsset2> = asset_server.load("game_settings.config");
     let config: Handle<ConfigAsset> = asset_server.load("game_settings.config");
     commands.insert_resource(config);
 }
@@ -109,7 +94,7 @@ fn load_config(
 }
 
 #[derive(Default)]
-pub struct AtlasHandles(HashMap<String,Handle<TextureAtlas>>);
+pub struct AtlasHandles(HashMap<String, Handle<TextureAtlas>>);
 
 // fn load_config(
 //     mut game_state: ResMut<State<GameState>>,

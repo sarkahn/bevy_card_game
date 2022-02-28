@@ -2,17 +2,21 @@ use bevy::prelude::*;
 use bevy_tiled_camera::TiledProjection;
 use serde::{Deserialize, Serialize};
 
-use crate::{GameState, grid::*, config::{GameSettings, ConfigAsset}, SETTINGS_PATH};
+use crate::{
+    config::{ConfigAsset, GameSettings},
+    grid::*,
+    GameState, SETTINGS_PATH,
+};
 
 use self::{
-    input::InputPlugin, map::MapPlugin, states::BattleMapSelectionPlugin,
+    animated::AnimScenePlugin, input::InputPlugin, map::MapPlugin, states::BattleMapStatesPlugin,
     units::UnitsPlugin,
 };
 
+mod animated;
 mod components;
 mod input;
 mod map;
-mod render;
 mod states;
 mod units;
 
@@ -35,9 +39,9 @@ impl Plugin for BattleMapPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_state(BattleMapState::Inactive)
             .add_plugin(UnitsPlugin)
-            //.add_plugin(RenderPlugin)
-            .add_plugin(BattleMapSelectionPlugin)
+            .add_plugin(BattleMapStatesPlugin)
             .add_plugin(InputPlugin)
-            .add_plugin(MapPlugin);
+            .add_plugin(MapPlugin)
+            .add_plugin(AnimScenePlugin);
     }
 }
