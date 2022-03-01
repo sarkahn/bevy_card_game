@@ -4,7 +4,7 @@ use sark_pathfinding::AStar;
 
 use crate::{GameState, SETTINGS_PATH, config::ConfigAsset};
 
-use super::{input::TileClickedEvent, map::CollisionMap, Map, units::{UnitCommand, UnitCommands, PlayerUnit}};
+use super::{input::{TileClickedEvent, Cursor}, map::CollisionMap, Map, units::{UnitCommand, UnitCommands, PlayerUnit}};
 
 pub struct BattleMapSelectionPlugin;
 
@@ -40,6 +40,7 @@ fn on_select(
     q_pos: Query<&Transform>,
     q_player: Query<&PlayerUnit>,
     q_highlight: Query<Entity,With<HighlightSprite>>,
+    q_cursor: Query<&Transform, With<Cursor>>,
 ) {
     if let Some(config) = configs.get(SETTINGS_PATH) {
         q_highlight.iter().for_each(|e|commands.entity(e).despawn());
@@ -53,40 +54,43 @@ fn on_select(
                     Color::rgba_u8(55,155,255,150)
                 );
             }
+
+            if let Ok(cursor_transform) = q_cursor.get_single() {
+                let a = q_pos.get(selected).unwrap().translation.xy();
+                let a = map.to_index_2d(a);
+                let b = map.to_index_2d(cursor_transform.translation.xy());
+                if a == b {
+                    return;
+                }
+                selection.path = get_path(a,b, &collision_map);
+            }
         }
 
         for ev in ev_click.iter() {
             if let Some(clicked_unit) = ev.unit {
                 // Can only select player units
                 if q_player.get(clicked_unit).is_ok() {
-                    println!("Highlighting unit {:?}", clicked_unit);
+                    //println!("Highlighting unit {:?}", clicked_unit);
                     selection.selected_unit = Some(clicked_unit);
                     selection.path = None;
-                }
+                } 
+                //println!("PAth from {} to {}?", a, b);
             }
-    
-            if let Some(selected) = selection.selected_unit {
-                let a = q_pos.get(selected).unwrap().translation.xy();
-                let a = map.to_index_2d(a);
-                let b = ev.xy;
-                println!("PAth from {} to {}?", a, b);
-                if a == b {
-                    return;
-                }
-                if let Some(path) = get_path(a,b, &collision_map) {
-
-                    if let Ok(mut commands) = q_unit_commands.get_mut(selected) {
-                        commands.clear();
-                        for window in path.as_slice().windows(2) {
-                            let [a,b] = [window[0],window[1]];
-                            commands.push(UnitCommand::MoveToTile(a,b));
-                            commands.push(UnitCommand::Wait(config.settings.map_move_wait));
-                        }
+            
+            if let (Some(path), Some(selected)) = (&selection.path, selection.selected_unit) {
+                if let Ok(mut commands) = q_unit_commands.get_mut(selected) {
+                    commands.clear();
+                    for window in path.as_slice().windows(2) {
+                        let [a,b] = [window[0],window[1]];
+                        let [a,b] = [map.xy_from_index_2d(a), map.xy_from_index_2d(b)];
+                        commands.push(UnitCommand::MoveToTile(a.as_ivec2(),b.as_ivec2()));
+                        commands.push(UnitCommand::Wait(config.settings.map_move_wait));
                     }
-                    selection.path = Some(path);
-                    selection.selected_unit = None;
                 }
+                selection.path = None;
+                selection.selected_unit = None;
             }
+
         }
     }
 

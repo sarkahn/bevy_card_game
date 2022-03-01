@@ -108,8 +108,10 @@ impl UnitCommands {
         cmd
     }
     fn next(&mut self) -> bool {
-        //println!("Next command. Size {}", self.queue.len());
         self.current = self.queue.pop_front();
+        if let Some(current) = self.current {
+            //println!("Setting current command to {:?}", current);
+        }
         self.current.is_some()
     }
 
@@ -124,9 +126,6 @@ impl UnitCommands {
             _ => {}
         };
         self.queue.push_back(command);
-        if self.queue.len() == 1 {
-            self.current = Some(command);
-        }
     }
     /// Does not clear current action - unit will
     /// finish what it's currently doing.
@@ -148,7 +147,12 @@ fn process_commands(
 ) {
     player_positions.clear();
     player_positions.extend(q_set.q1().iter().map(|t|map.to_index_2d(t.translation.xy())));
-    for (_, mut unit_commands, mut transform, speed) in q_set.q0().iter_mut() {
+    for (entity, mut unit_commands, mut transform, speed) in q_set.q0().iter_mut() {
+        //println!("{:?} Command count {}", entity, unit_commands.queue.len());
+        if unit_commands.current.is_none() {
+            unit_commands.next();
+        }
+
         if let Some(command) = unit_commands.current {
             match command {
                 UnitCommand::MoveToTile(a, b) => {
@@ -160,24 +164,14 @@ fn process_commands(
                         transform.translation = p.extend(transform.translation.z);
                     } else {
                         transform.translation = b.extend(transform.translation.z);
+                        //println!("Done moving from {} to {} Final Pos {}", 
+                        //a, b, transform.translation.xy());
                         unit_commands.move_timer.reset();
                         unit_commands.next();
                     }
-                    // let a = transform.translation.xy();
-                    // let b = b.as_vec2();
-
-                    // let dir = b - a;
-                    // if dir.length() <= 0.1 {
-                    //     println!("{} got to their desination, next command", a);
-                    //     unit_commands.next();
-                    // } else {
-                    //     let dir = dir.normalize();
-                    //     let vel = dir + speed.0 * time.delta_seconds();
-                    //     println!("{} is moving to {}. Velocity {}", a, b, vel);
-                    //     transform.translation += vel.extend(0.0);
-                    // }
                 }
                 UnitCommand::Wait(_) => {
+                    //println!("{:?} WAITING", entity);
                     unit_commands.wait_timer.tick(time.delta());
                     if unit_commands.wait_timer.finished() {
                         unit_commands.wait_timer.reset();
@@ -185,7 +179,7 @@ fn process_commands(
                     }
                 },
                 UnitCommand::AiThink() => {
-                    println!("Thinking!");
+                    //println!("{:?} Thinking!", entity);
                     let mut rng = thread_rng();
                     let choices = ["wait", "attack"];
                     let weights = [1_i32,5];
@@ -197,26 +191,28 @@ fn process_commands(
                         unit_commands.push(UnitCommand::AiThink());
                         unit_commands.next();
                         continue;
-                        //continue;
                     }
 
                     let a = map.to_index_2d(transform.translation.xy());
-                    println!("Finding nearest player: {}, {:?}", a, player_positions);
+                    //println!("{:?} at {}, Finding nearest player", entity, a);
                     if let Some(b) = get_nearest_player_position(a,&player_positions) {
                         //let b = map.to_index_2d(b.as_vec2());
-                        println!("Nearest player {}", b);
                         let mut astar = AStar::new(10);
                         if let Some(path) = astar.find_path(&collision_map.0, a.into(), b.into()) {
                             if let Some(next) = path.get(1) {
-                                let index = IVec2::from(*next);
-                                let a = map.xy_from_index_2d(a);
-                                let b = map.xy_from_index_2d(index);
-                                unit_commands.push(UnitCommand::MoveToTile(a.as_ivec2(), b.as_ivec2()));
+                                let b = IVec2::from(*next);
+                                //println!("Moving from {} to {}", a, b);
+                                let a = map.to_xy(transform.translation.xy());
+                                let b = map.xy_from_index_2d(b);
+
+                                //println!("Should see 'done moving' next");
+                                unit_commands.push(UnitCommand::MoveToTile(a, b.as_ivec2()));
                                 unit_commands.push(UnitCommand::AiThink());
+                                //println!("{:?} pushed {} to {} to commands for move. Stack state: {:?}. Calling next",entity, a, b, unit_commands.queue);
                                 unit_commands.next();
                             }
                         } else {
-                            println!("Couldn't find a player to path to!");
+                            // Couldn't find a player to path to. Go for the kill!
                         }
                     }
 
@@ -250,10 +246,10 @@ fn update_map_units(
         return;
     }
     units.0.iter_mut().for_each(|f| *f = None);
-    for (entity, pos) in q_units.iter() {
-        //let xy = pos.xy() + units.size().as_ivec2() / 2;
-        //println!("Map unit update pos: {}", xy);
-        //units.0[xy] = Some(entity);
+    for (entity, transform) in q_units.iter() {
+        let xy = map.to_index_2d(transform.translation.xy());
+        //println!("Update Map unit pos {} index {}", transform.translation.xy(), xy);
+        units.0[xy] = Some(entity);
         //let xy = map.to_index_2d(pos.xy());
     }
 }

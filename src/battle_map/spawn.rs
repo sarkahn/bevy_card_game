@@ -80,7 +80,7 @@ fn spawn_from_event(
             }
             if enums.iter().any(|s|s=="spawner") {
                 new.insert(EnemySpawner {
-                    timer: Timer::from_seconds(0.5, false),
+                    timer: Timer::from_seconds(1.5, true),
                 });
             }
             if enums.iter().any(|s|s=="playerbase") {
@@ -150,7 +150,7 @@ fn spawn_from_entity(
     
                             if let Some(enums) = tileset.enums.get(&tile_id) {
                                 if enums.iter().any(|s|s=="enemy") {
-                                    println!("Adding AI!");
+                                    //println!("Adding AI!");
                                     new.insert(EnemyUnit);
                                     let settings = &config.settings;
                                     let mut unit_commands = UnitCommands::new(
