@@ -237,6 +237,7 @@ dependencies = [
  "bevy_egui",
  "bevy_tiled_camera",
  "ldtk_rust",
+ "rand",
  "ron 0.7.0",
  "sark_grids",
  "sark_pathfinding",

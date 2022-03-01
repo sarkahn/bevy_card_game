@@ -84,7 +84,7 @@ fn load_config(
         match ev {
             AssetEvent::Created { handle } => {
                 let config = &configs.get(handle).unwrap();
-                println!("Settings {:?}. Setting state", config.settings);
+                //println!("Settings {:?}. Setting state", config.settings);
                 game_state.set(config.settings.begin_state).unwrap();
                 commands.insert_resource(config.settings.clone());
             }

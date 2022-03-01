@@ -35,7 +35,7 @@ impl AnimationController {
             self.timer.reset();
             self.frame_index = 0;
         } else {
-            println!("Animation {} not found", name);
+            //println!("Animation {} not found", name);
         }
     }
 

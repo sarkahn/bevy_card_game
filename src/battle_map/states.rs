@@ -8,7 +8,7 @@ use super::{
     input::{Cursor, TileClickedEvent},
     map::*,
     //render::MapOverlayTerminal,
-    units::{MapUnit, MapUnitMovement, PlayerUnit},
+    units::{MapUnit, PlayerUnit},
     BattleMapState,
     Map,
 };
@@ -24,15 +24,15 @@ impl Plugin for BattleMapStatesPlugin {
     fn build(&self, app: &mut App) {
         app
             .init_resource::<SelectionState>()
-            .add_system_set(SystemSet::on_update(BattleMapState::SelectUnit)
-            .with_system(select_unit.label("map_on_tile_clicked"))
+            // .add_system_set(SystemSet::on_update(BattleMapState::SelectUnit)
+            // .with_system(select_unit.label("map_on_tile_clicked"))
             //.with_system(path.label("path").after("map_on_tile_clicked"))
             //.with_system(on_path.after("path"))
-        )
-        .add_system_set(SystemSet::on_update(BattleMapState::ChooseTarget)
-            .with_system(choose_target))
-        .add_system_set(SystemSet::on_exit(BattleMapState::ChooseTarget)
-            .with_system(on_exit_choose_target))
+        // )
+        // .add_system_set(SystemSet::on_update(BattleMapState::ChooseTarget)
+        //     .with_system(choose_target))
+        // .add_system_set(SystemSet::on_exit(BattleMapState::ChooseTarget)
+        //     .with_system(on_exit_choose_target))
 
         // .add_system_set(SystemSet::on_update(BattleMapState::UnitMoving)
         //     .with_system(unit_moving_update))
@@ -73,29 +73,6 @@ fn select_unit(
             return;
         }
     }
-    // if !q_moving_units.is_empty() {
-    //     return;
-    // }
-
-    // for ev in ev_tile_clicked.iter() {
-    //     if let Some(new_selected) = ev.unit {
-    //         selection.unit = Some(new_selected);
-    //         println!("Selected {:?}", new_selected);
-    //         return;
-    //     }
-    //     if let Some(selected) = selection.unit {
-    //         if let Ok(mut pos) = q_unit.get_mut(selected) {
-    //             if let Some(path) = selection.path
-    //             if let Ok(mut path) = q_unit_path.get_mut(selected) {
-
-    //             }
-    //             //pos.xy = ev.xy;
-    //             //println!("Moving {:?} to {}", selected, pos.xy);
-    //             selection.unit = None;
-    //             selection.path.clear();
-    //         }
-    //     }
-    // }
 }
 
 #[derive(Component)]

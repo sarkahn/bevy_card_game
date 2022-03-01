@@ -206,7 +206,7 @@ fn build_tileset(def: &TilesetDefinition, image:Handle<Image>) -> MapTileset {
             vec.push(enum_name.to_lowercase());
         }
     }
-    println!("Player ids for tileset {}: {:?}", def.identifier, enums);
+    //println!("Player ids for tileset {}: {:?}", def.identifier, enums);
 
     MapTileset {
         tile_count: IVec2::new(def.c_wid as i32, def.c_hei as i32),
@@ -283,7 +283,7 @@ fn anims_from_def(
         if field.identifier.to_lowercase() != "animations" {
             continue;
         }
-        println!("Attempting to load animations for {}", def.identifier);
+        //println!("Attempting to load animations for {}", def.identifier);
         if let Some(content) = &field.default_override {
             match content {
                 Value::Object(o) => {

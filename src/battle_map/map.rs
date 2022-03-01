@@ -111,8 +111,8 @@ impl CollisionMap {
 
 fn setup(
     configs: Res<Assets<ConfigAsset>>,
-    mut state: ResMut<State<BattleMapState>>,
     asset_server: Res<AssetServer>,
+    mut state: ResMut<State<BattleMapState>>,
     mut loading_map: ResMut<BattleMapLdtkHandle>,
 ) {
     if *state.current() == BattleMapState::BuildingMap {

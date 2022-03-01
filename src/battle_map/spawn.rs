@@ -1,8 +1,8 @@
 use bevy::{prelude::*, utils::HashMap, math::Vec3Swizzles, ecs::system::EntityCommands};
 
-use crate::{GameState, UnitAnimation, battle_map::{units::{MapUnitBundle, PlayerUnit, EnemyUnit}, enemies::EnemySpawner}, AnimationController, ldtk_loader::{LdtkMap, MapTileset}, AtlasHandles};
+use crate::{GameState, UnitAnimation, battle_map::{units::{MapUnitBundle, PlayerUnit, EnemyUnit}, enemies::EnemySpawner}, AnimationController, ldtk_loader::{LdtkMap, MapTileset}, AtlasHandles, config::ConfigAsset, SETTINGS_PATH};
 
-use super::map::BattleMapLdtkHandle;
+use super::{map::BattleMapLdtkHandle, units::{PlayerBase, EnemyBase, UnitCommands, UnitCommand}};
 
 pub const BATTLE_MAP_SPAWN_SYSTEM: &str = "BATTLEMAP_SPAWN_SYSTEM";
 
@@ -76,13 +76,19 @@ fn spawn_from_event(
                 new.insert(PlayerUnit);
             }
             if enums.iter().any(|s|s=="enemy") {
-                new.insert(PlayerUnit);
+                new.insert(EnemyUnit);
             }
             if enums.iter().any(|s|s=="spawner") {
-                println!("Found spawner YO");
                 new.insert(EnemySpawner {
-                    timer: Timer::from_seconds(1.5, true),
+                    timer: Timer::from_seconds(0.5, false),
                 });
+            }
+            if enums.iter().any(|s|s=="playerbase") {
+                new.insert(PlayerBase);
+            }
+
+            if enums.iter().any(|s|s=="enemybase") {
+                new.insert(EnemyBase);
             }
 
         }
@@ -109,52 +115,63 @@ fn spawn_from_entity(
     ldtk_assets: Res<Assets<LdtkMap>>,
     mut atlas_handles: ResMut<AtlasHandles>,
     mut atlases: ResMut<Assets<TextureAtlas>>,
+    configs: Res<Assets<ConfigAsset>>,
+    asset_server: Res<AssetServer>,
 ) {
-    for (entity,spawn) in q_spawns.iter() {
-        if let Some(ldtk) = ldtk_assets.get(spawn.ldtk.clone()) {
-            commands.entity(entity).despawn();
-            let defs = &ldtk.entity_defs;
-            //println!("DEFS {:?}", defs);
-            //println!("Slime? :{:?}", defs.def_from_name("slime"));
-            if let Some(def) = defs.def_from_name(&spawn.name.to_lowercase()) {
-                if let (Some(tileset_id), Some(tile_id)) = (def.tileset_id,def.tile_id) {
-                    if let Some(tileset) = ldtk.tilesets.get(&tileset_id) {
-                        let pos = spawn.pos;
-                        let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
-                        let comps = build_unit(pos, atlas, tile_id);
-
-                        //println!("Spawning {} at {}", spawn.name, spawn.pos);
-                        let mut new = commands.spawn();
-                        new.insert(comps.0)
-                        .insert_bundle(comps.1)
-                        .insert_bundle(comps.2);
-
-                        if !def.animations.is_empty() {
-                            //println!("Loading animations for {}", entity.name);
-                            let mut controller = AnimationController::default();
-                            for (name, anim) in def.animations.iter() {
-                                controller.add(&name, anim.clone());
+    if let Some(config) = configs.get(SETTINGS_PATH) {
+        for (entity,spawn) in q_spawns.iter() {
+            if let Some(ldtk) = ldtk_assets.get(spawn.ldtk.clone()) {
+                commands.entity(entity).despawn();
+                let defs = &ldtk.entity_defs;
+                //println!("DEFS {:?}", defs);
+                //println!("Slime? :{:?}", defs.def_from_name("slime"));
+                if let Some(def) = defs.def_from_name(&spawn.name.to_lowercase()) {
+                    if let (Some(tileset_id), Some(tile_id)) = (def.tileset_id,def.tile_id) {
+                        if let Some(tileset) = ldtk.tilesets.get(&tileset_id) {
+                            let pos = spawn.pos;
+                            let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
+                            let comps = build_unit(pos, atlas, tile_id);
+    
+                            //println!("Spawning {} at {}", spawn.name, spawn.pos);
+                            let mut new = commands.spawn();
+                            new.insert(comps.0)
+                            .insert_bundle(comps.1)
+                            .insert_bundle(comps.2);
+    
+                            if !def.animations.is_empty() {
+                                //println!("Loading animations for {}", entity.name);
+                                let mut controller = AnimationController::default();
+                                for (name, anim) in def.animations.iter() {
+                                    controller.add(&name, anim.clone());
+                                }
+                                controller.play("idle");
+                                new.insert(controller);
                             }
-                            controller.play("idle");
-                            new.insert(controller);
+    
+                            if let Some(enums) = tileset.enums.get(&tile_id) {
+                                if enums.iter().any(|s|s=="enemy") {
+                                    println!("Adding AI!");
+                                    new.insert(EnemyUnit);
+                                    let settings = &config.settings;
+                                    let mut unit_commands = UnitCommands::new(
+                                        settings.map_move_speed,
+                                        settings.map_move_speed, pos.truncate());
+                                    unit_commands.push(UnitCommand::AiThink());
+                                    new.insert(unit_commands);
+                                }
+                            }
+                            
                         }
-
-
-                        // if let Some(team) = &spawn.team {
-                        //     match team {
-                        //         Team::Player => new.insert(PlayerUnit),
-                        //         Team::Enemy => new.insert(EnemyUnit),
-                        //     };
-                        // }
                     }
+                } else {
+                    panic!("Attempting to spawn entity {}, but no definition was found in the ldtk file {}",
+                    spawn.name, ldtk.name,
+                    );
                 }
-            } else {
-                panic!("Attempting to spawn entity {}, but no definition was found in the ldtk file {}",
-                spawn.name, ldtk.name,
-                );
             }
         }
     }
+    
 } 
 
 fn build_unit(

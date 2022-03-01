@@ -10,7 +10,7 @@ use crate::{
 
 use self::{
     animated::AnimScenePlugin, input::InputPlugin, map::MapPlugin, states::BattleMapStatesPlugin,
-    units::UnitsPlugin, spawn::MapSpawnPlugin, enemies::EnemiesPlugin,
+    units::UnitsPlugin, spawn::MapSpawnPlugin, enemies::EnemiesPlugin, selection::BattleMapSelectionPlugin,
 };
 
 mod animated;
@@ -21,6 +21,7 @@ mod states;
 mod units;
 mod enemies;
 mod spawn;
+mod selection;
 
 pub use components::*;
 pub use map::{Map, MapUnits};
@@ -47,6 +48,7 @@ impl Plugin for BattleMapPlugin {
             .add_plugin(AnimScenePlugin)
             .add_plugin(MapSpawnPlugin)
             .add_plugin(EnemiesPlugin)
+            .add_plugin(BattleMapSelectionPlugin)
             ;
     }
 }
