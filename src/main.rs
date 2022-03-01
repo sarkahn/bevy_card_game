@@ -19,12 +19,14 @@ mod camera;
 mod config;
 mod grid;
 mod ldtk_loader;
+mod util;
 
 pub use grid::*;
 
 pub const SETTINGS_PATH: &str = "game_settings.config";
 
 pub use animation::{AnimationController, UnitAnimation};
+pub use util::*;
 
 #[derive(Component)]
 pub struct ResizeCamera(pub IVec2);
@@ -38,6 +40,7 @@ pub enum GameState {
     LoadArena,
     Arena,
     AssetTest,
+    BeginningCombat,
 }
 
 impl Default for GameState {
@@ -95,21 +98,3 @@ fn load_config(
 
 #[derive(Default)]
 pub struct AtlasHandles(HashMap<String, Handle<TextureAtlas>>);
-
-// fn load_config(
-//     mut game_state: ResMut<State<GameState>>,
-//     asset_server: Res<AssetServer>,
-//     configs: Res<Assets<ConfigAsset2>>,
-// ) {
-//     let handle: Handle<ConfigAsset2> = asset_server.load("settings");
-//     if asset_server.get_load_state(handle) == LoadState::Loaded {
-//         println!("Settings is loaded")
-//     }
-//     // if let Some(config) = asset_server.load("settings") {
-//     //     println!("Found settings");
-//     //     if let Ok(settings) = ron::de::from_str::<GameSettings>(config.prefab_string.as_str()) {
-//     //         println!("Setting state");
-//     //         game_state.set(settings.begin_state).unwrap();
-//     //     }
-//     // }
-// }

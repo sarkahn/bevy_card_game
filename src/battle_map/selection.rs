@@ -1,8 +1,8 @@
-use bevy::{prelude::*, math::Vec3Swizzles};
+use bevy::{prelude::*, math::Vec3Swizzles, ecs::system::EntityCommands};
 use bevy_tiled_camera::TiledProjection;
 use sark_pathfinding::AStar;
 
-use crate::{GameState, SETTINGS_PATH, config::ConfigAsset};
+use crate::{GameState, SETTINGS_PATH, config::ConfigAsset, make_sprite};
 
 use super::{input::{TileClickedEvent, Cursor}, map::CollisionMap, Map, units::{UnitCommand, UnitCommands, PlayerUnit}};
 
@@ -52,7 +52,7 @@ fn on_select(
                     &mut commands, 
                     xy, 
                     Color::rgba_u8(55,155,255,150)
-                );
+                ).insert(PathSprite);
             }
 
             if let Ok(cursor_transform) = q_cursor.get_single() {
@@ -106,19 +106,6 @@ fn get_path(a: IVec2, b: IVec2, map: &CollisionMap) -> Option<Vec<IVec2>> {
 
 #[derive(Component)]
 struct PathSprite;
-fn make_sprite(commands: &mut Commands, xy: Vec2, color: Color) {
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: color,
-                custom_size: Some(Vec2::ONE),
-                ..Default::default()
-            },
-            transform: Transform::from_xyz(xy.x, xy.y, 2.0),
-            ..Default::default()
-        })
-        .insert(PathSprite);
-}
 
 fn path_sprites(
     mut commands: Commands,
@@ -131,7 +118,8 @@ fn path_sprites(
         for p in path.iter() {
             let xy = IVec2::from(*p).as_vec2() - map.size().as_vec2() / 2.0;
             let xy = xy + Vec2::new(0.5, 0.5);
-            make_sprite(&mut commands, xy, Color::rgba_u8(200, 200, 200, 200));
+            make_sprite(&mut commands, xy, Color::rgba_u8(200, 200, 200, 200))
+            .insert(PathSprite);
         }
     }
 }

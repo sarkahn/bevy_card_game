@@ -13,17 +13,17 @@ impl Plugin for RenderPlugin {
 }
 
 fn setup(asset_server: Res<AssetServer>, mut commands: Commands) {
-    println!("Spawning bg");
-    let bg = asset_server.load("arena_bg.png");
-    let bg = SpriteBundle {
-        sprite: Sprite {
-            //color: Color::BLUE,
-            custom_size: Some(Vec2::new(16.0, 16.0)),
-            ..Default::default()
-        },
-        texture: bg,
-        ..Default::default()
-    };
+    // println!("Spawning bg");
+    // let bg = asset_server.load("arena_bg.png");
+    // let bg = SpriteBundle {
+    //     sprite: Sprite {
+    //         //color: Color::BLUE,
+    //         custom_size: Some(Vec2::new(16.0, 16.0)),
+    //         ..Default::default()
+    //     },
+    //     texture: bg,
+    //     ..Default::default()
+    // };
 
-    commands.spawn_bundle(bg);
+    // commands.spawn_bundle(bg);
 }

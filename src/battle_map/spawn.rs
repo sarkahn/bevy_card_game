@@ -92,13 +92,6 @@ fn spawn_from_event(
             }
 
         }
-
-        // if let Some(team) = &spawn.team {
-        //     match team {
-        //         Team::Player => new.insert(PlayerUnit),
-        //         Team::Enemy => new.insert(EnemyUnit),
-        //     };
-        // }
     }
 } 
 
