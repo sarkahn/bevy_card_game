@@ -4,7 +4,7 @@ use sark_pathfinding::AStar;
 
 use crate::{GameState, SETTINGS_PATH, config::ConfigAsset};
 
-use super::{MapPosition, MapUnits, input::TileClickedEvent, map::CollisionMap, Map, units::{UnitCommand, UnitCommands, PlayerUnit}};
+use super::{input::TileClickedEvent, map::CollisionMap, Map, units::{UnitCommand, UnitCommands, PlayerUnit}};
 
 pub struct BattleMapSelectionPlugin;
 
@@ -31,19 +31,20 @@ struct HighlightSprite;
 
 fn on_select(
     mut commands: Commands,
-    map: Res<CollisionMap>,
+    collision_map: Res<CollisionMap>,
+    map: Res<Map>,
     mut selection: ResMut<Selection>,
     mut ev_click: EventReader<TileClickedEvent>,
     configs: Res<Assets<ConfigAsset>>,
     mut q_unit_commands: Query<&mut UnitCommands>,
-    q_pos: Query<(&Transform,&MapPosition)>,
+    q_pos: Query<&Transform>,
     q_player: Query<&PlayerUnit>,
     q_highlight: Query<Entity,With<HighlightSprite>>,
 ) {
     if let Some(config) = configs.get(SETTINGS_PATH) {
         q_highlight.iter().for_each(|e|commands.entity(e).despawn());
         if let Some(selected) = selection.selected_unit {
-            if let Ok((transform,_)) = q_pos.get(selected) {
+            if let Ok(transform) = q_pos.get(selected) {
                 let xy = transform.translation.xy();
                 //let xy = xy + map.size().as_vec2() / 2.0;
                 make_sprite(
@@ -65,18 +66,20 @@ fn on_select(
             }
     
             if let Some(selected) = selection.selected_unit {
-                let a = q_pos.get(selected).unwrap().1.xy + map.size().as_ivec2() / 2;
+                let a = q_pos.get(selected).unwrap().translation.xy();
+                let a = map.to_index_2d(a);
                 let b = ev.xy;
                 println!("PAth from {} to {}?", a, b);
                 if a == b {
                     return;
                 }
-                if let Some(path) = get_path(a,b, &map) {
+                if let Some(path) = get_path(a,b, &collision_map) {
 
                     if let Ok(mut commands) = q_unit_commands.get_mut(selected) {
                         commands.clear();
-                        for p in path.iter().skip(1) {
-                            commands.push(UnitCommand::MoveToTile(*p));
+                        for window in path.as_slice().windows(2) {
+                            let [a,b] = [window[0],window[1]];
+                            commands.push(UnitCommand::MoveToTile(a,b));
                             commands.push(UnitCommand::Wait(config.settings.map_move_wait));
                         }
                     }

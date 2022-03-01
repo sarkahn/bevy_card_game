@@ -4,7 +4,7 @@ use bevy::{ecs::system::EntityCommands, prelude::*, utils::HashMap, math::Vec3Sw
 use bevy_ascii_terminal::{ldtk::LdtkAsset, Point2d, Size2d};
 use bevy_tiled_camera::TiledProjection;
 use sark_grids::Grid;
-use sark_pathfinding::{pathing_map::ArrayVec, AStar, PathMap2d, PathingMap};
+use sark_pathfinding::{PathMap2d};
 
 use crate::{
     config::{ConfigAsset, GameSettings},
@@ -28,11 +28,10 @@ impl Plugin for MapPlugin {
             .add_system_set(
                 SystemSet::on_update(BattleMapState::BuildingMap).with_system(build_map),
             )
+
             ;
-        //.add_system_set(SystemSet::on_enter(GameState::LoadBattleMap).with_system(setup))
-        // .add_system_set(
-        //     SystemSet::on_update(GameState::BattleMap).with_system(update_collision_map),
-        // )
+        // .add_system_set(SystemSet::on_enter(GameState::LoadBattleMap).with_system(setup))
+
         //.add_event::<LdtkRebuild>()
     }
 }
@@ -71,6 +70,26 @@ impl Map {
     pub fn axis_offset(&self) -> Vec2 {
         let cmp = (self.size().as_ivec2() % 2).cmpeq(IVec2::ZERO);
         Vec2::select(cmp, Vec2::new(0.5, 0.5), Vec2::ZERO)
+    }
+    pub fn to_index_2d(&self, point: Vec2) -> IVec2 {
+        (point + self.size().as_vec2() / 2.0).floor().as_ivec2()
+    }
+
+    pub fn xy_from_index_2d(&self, point: IVec2) -> Vec2 {
+        (point - self.size().as_ivec2() / 2).as_vec2()
+    }
+
+    pub fn to_xy(&self, point: Vec2) -> IVec2 {
+        point.floor().as_ivec2()
+    }
+
+    pub fn transform_to_xy(&self, transform: &Transform) -> IVec2 {
+        let xy = transform.translation.xy() + Vec2::new(0.5,0.5);
+        xy.floor().as_ivec2()
+    }
+
+    pub fn pos_to_tile_center(&self, xy: Vec2) -> Vec2 {
+        xy.floor() + Vec2::new(0.5,0.5)
     }
 }
 

@@ -2,7 +2,9 @@ use bevy::prelude::*;
 
 use crate::{ldtk_loader::LdtkMap, GameState};
 
-use super::{MapPosition, spawn::{SpawnUnit, SpawnEntity, Team, BATTLE_MAP_SPAWN_SYSTEM}, map::BattleMapLdtkHandle};
+use super::{
+    //MapPosition, 
+    spawn::{SpawnUnit, SpawnEntity, Team, BATTLE_MAP_SPAWN_SYSTEM}, map::BattleMapLdtkHandle};
 
 pub struct EnemiesPlugin;
 
@@ -25,21 +27,22 @@ pub struct EnemySpawner {
 fn spawn(
     mut commands: Commands,
     time: Res<Time>,
-    mut q_spawner: Query<(&mut EnemySpawner, &MapPosition)>,
+    mut q_spawner: Query<(&mut EnemySpawner, &Transform)>,
     ldtk_handle: Res<BattleMapLdtkHandle>,
 ) {
         //println!("SPAAAWN");
-        for (mut spawner, pos) in q_spawner.iter_mut() {
+        for (mut spawner, transform) in q_spawner.iter_mut() {
             //println!("Spawners running?");
             spawner.timer.tick(time.delta());
             
             if spawner.timer.just_finished() {
                 //println!("Trying to spawn slime");
-                let xyz = (pos.xy + IVec2::new(0,-1)).extend(2);
+                let p = transform.translation + Vec3::new(0.0, -1.0, 0.0);
+                //let xyz = (pos.xy + IVec2::new(0,-1)).extend(2);
                 let spawn = SpawnEntity {
                     ldtk: ldtk_handle.0.clone(),
                     name: "Slime".to_string(),
-                    pos: xyz,
+                    pos: p,
                 };
                 commands.spawn().insert(spawn);
             }

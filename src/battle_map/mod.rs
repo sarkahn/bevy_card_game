@@ -9,7 +9,7 @@ use crate::{
 };
 
 use self::{
-    animated::AnimScenePlugin, input::InputPlugin, map::MapPlugin, states::BattleMapStatesPlugin,
+    animated::AnimScenePlugin, input::InputPlugin, map::MapPlugin, 
     units::UnitsPlugin, spawn::MapSpawnPlugin, enemies::EnemiesPlugin, selection::BattleMapSelectionPlugin,
 };
 
@@ -17,7 +17,6 @@ mod animated;
 mod components;
 mod input;
 mod map;
-mod states;
 mod units;
 mod enemies;
 mod spawn;
@@ -42,7 +41,6 @@ impl Plugin for BattleMapPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_state(BattleMapState::Inactive)
             .add_plugin(UnitsPlugin)
-            .add_plugin(BattleMapStatesPlugin)
             .add_plugin(InputPlugin)
             .add_plugin(MapPlugin)
             .add_plugin(AnimScenePlugin)

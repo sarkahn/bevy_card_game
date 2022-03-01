@@ -3,7 +3,7 @@ use bevy_tiled_camera::TiledProjection;
 
 use crate::GameState;
 
-use super::{MapPosition, MapUnits};
+use super::{ MapUnits, Map};
 
 pub struct InputPlugin;
 
@@ -37,8 +37,7 @@ fn on_enter(mut commands: Commands) {
     };
     commands
         .spawn_bundle(cursor)
-        .insert(Cursor)
-        .insert(MapPosition::default());
+        .insert(Cursor);
 }
 
 fn on_exit(mut commands: Commands, q_cursor: Query<Entity, With<Cursor>>) {
@@ -51,9 +50,10 @@ fn cursor_system(
     input: Res<Input<MouseButton>>,
     windows: Res<Windows>,
     q_camera: Query<(&Camera, &GlobalTransform, &TiledProjection)>,
-    mut q_cursor: Query<(&mut Transform, &mut MapPosition, &mut Visibility), With<Cursor>>,
+    mut q_cursor: Query<(&mut Transform, &mut Visibility), With<Cursor>>,
     mut ev_tile_clicked: EventWriter<TileClickedEvent>,
     units: Res<MapUnits>,
+    map: Res<Map>,
 ) {
     let window = windows.get_primary().unwrap();
 
@@ -63,16 +63,15 @@ fn cursor_system(
                 if let Some(mut p) = proj.world_to_tile_center(cam_transform, p) {
                     p.z = 2.0;
 
-                    let (mut cursor_transform, mut map_pos, mut v) = q_cursor.single_mut();
+                    let (mut cursor_transform, mut v) = q_cursor.single_mut();
                     v.is_visible = true;
 
                     cursor_transform.translation = p;
-                    map_pos.xy = p.truncate().floor().as_ivec2();
 
                     if input.just_pressed(MouseButton::Left) {
                         let xy = proj.world_to_tile(cam_transform, p).unwrap();
-                        let xy = xy + units.size().as_ivec2() / 2;
-                        let unit = units[xy];
+                        let index = map.to_index_2d(xy.as_vec2());
+                        let unit = units[index];
                         //println!("Sending click event! {}: {:?}", xy, unit);
                         //ev_tile_clicked.send(TileClickedEvent { xy, unit });
                         ev_tile_clicked.send(TileClickedEvent { xy, unit });
@@ -83,6 +82,6 @@ fn cursor_system(
             }
         }
     }
-    let (_, _, mut v) = q_cursor.single_mut();
+    let (_, mut v) = q_cursor.single_mut();
     v.is_visible = false;
 }

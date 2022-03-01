@@ -59,7 +59,7 @@ fn spawn_from_event(
         };
     
         let mut new = commands.spawn_bundle(sprite);
-        new.insert_bundle(MapUnitBundle::new(xy));
+        new.insert_bundle(MapUnitBundle::default());
     
         if let Some(anims) = &spawn.animations {
             //println!("Loading animations for {}", entity.name);
@@ -106,7 +106,7 @@ fn spawn_from_event(
 pub struct SpawnEntity {
     pub ldtk: Handle<LdtkMap>,
     pub name: String,
-    pub pos: IVec3,
+    pub pos: Vec3,
 }
 
 fn spawn_from_entity(
@@ -130,7 +130,7 @@ fn spawn_from_entity(
                         if let Some(tileset) = ldtk.tilesets.get(&tileset_id) {
                             let pos = spawn.pos;
                             let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
-                            let comps = build_unit(pos, atlas, tile_id);
+                            let comps = build_unit(pos.as_ivec3(), atlas, tile_id);
     
                             //println!("Spawning {} at {}", spawn.name, spawn.pos);
                             let mut new = commands.spawn();
@@ -155,7 +155,7 @@ fn spawn_from_entity(
                                     let settings = &config.settings;
                                     let mut unit_commands = UnitCommands::new(
                                         settings.map_move_speed,
-                                        settings.map_move_speed, pos.truncate());
+                                        settings.map_move_speed);
                                     unit_commands.push(UnitCommand::AiThink());
                                     new.insert(unit_commands);
                                 }
@@ -193,7 +193,7 @@ fn build_unit(
         transform,
         ..Default::default()
     };
-    let unit = MapUnitBundle::new(xy);
+    let unit = MapUnitBundle::default();
     (transform,sprite,unit)
 }
 
