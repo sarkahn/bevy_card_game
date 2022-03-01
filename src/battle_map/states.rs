@@ -63,7 +63,7 @@ fn select_unit(
 ) {
     for ev in ev_tile_clicked.iter() {
         if let Some(new_selected) = ev.unit {
-            if q_player_units.get(new_selected).is_ok() {
+            if !q_player_units.get(new_selected).is_ok() {
                 continue;
             }
             selection.clear();

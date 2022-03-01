@@ -202,6 +202,7 @@ fn build_tileset(def: &TilesetDefinition, image:Handle<Image>) -> MapTileset {
             vec.push(enum_name.to_lowercase());
         }
     }
+    println!("Player ids for tileset {}: {:?}", def.identifier, enums);
 
     MapTileset {
         tile_count: IVec2::new(def.c_wid as i32, def.c_hei as i32),

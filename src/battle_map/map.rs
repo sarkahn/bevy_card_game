@@ -247,7 +247,9 @@ fn spawn_entity(
     let axis_offset = axis_offset(units.size().as_ivec2());
     if let (Some(id), Some(tileset_id)) = (entity.tile_id, entity.tileset_id) {
         let tileset = ldtk.tileset(tileset_id);
-        let xy = entity.xy.as_vec2() + axis_offset;
+        let mut xy = entity.xy;
+        xy.y -= 1;
+        let xy = xy.as_vec2() + axis_offset;
 
         let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
         let sprite = TextureAtlasSprite {
@@ -266,7 +268,7 @@ fn spawn_entity(
         new.insert_bundle(MapUnitBundle::new(xy.as_ivec2()));
 
         if let Some(anims) = animations.get(&entity.def_id) {
-            println!("Loading animations for {}", entity.name);
+            //println!("Loading animations for {}", entity.name);
             let mut controller = AnimationController::default();
             for (name, anim) in anims {
                 controller.add(name, anim.clone());
@@ -277,6 +279,7 @@ fn spawn_entity(
 
         if let Some(enums) = tileset.enums.get(&id) {
             if enums.iter().any(|s|s=="player") {
+                println!("Adding player to entity {} from tileset {}", id, tileset.name);
                 new.insert(PlayerUnit);
             }
             if enums.iter().any(|s|s=="enemy") {
