@@ -9,10 +9,10 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 25,
+	"nextUid": 27,
 	"worldLayout": "Free",
-	"worldGridWidth": 256,
-	"worldGridHeight": 256,
+	"worldGridWidth": 1920,
+	"worldGridHeight": 1080,
 	"defaultPivotX": 0,
 	"defaultPivotY": 0,
 	"defaultGridSize": 16,
@@ -267,8 +267,8 @@
 			"spacing": 0,
 			"padding": 0,
 			"tagsSourceEnumUid": 16,
-			"enumTags": [{ "enumValueId": "Collider", "tileIds": [6,7,15,22,23] }],
-			"customData": [ { "tileId": 3, "data": "aaa" }, { "tileId": 6, "data": "Collider" }, { "tileId": 7, "data": "Collider" } ],
+			"enumTags": [{ "enumValueId": "Collider", "tileIds": [32,33,34,40,41,42,46,48,49,50,51,52,53,54,59,60] }],
+			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": {
 				"opaqueTiles": "1111000011100000101100000111000011100000111111101111111000011000",
@@ -286,8 +286,8 @@
 			"tileGridSize": 64,
 			"spacing": 0,
 			"padding": 0,
-			"tagsSourceEnumUid": null,
-			"enumTags": [],
+			"tagsSourceEnumUid": 16,
+			"enumTags": [{ "enumValueId": "Collider", "tileIds": [0,1,2,3,4,5,6,7] }],
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "000000000", "averageColors": "844484448444844484448544854485440000" }
@@ -303,28 +303,28 @@
 			"tileGridSize": 64,
 			"spacing": 0,
 			"padding": 0,
-			"tagsSourceEnumUid": null,
-			"enumTags": [],
+			"tagsSourceEnumUid": 25,
+			"enumTags": [ { "enumValueId": "Player", "tileIds": [0,1,2] }, { "enumValueId": "Enemy", "tileIds": [3] }, { "enumValueId": "Collider", "tileIds": [4,5] } ],
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258622862285376664642645a000000000000000000000000000000000000" }
 		},
 		{
-			"__cWid": 2,
-			"__cHei": 2,
+			"__cWid": 4,
+			"__cHei": 4,
 			"identifier": "Figurines_Large",
 			"uid": 21,
 			"relPath": "textures/figurinesLarge_spriteSheet.png",
 			"pxWid": 256,
 			"pxHei": 256,
-			"tileGridSize": 128,
+			"tileGridSize": 64,
 			"spacing": 0,
 			"padding": 0,
-			"tagsSourceEnumUid": null,
-			"enumTags": [],
+			"tagsSourceEnumUid": 16,
+			"enumTags": [{ "enumValueId": "Collider", "tileIds": [0,1] }],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "5454243700000000" }
+			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "a454a45445473337000000000000000000000000000000000000000000000000" }
 		},
 		{
 			"__cWid": 2,
@@ -360,13 +360,20 @@
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "8a998aa989998aaa" }
 		}
-	], "enums": [{ "identifier": "TileType", "uid": 16, "values": [{ "id": "Collider", "tileId": 30, "color": 0, "__tileSrcRect": [384,192,64,64] }], "iconTilesetUid": 2, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [] },
+	], "enums": [
+		{ "identifier": "TileType", "uid": 16, "values": [{ "id": "Collider", "tileId": 30, "color": 0, "__tileSrcRect": [384,192,64,64] }], "iconTilesetUid": 2, "externalRelPath": null, "externalFileChecksum": null },
+		{ "identifier": "Units", "uid": 25, "values": [
+			{ "id": "Player", "tileId": 7, "color": 0, "__tileSrcRect": [192,64,64,64] },
+			{ "id": "Enemy", "tileId": null, "color": 0, "__tileSrcRect": null },
+			{ "id": "Collider", "tileId": null, "color": 0, "__tileSrcRect": null }
+		], "iconTilesetUid": 20, "externalRelPath": null, "externalFileChecksum": null }
+	], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
 			"identifier": "Level_0",
 			"uid": 0,
-			"worldX": -192,
-			"worldY": -512,
+			"worldX": 0,
+			"worldY": -2160,
 			"pxWid": 1216,
 			"pxHei": 768,
 			"__bgColor": "#696A79",
