@@ -20,8 +20,7 @@ impl Plugin for GameCameraPlugin {
         app.add_startup_system(spawn)
             .add_plugin(TiledCameraPlugin)
             .add_event::<ZoomCamera>()
-            .add_system(zoom_test)
-            .add_system(zoom)
+            .add_system(input)
             .add_system(resize);
     }
 }
@@ -34,18 +33,51 @@ fn spawn(mut commands: Commands) {
     //commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
 
-fn zoom_test(
+fn input(
+    time: Res<Time>,
     mut ev_scroll: EventReader<MouseWheel>,
-    mut ev_zoom: EventWriter<ZoomCamera>,
+    keyboard: Res<Input<KeyCode>>,
+    mut q_cam: Query<(&mut Transform, &mut TiledProjection)>,
 ) {
-    for ev in ev_scroll.iter() {
-        if ev.y > 0.0 {
-            ev_zoom.send(ZoomCamera::In);
+    if let Ok((mut transform, mut proj)) = q_cam.get_single_mut() {
+        for ev in ev_scroll.iter() {
+            let mut zoom = proj.pixels_per_tile / 16;
+            if ev.y > 0.0 {
+                zoom = u32::min(zoom + 1, 64);
+            }
+            if ev.y < 0.0 {
+                zoom = u32::max(4, zoom - 1);
+            }
+            proj.pixels_per_tile = zoom * 16;
         }
-        if ev.y < 0.0 {
-            ev_zoom.send(ZoomCamera::Out);
+
+        let pixel = 1.0 / 64.0; 
+        let speed = 64.0 * 5.0;
+        let vel = speed * pixel * time.delta_seconds();
+        let up = Vec3::new(0.0,vel,0.0);
+        let right = Vec3::new(vel, 0.0, 0.0);
+        let mut movement = Vec3::ZERO;
+        
+        if keyboard.pressed(KeyCode::W) {
+            movement += up;
+        }
+        
+        if keyboard.pressed(KeyCode::S) {
+            movement += -up;
+        }
+        
+        if keyboard.pressed(KeyCode::A) {
+            movement += -right;
+        }
+        if keyboard.pressed(KeyCode::D) {
+            movement += right;
+        }
+
+        if movement != Vec3::ZERO {
+            transform.translation += movement;
         }
     }
+    
 }
 
 fn resize(
@@ -61,19 +93,20 @@ fn resize(
     }
 }
 
-fn zoom(
-    mut ev_zoom: EventReader<ZoomCamera>,
-    mut q_cam: Query<&mut TiledProjection>,
-) {
-    for ev in ev_zoom.iter() {  
-        for mut proj in q_cam.iter_mut() {
-            let zoom = proj.pixels_per_tile / 16;
-            let zoom = match ev {
-                ZoomCamera::In => u32::min(zoom + 1, 64),
-                ZoomCamera::Out => u32::max(4, zoom - 1),
-            };
-            proj.pixels_per_tile = zoom * 16;
-        }
-    }
 
-}
+// fn zoom(
+//     mut ev_zoom: EventReader<ZoomCamera>,
+//     mut q_cam: Query<&mut TiledProjection>,
+// ) {
+//     for ev in ev_zoom.iter() {  
+//         for mut proj in q_cam.iter_mut() {
+//             let zoom = proj.pixels_per_tile / 16;
+//             let zoom = match ev {
+//                 ZoomCamera::In => u32::min(zoom + 1, 64),
+//                 ZoomCamera::Out => u32::max(4, zoom - 1),
+//             };
+//             proj.pixels_per_tile = zoom * 16;
+//         }
+//     }
+
+// }
