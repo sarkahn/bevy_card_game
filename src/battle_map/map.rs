@@ -12,7 +12,7 @@ use crate::{
     AtlasHandles, GameState, SETTINGS_PATH, UnitAnimation, AnimationController,
 };
 
-use super::{units::{MapUnitBundle, MapUnit}, BattleMapState};
+use super::{units::{MapUnitBundle, MapUnit, PlayerUnit, EnemyUnit}, BattleMapState};
 
 pub struct MapPlugin;
 
@@ -273,6 +273,16 @@ fn spawn_entity(
             }
             controller.play("idle");
             new.insert(controller);
+        }
+
+        if let Some(enums) = tileset.enums.get(&id) {
+            if enums.iter().any(|s|s=="player") {
+                new.insert(PlayerUnit);
+            }
+            if enums.iter().any(|s|s=="enemy") {
+                new.insert(EnemyUnit);
+            }
+
         }
     }
 }

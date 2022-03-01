@@ -202,7 +202,7 @@
 			"spacing": 0,
 			"padding": 0,
 			"tagsSourceEnumUid": 18,
-			"enumTags": [ { "enumValueId": "Actor", "tileIds": [2,3,4,8,9] }, { "enumValueId": "Collider", "tileIds": [13,18] } ],
+			"enumTags": [ { "enumValueId": "Actor", "tileIds": [2,3,4,8,9] }, { "enumValueId": "Collider", "tileIds": [13,18] }, { "enumValueId": "Player", "tileIds": [2] }, { "enumValueId": "Enemy", "tileIds": [8] } ],
 			"customData": [
 				{ "tileId": 0, "data": "Dirt" },
 				{ "tileId": 6, "data": "Mud" },
@@ -216,7 +216,12 @@
 				"averageColors": "f863f7533000300020000000f532f7634000600000000000f682a49b0000000000000000f87600000000000000000000"
 			}
 		}
-	], "enums": [{ "identifier": "EntityType", "uid": 18, "values": [ { "id": "Actor", "tileId": null, "color": 0, "__tileSrcRect": null }, { "id": "Collider", "tileId": null, "color": 0, "__tileSrcRect": null } ], "iconTilesetUid": 1, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [
+	], "enums": [{ "identifier": "EntityType", "uid": 18, "values": [
+		{ "id": "Actor", "tileId": null, "color": 0, "__tileSrcRect": null },
+		{ "id": "Collider", "tileId": null, "color": 0, "__tileSrcRect": null },
+		{ "id": "Player", "tileId": null, "color": 0, "__tileSrcRect": null },
+		{ "id": "Enemy", "tileId": null, "color": 0, "__tileSrcRect": null }
+	], "iconTilesetUid": 1, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [
 		{
 			"identifier": "Animation",
 			"__type": "String",

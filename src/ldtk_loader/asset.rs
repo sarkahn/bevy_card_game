@@ -201,9 +201,6 @@ fn build_tileset(def: &TilesetDefinition, image:Handle<Image>) -> MapTileset {
             let vec = entry.or_insert(Vec::new());
             vec.push(enum_name.to_lowercase());
         }
-        // if let Some(ids) = en.get("tileIds") {
-        //     println!("IDS: {:?}", ids);
-        // }
     }
 
     MapTileset {

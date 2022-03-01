@@ -24,6 +24,12 @@ impl Plugin for UnitsPlugin {
     }
 }
 
+#[derive(Component)]
+pub struct PlayerUnit;
+
+#[derive(Component)]
+pub struct EnemyUnit;
+
 #[derive(Component, Default)]
 pub struct MapUnit;
 
