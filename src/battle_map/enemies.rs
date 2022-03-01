@@ -12,7 +12,6 @@ impl Plugin for EnemiesPlugin {
             SystemSet::on_update(GameState::BattleMap)
             .with_system(spawn)
             .before(BATTLE_MAP_SPAWN_SYSTEM)
-    
         );
     }
 }
@@ -29,10 +28,13 @@ fn spawn(
     mut q_spawner: Query<(&mut EnemySpawner, &MapPosition)>,
     ldtk_handle: Res<BattleMapLdtkHandle>,
 ) {
+        //println!("SPAAAWN");
         for (mut spawner, pos) in q_spawner.iter_mut() {
+            //println!("Spawners running?");
             spawner.timer.tick(time.delta());
             
             if spawner.timer.just_finished() {
+                //println!("Trying to spawn slime");
                 let xyz = (pos.xy + IVec2::new(0,-1)).extend(2);
                 let spawn = SpawnEntity {
                     ldtk: ldtk_handle.0.clone(),

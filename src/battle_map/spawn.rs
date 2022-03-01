@@ -42,7 +42,7 @@ fn spawn_from_event(
     mut ev_spawn: EventReader<SpawnUnit>,
 ) {
     for spawn in ev_spawn.iter() {
-        println!("SHOULD BE SPAWNING!");
+        //println!("SHOULD BE SPAWNING!");
         let (xy, depth) = (spawn.position.xy(), spawn.position.z); 
         let transform = Transform::from_xyz(xy.x as f32, xy.y as f32, depth as f32);
     
@@ -79,6 +79,7 @@ fn spawn_from_event(
                 new.insert(PlayerUnit);
             }
             if enums.iter().any(|s|s=="spawner") {
+                println!("Found spawner YO");
                 new.insert(EnemySpawner {
                     timer: Timer::from_seconds(1.5, true),
                 });
@@ -113,14 +114,16 @@ fn spawn_from_entity(
         if let Some(ldtk) = ldtk_assets.get(spawn.ldtk.clone()) {
             commands.entity(entity).despawn();
             let defs = &ldtk.entity_defs;
-            if let Some(def) = defs.def_from_name(&spawn.name) {
+            //println!("DEFS {:?}", defs);
+            //println!("Slime? :{:?}", defs.def_from_name("slime"));
+            if let Some(def) = defs.def_from_name(&spawn.name.to_lowercase()) {
                 if let (Some(tileset_id), Some(tile_id)) = (def.tileset_id,def.tile_id) {
                     if let Some(tileset) = ldtk.tilesets.get(&tileset_id) {
                         let pos = spawn.pos;
                         let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
                         let comps = build_unit(pos, atlas, tile_id);
 
-                        println!("Spawning {} at {}", spawn.name, spawn.pos);
+                        //println!("Spawning {} at {}", spawn.name, spawn.pos);
                         let mut new = commands.spawn();
                         new.insert(comps.0)
                         .insert_bundle(comps.1)
