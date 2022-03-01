@@ -190,12 +190,29 @@ fn build_tileset(def: &TilesetDefinition, image:Handle<Image>) -> MapTileset {
         tile_data.insert(id, data);
     }
 
+    let mut enums: HashMap<i32, Vec<String>> = HashMap::default();
+    for map in def.enum_tags.iter() {
+        let enum_name = map.get("enumValueId").unwrap().as_ref().unwrap();
+        let enum_name = enum_name.as_str().unwrap();
+        let ids = map.get("tileIds").unwrap().as_ref().unwrap();
+        let ids = ids.as_array().unwrap();
+        for id in ids {
+            let entry = enums.entry(id.as_i64().unwrap() as i32);
+            let vec = entry.or_insert(Vec::new());
+            vec.push(enum_name.to_lowercase());
+        }
+        // if let Some(ids) = en.get("tileIds") {
+        //     println!("IDS: {:?}", ids);
+        // }
+    }
+
     MapTileset {
         tile_count: IVec2::new(def.c_wid as i32, def.c_hei as i32),
         tile_size: def.tile_grid_size as i32,
         tile_data,
         name: def.identifier.clone(),
         image: image,
+        enums,
     }
 }
 
@@ -298,6 +315,7 @@ pub struct MapTileset {
     pub tile_count: IVec2,
     pub name: String,
     pub image: Handle<Image>,
+    pub enums: HashMap<i32, Vec<String>>,
 }
 
 #[derive(Debug)]

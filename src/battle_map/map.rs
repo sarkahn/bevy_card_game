@@ -159,18 +159,18 @@ fn build_map(
                     match layer {
                         MapLayer::Tiles(layer) => {
                             let tileset = ldtk.tileset(layer.tileset_id);
-                            
+
                             let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
                             let axis_offset = axis_offset(ldtk.size);
 
                             for tile in layer.tiles.iter() {
                                 spawn_tile(
-                                    &mut commands, 
-                                    tile, 
-                                    axis_offset, 
+                                    &mut commands,
+                                    tile,
+                                    axis_offset,
                                     depth,
-                                    atlas.clone(), 
-                                    tileset, 
+                                    atlas.clone(),
+                                    tileset,
                                     &mut collision_map
                                 );
                             }
@@ -202,15 +202,15 @@ fn build_map(
 
 fn spawn_tile(
     commands: &mut Commands,
-    tile: &MapTile, 
-    axis_offset: Vec2, 
+    tile: &MapTile,
+    axis_offset: Vec2,
     depth: usize,
     atlas: Handle<TextureAtlas>,
     tileset: &MapTileset,
     collision_map: &mut CollisionMap,
 ) {
     let xy = tile.xy.as_vec2() + axis_offset;
-        
+
     let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
     let sprite = TextureAtlasSprite {
         custom_size: Some(Vec2::ONE),
@@ -225,13 +225,9 @@ fn spawn_tile(
     };
 
     commands.spawn_bundle(sprite);
-    if let Some(data) = tileset.tile_data.get(&tile.id) {
-        if data
-            .lines()
-            .map(|l| l.to_lowercase())
-            .position(|s| s == "collider")
-            .is_some()
-        {
+    if let Some(enums) = tileset.enums.get(&tile.id) {
+        //println!("Found enums for tileset {}: {:?}", tileset.name, enums);
+        if enums.iter().any(|s|s=="collider") {
             let xy = tile.xy + collision_map.size().as_ivec2() / 2;
             collision_map.set_collidable(xy);
         }
@@ -252,7 +248,7 @@ fn spawn_entity(
     if let (Some(id), Some(tileset_id)) = (entity.tile_id, entity.tileset_id) {
         let tileset = ldtk.tileset(tileset_id);
         let xy = entity.xy.as_vec2() + axis_offset;
-        
+
         let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
         let sprite = TextureAtlasSprite {
             custom_size: Some(Vec2::ONE),

@@ -20,7 +20,7 @@ impl Plugin for GameCameraPlugin {
         app.add_startup_system(spawn)
             .add_plugin(TiledCameraPlugin)
             .add_event::<ZoomCamera>()
-            .add_system(input)
+            //.add_system(input)
             .add_system(resize);
     }
 }

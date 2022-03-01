@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 18,
+	"nextUid": 19,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -201,8 +201,8 @@
 			"tileGridSize": 16,
 			"spacing": 0,
 			"padding": 0,
-			"tagsSourceEnumUid": null,
-			"enumTags": [],
+			"tagsSourceEnumUid": 18,
+			"enumTags": [ { "enumValueId": "Actor", "tileIds": [2,3,4,8,9] }, { "enumValueId": "Collider", "tileIds": [13,18] } ],
 			"customData": [
 				{ "tileId": 0, "data": "Dirt" },
 				{ "tileId": 6, "data": "Mud" },
@@ -216,7 +216,7 @@
 				"averageColors": "f863f7533000300020000000f532f7634000600000000000f682a49b0000000000000000f87600000000000000000000"
 			}
 		}
-	], "enums": [], "externalEnums": [], "levelFields": [
+	], "enums": [{ "identifier": "EntityType", "uid": 18, "values": [ { "id": "Actor", "tileId": null, "color": 0, "__tileSrcRect": null }, { "id": "Collider", "tileId": null, "color": 0, "__tileSrcRect": null } ], "iconTilesetUid": 1, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [
 		{
 			"identifier": "Animation",
 			"__type": "String",
@@ -315,7 +315,7 @@
 							"px": [192,48],
 							"fieldInstances": [{
 								"__identifier": "Animations",
-								"__value": "{\n    \"idle\": (\n        frames: [8,9],\n        speed: 0.35,\n ),\n}",
+								"__value": "{     \"idle\": (         frames: [8,9],         speed: 0.35,  ), }",
 								"__type": "String",
 								"defUid": 15,
 								"realEditorValues": []
@@ -334,7 +334,7 @@
 								{
 									"__identifier": "Animations",
 									"__value": [
-										"{\n    \"idle\": (\n        frames: [2,3,4,3],\n        speed: 0.2,\n ),\n    \"farting\": (\n        frames: [2,4],\n        speed: 0.05,\n    ),\n}"
+										"{     \"idle\": (         frames: [2,3,4,3],         speed: 0.2,  ),     \"farting\": (         frames: [2,4],         speed: 0.05,     ), }"
 									],
 									"__type": "Array<String>",
 									"defUid": 12,
@@ -382,7 +382,7 @@
 							"px": [96,176],
 							"fieldInstances": [{
 								"__identifier": "Animations",
-								"__value": "{\n    \"idle\": (\n        frames: [8,9],\n        speed: 0.35,\n ),\n}",
+								"__value": "{     \"idle\": (         frames: [8,9],         speed: 0.35,  ), }",
 								"__type": "String",
 								"defUid": 15,
 								"realEditorValues": []
@@ -399,7 +399,7 @@
 							"px": [96,16],
 							"fieldInstances": [{
 								"__identifier": "Animations",
-								"__value": "{\n    \"idle\": (\n        frames: [8,9],\n        speed: 0.35,\n ),\n}",
+								"__value": "{     \"idle\": (         frames: [8,9],         speed: 0.35,  ), }",
 								"__type": "String",
 								"defUid": 15,
 								"realEditorValues": []
