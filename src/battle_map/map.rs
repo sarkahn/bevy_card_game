@@ -248,7 +248,6 @@ fn spawn_entity(
     if let (Some(id), Some(tileset_id)) = (entity.tile_id, entity.tileset_id) {
         let tileset = ldtk.tileset(tileset_id);
         let mut xy = entity.xy;
-        xy.y -= 1;
         let xy = xy.as_vec2() + axis_offset;
 
         let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
