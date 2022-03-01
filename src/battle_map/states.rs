@@ -60,11 +60,6 @@ fn select_unit(
     mut ev_tile_clicked: EventReader<TileClickedEvent>,
     mut selection: ResMut<SelectionState>,
     q_player_units: Query<&PlayerUnit>,
-    // mut commands: Commands,
-    // mut q_unit: Query<&mut MapPosition>,
-    // q_moving_units: Query<&mut MoveUnit>,
-    // mut q_unit_path: Query<&mut UnitPath>,
-    // mut state: ResMut<State<BattleMapState>>,
 ) {
     for ev in ev_tile_clicked.iter() {
         if let Some(new_selected) = ev.unit {
