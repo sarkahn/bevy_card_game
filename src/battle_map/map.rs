@@ -247,8 +247,7 @@ fn spawn_entity(
     let axis_offset = axis_offset(units.size().as_ivec2());
     if let (Some(id), Some(tileset_id)) = (entity.tile_id, entity.tileset_id) {
         let tileset = ldtk.tileset(tileset_id);
-        let mut xy = entity.xy;
-        let xy = xy.as_vec2() + axis_offset;
+        let xy = (entity.xy.as_vec2() + axis_offset).floor();
 
         let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
         let sprite = TextureAtlasSprite {

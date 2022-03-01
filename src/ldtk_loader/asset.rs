@@ -244,7 +244,7 @@ fn build_entities(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefinition>)
         }
 
         let [x,y] = [entity.grid[0], entity.grid[1]];
-        let y = layer_height - y;
+        let y = layer_height - 1 - y;
         let xy = IVec2::new(x as i32, y as i32);
         let xy = xy - layer_size / 2;
 
