@@ -152,7 +152,7 @@ fn build_map(
                 }
                 if let Ok(mut cam) = q_cam.get_single_mut() {
                     cam.pixels_per_tile = ldtk.tile_size.y as u32;
-                    cam.set_tile_count(ldtk.size.as_uvec2().into());
+                    cam.set_tile_count((ldtk.size.as_uvec2() / 2).into());
                 }
 
                 for (depth, layer) in ldtk.layers.iter().rev().enumerate() {

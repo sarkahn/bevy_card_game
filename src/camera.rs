@@ -1,14 +1,27 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, input::mouse::MouseWheel};
 use bevy_tiled_camera::{TiledCameraBundle, TiledCameraPlugin, TiledProjection};
 
 use crate::ResizeCamera;
 
 pub struct GameCameraPlugin;
 
+pub enum ZoomCamera {
+    In,
+    Out
+}
+impl Default for ZoomCamera {
+    fn default() -> Self {
+        ZoomCamera::In
+    }
+}
+
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(spawn)
             .add_plugin(TiledCameraPlugin)
+            .add_event::<ZoomCamera>()
+            .add_system(zoom_test)
+            .add_system(zoom)
             .add_system(resize);
     }
 }
@@ -19,6 +32,20 @@ fn spawn(mut commands: Commands) {
         TiledCameraBundle::new().with_tile_count([16, 16]), //.with_pixels_per_tile(16)
     );
     //commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+}
+
+fn zoom_test(
+    mut ev_scroll: EventReader<MouseWheel>,
+    mut ev_zoom: EventWriter<ZoomCamera>,
+) {
+    for ev in ev_scroll.iter() {
+        if ev.y > 0.0 {
+            ev_zoom.send(ZoomCamera::In);
+        }
+        if ev.y < 0.0 {
+            ev_zoom.send(ZoomCamera::Out);
+        }
+    }
 }
 
 fn resize(
@@ -32,4 +59,21 @@ fn resize(
             commands.entity(entity).despawn();
         }
     }
+}
+
+fn zoom(
+    mut ev_zoom: EventReader<ZoomCamera>,
+    mut q_cam: Query<&mut TiledProjection>,
+) {
+    for ev in ev_zoom.iter() {  
+        for mut proj in q_cam.iter_mut() {
+            let zoom = proj.pixels_per_tile / 16;
+            let zoom = match ev {
+                ZoomCamera::In => u32::min(zoom + 1, 64),
+                ZoomCamera::Out => u32::max(4, zoom - 1),
+            };
+            proj.pixels_per_tile = zoom * 16;
+        }
+    }
+
 }
