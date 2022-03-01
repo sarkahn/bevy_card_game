@@ -20,6 +20,7 @@ impl Plugin for LdtkAssetPlugin {
 #[derive(TypeUuid, Default, Debug)]
 #[uuid = "ac23ab52-5393-4bbe-178f-16c414aaa0eb"]
 pub struct LdtkMap {
+    pub name: String,
     pub size: IVec2,
     pub layers: Vec<MapLayer>,
     // Maps tileset id to it's image handle
@@ -30,6 +31,7 @@ pub struct LdtkMap {
     id_map: HashMap<String, i32>,
     //pub atlases: HashMap<i32, Handle<TextureAtlas>>,
     pub tile_size: IVec2,
+    pub entity_defs: MapEntityDefinitions,
 }
 
 impl LdtkMap {
@@ -134,12 +136,14 @@ impl AssetLoader for LdtkAssetLoader {
             let max_tile_size = layers.iter().map(|l| l.grid_size as i32).max().unwrap();
 
             let map = LdtkMap {
+                name: load_context.path().to_string_lossy().to_string(),
                 size: IVec2::new(max_width, max_height),
                 layers: map_layers,
                 images,
                 tilesets,
                 id_map,
                 tile_size: IVec2::splat(max_tile_size),
+                entity_defs: MapEntityDefinitions::from_defs(&entity_defs)
             };
 
             let asset = LoadedAsset::new(map);
@@ -259,37 +263,8 @@ fn build_entities(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefinition>)
     }
 
     let mut animations = HashMap::default();
-
-    for id in entity_def_ids {
-        let def = defs.get(&id).expect("Error getting defintion");
-        for field in def.field_defs.iter() {
-            if field.identifier.to_lowercase() != "animations" {
-                continue;
-            }
-            println!("Attempting to load animations for {}", def.identifier);
-            if let Some(content) = &field.default_override {
-                match content {
-                    Value::Object(o) => {
-                        let content = o.get("params").expect("Error loading animations, unexpected format");
-                        match content {
-                            Value::Array(arr) => {
-                                let value = arr[0].as_str().unwrap();
-                                //println!("Value {}", value);
-                                let anims: HashMap<String,UnitAnimation> = 
-                                    ron::de::from_str(value).unwrap();
-
-                                for (name,_) in anims.iter() {
-                                    println!("Found anim! {}", name);
-                                }
-                                animations.insert(id as i32, anims);
-                            },
-                            _ => { panic!("Error loading animations array for {}, unexpected format: {:#?}", id, content) }
-                        }
-                    },
-                    _ => { panic!("Error loading animations for {}, unexpected format {:#?}", id, content) }
-                }
-            }
-        }
+    for(id,def) in defs.iter() {
+        animations.insert(*id as i32, anims_from_def(&def));
     }
 
     EntitiesLayer {
@@ -299,10 +274,92 @@ fn build_entities(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefinition>)
     }
 }
 
+fn anims_from_def(
+    def: &EntityDefinition,
+) -> HashMap<String, UnitAnimation> {
+    let mut animations = HashMap::default();
+
+    for field in def.field_defs.iter() {
+        if field.identifier.to_lowercase() != "animations" {
+            continue;
+        }
+        println!("Attempting to load animations for {}", def.identifier);
+        if let Some(content) = &field.default_override {
+            match content {
+                Value::Object(o) => {
+                    let content = o.get("params").expect("Error loading animations, unexpected format");
+                    match content {
+                        Value::Array(arr) => {
+                            let value = arr[0].as_str().unwrap();
+                            //println!("Value {}", value);
+                            animations = ron::de::from_str(value).unwrap();
+
+                        },
+                        _ => { panic!("Error loading animations array for {}, unexpected format: {:#?}", def.uid, content) }
+                    }
+                },
+                _ => { panic!("Error loading animations for {}, unexpected format {:#?}", def.uid, content) }
+            }
+        }
+    }
+    animations
+}
+
 #[derive(Debug, Default)]
 pub struct MapTile {
     pub id: i32,
     pub xy: IVec2,
+}
+
+#[derive(Debug,Default)]
+pub struct MapEntityDefinitions {
+    defs: HashMap<i32, MapEntityDef>,
+    name_map: HashMap<String,i32>,
+}
+impl MapEntityDefinitions {
+    pub fn def_from_id(&self, id: i32) -> Option<&MapEntityDef> {
+        self.defs.get(&id)
+    }
+    pub fn def_from_name(&self, name: &str) -> Option<&MapEntityDef> {
+        if let Some(id) = self.name_map.get(name) {
+            return self.def_from_id(*id);
+        }
+        None
+    }
+    pub fn from_defs(ldtk_defs: &HashMap<i64,&EntityDefinition>) -> Self {
+        let mut defs = HashMap::default();
+        let mut name_map = HashMap::default();
+
+        for (id, def) in ldtk_defs {
+            name_map.insert(def.identifier.to_lowercase(), *id as i32);
+            let def = MapEntityDef::from_ldtk_def(def);
+            defs.insert(*id as i32,def);
+        }
+        
+        Self {
+            defs,
+            name_map,
+        }
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct MapEntityDef {
+    name: String,
+    pub tile_id: Option<i32>,
+    pub tileset_id: Option<i32>,
+    pub animations: HashMap<String,UnitAnimation>,
+}
+impl MapEntityDef {
+    pub fn from_ldtk_def(def: &EntityDefinition) -> Self {
+        let animations = anims_from_def(def);
+        Self {
+            name: def.identifier.to_lowercase(),
+            tile_id: def.tile_id.map(|id|id as i32),
+            tileset_id: def.tileset_id.map(|id|id as i32),
+            animations,
+        }
+    }
 }
 
 #[derive(Debug, Default)]

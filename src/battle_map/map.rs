@@ -1,6 +1,6 @@
 use std::slice::Iter;
 
-use bevy::{ecs::system::EntityCommands, prelude::*, utils::HashMap};
+use bevy::{ecs::system::EntityCommands, prelude::*, utils::HashMap, math::Vec3Swizzles, reflect::TypeUuid};
 use bevy_ascii_terminal::{ldtk::LdtkAsset, Point2d, Size2d};
 use bevy_tiled_camera::TiledProjection;
 use sark_grids::Grid;
@@ -9,10 +9,10 @@ use sark_pathfinding::{pathing_map::ArrayVec, AStar, PathMap2d, PathingMap};
 use crate::{
     config::{ConfigAsset, GameSettings},
     ldtk_loader::{LdtkMap, MapLayer, MapEntity, MapTileset, MapTile},
-    AtlasHandles, GameState, SETTINGS_PATH, UnitAnimation, AnimationController,
+    AtlasHandles, GameState, SETTINGS_PATH, UnitAnimation, AnimationController, battle_map::spawn::Team,
 };
 
-use super::{units::{MapUnitBundle, MapUnit, PlayerUnit, EnemyUnit}, BattleMapState};
+use super::{BattleMapState, spawn::SpawnUnit};
 
 pub struct MapPlugin;
 
@@ -21,11 +21,14 @@ impl Plugin for MapPlugin {
         app.init_resource::<Map>()
             .init_resource::<MapUnits>()
             .init_resource::<CollisionMap>()
-            .init_resource::<LoadingMap>()
-            .add_system_set(SystemSet::on_update(GameState::LoadBattleMap).with_system(setup))
+            .init_resource::<BattleMapLdtkHandle>()
+            .add_system_set(SystemSet::on_update(GameState::LoadBattleMap)
+                .with_system(setup)
+            )
             .add_system_set(
                 SystemSet::on_update(BattleMapState::BuildingMap).with_system(build_map),
-            );
+            )
+            ;
         //.add_system_set(SystemSet::on_enter(GameState::LoadBattleMap).with_system(setup))
         // .add_system_set(
         //     SystemSet::on_update(GameState::BattleMap).with_system(update_collision_map),
@@ -33,6 +36,9 @@ impl Plugin for MapPlugin {
         //.add_event::<LdtkRebuild>()
     }
 }
+
+#[derive(Default)]
+pub struct BattleMapLdtkHandle(pub Handle<LdtkMap>);
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub enum TerrainTile {
@@ -103,13 +109,11 @@ impl CollisionMap {
     }
 }
 
-#[derive(Default)]
-struct LoadingMap(Handle<LdtkMap>);
 fn setup(
     configs: Res<Assets<ConfigAsset>>,
     mut state: ResMut<State<BattleMapState>>,
     asset_server: Res<AssetServer>,
-    mut loading_map: ResMut<LoadingMap>,
+    mut loading_map: ResMut<BattleMapLdtkHandle>,
 ) {
     if *state.current() == BattleMapState::BuildingMap {
         return;
@@ -139,6 +143,7 @@ fn build_map(
     mut game_state: ResMut<State<GameState>>,
     mut atlases: ResMut<Assets<TextureAtlas>>,
     mut atlas_handles: ResMut<AtlasHandles>,
+    mut ev_spawn: EventWriter<SpawnUnit>,
 ) {
     for ev in ev_reader.iter() {
         match ev {
@@ -171,7 +176,7 @@ fn build_map(
                                     depth,
                                     atlas.clone(),
                                     tileset,
-                                    &mut collision_map
+                                    &mut collision_map,
                                 );
                             }
                         },
@@ -179,7 +184,6 @@ fn build_map(
                             let animations = &layer.animations;
                             for entity in layer.entities.iter() {
                                 spawn_entity(
-                                    &mut commands,
                                     ldtk,
                                     &mut atlases,
                                     &mut atlas_handles,
@@ -187,6 +191,7 @@ fn build_map(
                                     &mut units,
                                     depth,
                                     animations,
+                                    &mut ev_spawn,
                                 );
                             }
                         },
@@ -235,7 +240,6 @@ fn spawn_tile(
 }
 
 fn spawn_entity(
-    commands: &mut Commands,
     ldtk: &LdtkMap,
     atlases: &mut Assets<TextureAtlas>,
     atlas_handles: &mut AtlasHandles,
@@ -243,48 +247,27 @@ fn spawn_entity(
     units: &mut MapUnits,
     depth: usize,
     animations: &HashMap<i32, HashMap<String, UnitAnimation>>,
+    ev_spawn: &mut EventWriter<SpawnUnit>,
 ) {
     let axis_offset = axis_offset(units.size().as_ivec2());
-    if let (Some(id), Some(tileset_id)) = (entity.tile_id, entity.tileset_id) {
+    if let (Some(tile_id), Some(tileset_id)) = (entity.tile_id, entity.tileset_id) {
+        
         let tileset = ldtk.tileset(tileset_id);
-        let xy = (entity.xy.as_vec2() + axis_offset).floor();
-
-        let transform = Transform::from_xyz(xy.x, xy.y, depth as f32);
-        let sprite = TextureAtlasSprite {
-            custom_size: Some(Vec2::ONE),
-            index: id as usize,
-            ..Default::default()
-        };
         let atlas = get_atlas(atlases, atlas_handles, tileset);
-        let sprite = SpriteSheetBundle {
-            sprite,
-            texture_atlas: atlas,
-            transform,
-            ..Default::default()
+        let position = (entity.xy.as_vec2() + axis_offset).floor().extend(depth as f32).as_ivec3();
+        let animations = animations.get(&entity.def_id);
+
+        let enums = tileset.enums.get(&tile_id);
+
+        let data = SpawnUnit {
+            atlas: atlas.clone(),
+            sprite_index: tile_id,
+            position,
+            animations: animations.cloned(),
+            enums: enums.cloned(),
         };
-        let mut new = commands.spawn_bundle(sprite);
-        new.insert_bundle(MapUnitBundle::new(xy.as_ivec2()));
 
-        if let Some(anims) = animations.get(&entity.def_id) {
-            //println!("Loading animations for {}", entity.name);
-            let mut controller = AnimationController::default();
-            for (name, anim) in anims {
-                controller.add(name, anim.clone());
-            }
-            controller.play("idle");
-            new.insert(controller);
-        }
-
-        if let Some(enums) = tileset.enums.get(&id) {
-            if enums.iter().any(|s|s=="player") {
-                println!("Adding player to entity {} from tileset {}", id, tileset.name);
-                new.insert(PlayerUnit);
-            }
-            if enums.iter().any(|s|s=="enemy") {
-                new.insert(EnemyUnit);
-            }
-
-        }
+        ev_spawn.send(data);
     }
 }
 
