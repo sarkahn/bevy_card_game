@@ -326,7 +326,7 @@ impl MapEntityDefinitions {
         }
         None
     }
-    pub fn from_defs(ldtk_defs: &HashMap<i64,&EntityDefinition>) -> Self {
+    fn from_defs(ldtk_defs: &HashMap<i64,&EntityDefinition>) -> Self {
         let mut defs = HashMap::default();
         let mut name_map = HashMap::default();
 

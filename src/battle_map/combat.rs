@@ -1,8 +1,8 @@
 use bevy::{prelude::*, math::Vec3Swizzles};
 
-use crate::{GameState, make_sprite, arena::ArenaState};
+use crate::{GameState, make_sprite, arena::ArenaState, ldtk_loader::LdtkMap, config::ConfigAsset, SETTINGS_PATH};
 
-use super::{units::EnemyUnit, MapUnits, Map, BattleMapState};
+use super::{units::EnemyUnit, MapUnits, Map, BattleMapState, spawn::{SpawnEntity, DespawnTimer}};
 
 pub struct MapCombatPlugin;
 
@@ -26,48 +26,53 @@ fn on_collision(
     map_units: Res<MapUnits>,
     map: Res<Map>,
     mut state: ResMut<State<GameState>>,
+    config: Res<Assets<ConfigAsset>>,
+    asset_server: Res<AssetServer>,
 ) {
-
-    for (enemy, transform) in q_enemies.iter() {
-        let grid_pos = map.to_index_2d(transform.translation.xy());
-        if let Some(player) = map_units[grid_pos] {
-            println!("BEGINNING COMBAT");
-            make_sprite(&mut commands, transform.translation.xy(), Color::RED)
-            .insert(
-                BeginCombat {
+    if let Some(config) = config.get(SETTINGS_PATH) {
+        let ldtk: Handle<LdtkMap> = asset_server.load(&config.settings.map_file);
+        //if let Ok(ldtk_handle) = asset_server.load::<LdtkMap>(&config.settings.map_file) {
+        for (enemy, transform) in q_enemies.iter() {
+            let grid_pos = map.to_index_2d(transform.translation.xy());
+            if let Some(player) = map_units[grid_pos] {
+                let mut pos = transform.translation;
+                pos += Vec3::new(0.0,0.0,1.0);
+                commands.spawn().insert(
+                    SpawnEntity {
+                        ldtk: ldtk.clone(),
+                        name: "BeginCombat".to_string(),
+                        pos,
+                    }
+                ).insert(BeginCombat {
                     player,
                     enemy,
-                    anim_timer: Timer::from_seconds(3.0, false),
-                }
-            );
-            state.set(GameState::BeginningCombat).unwrap();
-        } 
+                }).insert(DespawnTimer(Timer::from_seconds(3.0, false)));
+                state.set(GameState::BeginningCombat).unwrap();
+            } 
+        }
+
+
     }
+
 }
 
 #[derive(Component)]
 pub struct BeginCombat {
     player: Entity,
     enemy: Entity,
-    anim_timer: Timer,
 }
 
 fn begin_combat(
     mut commands: Commands,
-    mut q_begin: Query<(Entity,&mut BeginCombat)>,
+    mut q_begin: Query<(Entity,&mut BeginCombat, &DespawnTimer)>,
     mut state: ResMut<State<GameState>>,
     mut arena_state: ResMut<State<ArenaState>>,
     time: Res<Time>,
 ) {
 
-    for (entity,mut begin) in q_begin.iter_mut() {
-        let timer = &mut begin.anim_timer; 
-        timer.tick(time.delta());
-
-        if timer.finished() {
-            arena_state.push(ArenaState::Loading).unwrap();
-
-            commands.entity(entity).despawn();
+    for (entity,mut begin, timer) in q_begin.iter_mut() {
+        if timer.0.finished() {
+            println!("LOAD ARENA");
         }
     }
 }

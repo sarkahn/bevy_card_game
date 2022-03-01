@@ -15,7 +15,7 @@ impl Plugin for ArenaPlugin {
     fn build(&self, app: &mut App) {
         // Game State is paused, to return to game do GameState.Pop()
         app.add_state(ArenaState::Inactive)
-            .add_system_set(SystemSet::on_enter(ArenaState::Loading).with_system(on_enter))
+            //.add_system_set(SystemSet::on_enter(ArenaState::Loading).with_system(on_enter))
             .add_plugin(RenderPlugin);
     }
 }

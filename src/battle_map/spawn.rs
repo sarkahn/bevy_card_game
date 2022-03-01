@@ -4,7 +4,7 @@ use crate::{GameState, UnitAnimation, battle_map::{units::{MapUnitBundle, Player
 
 use super::{map::BattleMapLdtkHandle, units::{PlayerBase, EnemyBase, UnitCommands, UnitCommand}};
 
-pub const BATTLE_MAP_SPAWN_SYSTEM: &str = "BATTLEMAP_SPAWN_SYSTEM";
+pub const SPAWN_SYSTEM: &str = "BATTLEMAP_SPAWN_SYSTEM";
 
 pub struct MapSpawnPlugin;
 
@@ -14,11 +14,10 @@ impl Plugin for MapSpawnPlugin {
         .add_system_set(SystemSet::on_update(GameState::BattleMap)
             .with_system(spawn_from_event)
         )
-        .add_system_set(SystemSet::on_update(GameState::BattleMap)
-            .with_system(spawn_from_entity)
-            .label(BATTLE_MAP_SPAWN_SYSTEM)
-        )
+        .add_system(spawn_from_entity.label(SPAWN_SYSTEM))
         .add_event::<SpawnUnit>()
+        .add_system_to_stage(CoreStage::PreUpdate, despawn_tick)
+        .add_system_to_stage(CoreStage::PostUpdate, despawn_timer)
         ;
     }
 }
@@ -102,6 +101,9 @@ pub struct SpawnEntity {
     pub pos: Vec3,
 }
 
+#[derive(Component)]
+pub struct DespawnTimer(pub Timer);
+
 fn spawn_from_entity(
     mut commands: Commands,
     q_spawns: Query<(Entity,&SpawnEntity)>,
@@ -109,27 +111,34 @@ fn spawn_from_entity(
     mut atlas_handles: ResMut<AtlasHandles>,
     mut atlases: ResMut<Assets<TextureAtlas>>,
     configs: Res<Assets<ConfigAsset>>,
-    asset_server: Res<AssetServer>,
 ) {
     if let Some(config) = configs.get(SETTINGS_PATH) {
         for (entity,spawn) in q_spawns.iter() {
+            println!("SPAWNING {}", spawn.name);
             if let Some(ldtk) = ldtk_assets.get(spawn.ldtk.clone()) {
-                commands.entity(entity).despawn();
-                let defs = &ldtk.entity_defs;
+                let name = spawn.name.to_lowercase();
+                let defs = &ldtk.entity_defs;                    
+                if name == "begincombat" {
+                    println!("WHAT THE EHELL");
+                }
                 //println!("DEFS {:?}", defs);
                 //println!("Slime? :{:?}", defs.def_from_name("slime"));
-                if let Some(def) = defs.def_from_name(&spawn.name.to_lowercase()) {
+                if let Some(def) = defs.def_from_name(&name) {
                     if let (Some(tileset_id), Some(tile_id)) = (def.tileset_id,def.tile_id) {
                         if let Some(tileset) = ldtk.tilesets.get(&tileset_id) {
+        
                             let pos = spawn.pos;
                             let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
-                            let comps = build_unit(pos.as_ivec3(), atlas, tile_id);
+                            let comps = build_unit(pos, atlas, tile_id);
+                            //println!("Spawning at {}", pos);
     
-                            //println!("Spawning {} at {}", spawn.name, spawn.pos);
-                            let mut new = commands.spawn();
+                            let mut new = commands.entity(entity);
+                            new.remove::<SpawnEntity>();
                             new.insert(comps.0)
                             .insert_bundle(comps.1)
                             .insert_bundle(comps.2);
+
+
     
                             if !def.animations.is_empty() {
                                 //println!("Loading animations for {}", entity.name);
@@ -158,7 +167,7 @@ fn spawn_from_entity(
                     }
                 } else {
                     panic!("Attempting to spawn entity {}, but no definition was found in the ldtk file {}",
-                    spawn.name, ldtk.name,
+                    name, ldtk.name,
                     );
                 }
             }
@@ -168,7 +177,7 @@ fn spawn_from_entity(
 } 
 
 fn build_unit(
-    position: IVec3,
+    position: Vec3,
     atlas: Handle<TextureAtlas>,
     sprite_index: i32,
 ) -> (Transform,SpriteSheetBundle,MapUnitBundle) {
@@ -208,6 +217,27 @@ fn get_atlas(
             let handle = atlases.add(atlas);
             atlas_handles.0.insert(name.to_string(), handle.clone());
             handle
+        }
+    }
+}
+
+
+fn despawn_tick(
+    time: Res<Time>,
+    mut q_timers: Query<&mut DespawnTimer>,
+) {
+    for mut timer in q_timers.iter_mut() {
+        timer.0.tick(time.delta());
+    }
+}
+
+fn despawn_timer(
+    mut commands: Commands,
+    mut q_timers: Query<(Entity, &mut DespawnTimer)>,
+) {
+    for (entity,mut timer) in q_timers.iter_mut() {
+        if timer.0.finished() {
+            commands.entity(entity).despawn();
         }
     }
 }

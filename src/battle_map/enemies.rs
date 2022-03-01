@@ -4,7 +4,7 @@ use crate::{ldtk_loader::LdtkMap, GameState};
 
 use super::{
     //MapPosition, 
-    spawn::{SpawnUnit, SpawnEntity, Team, BATTLE_MAP_SPAWN_SYSTEM}, map::BattleMapLdtkHandle};
+    spawn::{SpawnUnit, SpawnEntity, Team, SPAWN_SYSTEM}, map::BattleMapLdtkHandle};
 
 pub struct EnemiesPlugin;
 
@@ -13,7 +13,7 @@ impl Plugin for EnemiesPlugin {
         app.add_system_set(
             SystemSet::on_update(GameState::BattleMap)
             .with_system(spawn)
-            .before(BATTLE_MAP_SPAWN_SYSTEM)
+            .before(SPAWN_SYSTEM)
         );
     }
 }
