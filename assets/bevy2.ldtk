@@ -290,7 +290,7 @@
 			"spacing": 0,
 			"padding": 0,
 			"tagsSourceEnumUid": 16,
-			"enumTags": [{ "enumValueId": "Collider", "tileIds": [32,33,34,40,41,42,46,48,49,50,51,52,53,54,59,60] }],
+			"enumTags": [{ "enumValueId": "Collider", "tileIds": [24,28,32,33,34,35,36,37,40,41,42,46,48,49,50,51,52,53,54,59,60] }],
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": {
