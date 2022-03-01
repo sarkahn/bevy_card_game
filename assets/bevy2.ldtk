@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 32,
+	"nextUid": 33,
 	"worldLayout": "Free",
 	"worldGridWidth": 1920,
 	"worldGridHeight": 1080,
@@ -309,8 +309,8 @@
 			"tileGridSize": 64,
 			"spacing": 0,
 			"padding": 0,
-			"tagsSourceEnumUid": 16,
-			"enumTags": [{ "enumValueId": "Collider", "tileIds": [0,1,2,3,4,5,6,7] }],
+			"tagsSourceEnumUid": 32,
+			"enumTags": [ { "enumValueId": "Spawner", "tileIds": [0,1,2,3,4,5,6,7] }, { "enumValueId": "Collider", "tileIds": [0,1,2,3,4,5,6,7] } ],
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "000000000", "averageColors": "844484448444844484448544854485440000" }
@@ -389,7 +389,8 @@
 			{ "id": "Player", "tileId": 7, "color": 0, "__tileSrcRect": [192,64,64,64] },
 			{ "id": "Enemy", "tileId": null, "color": 0, "__tileSrcRect": null },
 			{ "id": "Collider", "tileId": null, "color": 0, "__tileSrcRect": null }
-		], "iconTilesetUid": 20, "externalRelPath": null, "externalFileChecksum": null }
+		], "iconTilesetUid": 20, "externalRelPath": null, "externalFileChecksum": null },
+		{ "identifier": "Spawner", "uid": 32, "values": [ { "id": "Spawner", "tileId": null, "color": 0, "__tileSrcRect": null }, { "id": "Collider", "tileId": null, "color": 0, "__tileSrcRect": null } ], "iconTilesetUid": 11, "externalRelPath": null, "externalFileChecksum": null }
 	], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
