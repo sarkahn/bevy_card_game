@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 24,
+	"nextUid": 47,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -30,6 +30,44 @@
 	"levelNamePattern": "Level_%idx",
 	"flags": [],
 	"defs": { "layers": [
+		{
+			"__type": "Entities",
+			"identifier": "Enemy_Status",
+			"type": "Entities",
+			"uid": 42,
+			"gridSize": 16,
+			"displayOpacity": 1,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"requiredTags": [],
+			"excludedTags": [],
+			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"autoTilesetDefUid": null,
+			"autoRuleGroups": [],
+			"autoSourceLayerDefUid": null,
+			"tilesetDefUid": null,
+			"tilePivotX": 0,
+			"tilePivotY": 0
+		},
+		{
+			"__type": "Entities",
+			"identifier": "Player_Status",
+			"type": "Entities",
+			"uid": 26,
+			"gridSize": 16,
+			"displayOpacity": 1,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"requiredTags": [],
+			"excludedTags": [],
+			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"autoTilesetDefUid": null,
+			"autoRuleGroups": [],
+			"autoSourceLayerDefUid": null,
+			"tilesetDefUid": null,
+			"tilePivotX": 0,
+			"tilePivotY": 0
+		},
 		{
 			"__type": "Entities",
 			"identifier": "Card_SpawnPosition",
@@ -398,7 +436,7 @@
 			"identifier": "CardSpawnPosition",
 			"uid": 23,
 			"tags": [],
-			"width": 512,
+			"width": 300,
 			"height": 512,
 			"resizableX": false,
 			"resizableY": false,
@@ -406,18 +444,407 @@
 			"fillOpacity": 1,
 			"lineOpacity": 1,
 			"hollow": false,
-			"color": "#94D9B3",
-			"renderMode": "Tile",
+			"color": "#98D994",
+			"renderMode": "Rectangle",
 			"showName": true,
-			"tilesetId": 7,
-			"tileId": 0,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "Stretch",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0.5,
+			"pivotY": 0.5,
+			"fieldDefs": [
+				{
+					"identifier": "SpawnID",
+					"__type": "Int",
+					"uid": 24,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "UnitStatus_Name",
+			"uid": 25,
+			"tags": [],
+			"width": 180,
+			"height": 18,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#BC2D4B",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
 			"tileRenderMode": "FitInside",
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
 			"pivotY": 0,
-			"fieldDefs": []
+			"fieldDefs": [
+				{
+					"identifier": "SpawnID",
+					"__type": "Int",
+					"uid": 30,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "UnitStatus_Attack",
+			"uid": 27,
+			"tags": [],
+			"width": 130,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#D9187F",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "SpawnID",
+					"__type": "Int",
+					"uid": 31,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "UnitStatus_Defense",
+			"uid": 28,
+			"tags": [],
+			"width": 130,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#CF1A7A",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "SpawnID",
+					"__type": "Int",
+					"uid": 32,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "UnitStatus_Health",
+			"uid": 29,
+			"tags": [],
+			"width": 64,
+			"height": 22,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#E5087E",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "SpawnID",
+					"__type": "Int",
+					"uid": 33,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "EnemyStatus_Name",
+			"uid": 38,
+			"tags": [],
+			"width": 130,
+			"height": 18,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#4714E0",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "SpawnId",
+					"__type": "Int",
+					"uid": 43,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "EnemyStatus_Attack",
+			"uid": 39,
+			"tags": [],
+			"width": 100,
+			"height": 18,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#0C1BD3",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "SpawnID",
+					"__type": "Int",
+					"uid": 44,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "EnemyStatus_Defense",
+			"uid": 40,
+			"tags": [],
+			"width": 100,
+			"height": 18,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#0F0DCC",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "SpawnID",
+					"__type": "Int",
+					"uid": 45,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "EnemyStatus_Health",
+			"uid": 41,
+			"tags": [],
+			"width": 60,
+			"height": 20,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#1847C2",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "SpawnID",
+					"__type": "Int",
+					"uid": 46,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
 		}
 	], "tilesets": [
 		{
@@ -489,7 +916,7 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "8a998aa989998aaa" }
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "89998aa989998aaa" }
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -511,6 +938,554 @@
 			"externalRelPath": null,
 			"fieldInstances": [],
 			"layerInstances": [
+				{
+					"__identifier": "Enemy_Status",
+					"__type": "Entities",
+					"__cWid": 120,
+					"__cHei": 67,
+					"__gridSize": 16,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"levelId": 0,
+					"layerDefUid": 42,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGrid": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 5260448,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": [
+						{
+							"__identifier": "EnemyStatus_Name",
+							"__grid": [3,39],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 18,
+							"defUid": 38,
+							"px": [63,632],
+							"fieldInstances": [{ "__identifier": "SpawnId", "__value": 0, "__type": "Int", "defUid": 43, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "EnemyStatus_Attack",
+							"__grid": [5,40],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 100,
+							"height": 18,
+							"defUid": 39,
+							"px": [80,655],
+							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 44, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "EnemyStatus_Defense",
+							"__grid": [5,42],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 100,
+							"height": 18,
+							"defUid": 40,
+							"px": [81,676],
+							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 45, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "EnemyStatus_Health",
+							"__grid": [16,40],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 60,
+							"height": 20,
+							"defUid": 41,
+							"px": [256,654],
+							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 46, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "EnemyStatus_Name",
+							"__grid": [7,45],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 18,
+							"defUid": 38,
+							"px": [123,730],
+							"fieldInstances": [{
+								"__identifier": "SpawnId",
+								"__value": 1,
+								"__type": "Int",
+								"defUid": 43,
+								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Name",
+							"__grid": [3,51],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 18,
+							"defUid": 38,
+							"px": [54,831],
+							"fieldInstances": [{
+								"__identifier": "SpawnId",
+								"__value": 2,
+								"__type": "Int",
+								"defUid": 43,
+								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Name",
+							"__grid": [7,58],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 18,
+							"defUid": 38,
+							"px": [119,929],
+							"fieldInstances": [{
+								"__identifier": "SpawnId",
+								"__value": 3,
+								"__type": "Int",
+								"defUid": 43,
+								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Attack",
+							"__grid": [8,46],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 100,
+							"height": 18,
+							"defUid": 39,
+							"px": [139,750],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 1,
+								"__type": "Int",
+								"defUid": 44,
+								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Attack",
+							"__grid": [4,53],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 100,
+							"height": 18,
+							"defUid": 39,
+							"px": [69,851],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 2,
+								"__type": "Int",
+								"defUid": 44,
+								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Attack",
+							"__grid": [8,59],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 100,
+							"height": 18,
+							"defUid": 39,
+							"px": [136,949],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 3,
+								"__type": "Int",
+								"defUid": 44,
+								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Defense",
+							"__grid": [4,54],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 100,
+							"height": 18,
+							"defUid": 40,
+							"px": [70,872],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 2,
+								"__type": "Int",
+								"defUid": 45,
+								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Defense",
+							"__grid": [8,48],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 100,
+							"height": 18,
+							"defUid": 40,
+							"px": [140,772],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 1,
+								"__type": "Int",
+								"defUid": 45,
+								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Defense",
+							"__grid": [8,60],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 100,
+							"height": 18,
+							"defUid": 40,
+							"px": [138,970],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 3,
+								"__type": "Int",
+								"defUid": 45,
+								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Health",
+							"__grid": [19,47],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 60,
+							"height": 20,
+							"defUid": 41,
+							"px": [318,754],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 1,
+								"__type": "Int",
+								"defUid": 46,
+								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Health",
+							"__grid": [16,53],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 60,
+							"height": 20,
+							"defUid": 41,
+							"px": [259,851],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 2,
+								"__type": "Int",
+								"defUid": 46,
+								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+							}]
+						},
+						{
+							"__identifier": "EnemyStatus_Health",
+							"__grid": [20,59],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 60,
+							"height": 20,
+							"defUid": 41,
+							"px": [320,953],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 3,
+								"__type": "Int",
+								"defUid": 46,
+								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+							}]
+						}
+					]
+				},
+				{
+					"__identifier": "Player_Status",
+					"__type": "Entities",
+					"__cWid": 120,
+					"__cHei": 67,
+					"__gridSize": 16,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"levelId": 0,
+					"layerDefUid": 26,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGrid": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 7180206,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": [
+						{
+							"__identifier": "UnitStatus_Name",
+							"__grid": [96,39],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 180,
+							"height": 18,
+							"defUid": 25,
+							"px": [1545,631],
+							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 30, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "UnitStatus_Attack",
+							"__grid": [98,41],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 16,
+							"defUid": 27,
+							"px": [1570,658],
+							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 31, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "UnitStatus_Defense",
+							"__grid": [98,42],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 16,
+							"defUid": 28,
+							"px": [1569,678],
+							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 32, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "UnitStatus_Health",
+							"__grid": [108,40],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 22,
+							"defUid": 29,
+							"px": [1741,654],
+							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 33, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "UnitStatus_Name",
+							"__grid": [100,45],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 180,
+							"height": 18,
+							"defUid": 25,
+							"px": [1610,732],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 1,
+								"__type": "Int",
+								"defUid": 30,
+								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Name",
+							"__grid": [96,51],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 180,
+							"height": 18,
+							"defUid": 25,
+							"px": [1547,829],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 2,
+								"__type": "Int",
+								"defUid": 30,
+								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Name",
+							"__grid": [100,58],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 180,
+							"height": 18,
+							"defUid": 25,
+							"px": [1605,928],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 3,
+								"__type": "Int",
+								"defUid": 30,
+								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Attack",
+							"__grid": [100,47],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 16,
+							"defUid": 27,
+							"px": [1612,753],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 1,
+								"__type": "Int",
+								"defUid": 31,
+								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Attack",
+							"__grid": [96,53],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 16,
+							"defUid": 27,
+							"px": [1547,850],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 2,
+								"__type": "Int",
+								"defUid": 31,
+								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Attack",
+							"__grid": [100,59],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 16,
+							"defUid": 27,
+							"px": [1606,948],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 3,
+								"__type": "Int",
+								"defUid": 31,
+								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Defense",
+							"__grid": [100,60],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 16,
+							"defUid": 28,
+							"px": [1608,969],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 3,
+								"__type": "Int",
+								"defUid": 32,
+								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Defense",
+							"__grid": [96,54],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 16,
+							"defUid": 28,
+							"px": [1548,869],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 2,
+								"__type": "Int",
+								"defUid": 32,
+								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Defense",
+							"__grid": [100,48],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 130,
+							"height": 16,
+							"defUid": 28,
+							"px": [1612,774],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 1,
+								"__type": "Int",
+								"defUid": 32,
+								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Health",
+							"__grid": [112,46],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 22,
+							"defUid": 29,
+							"px": [1806,747],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 1,
+								"__type": "Int",
+								"defUid": 33,
+								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Health",
+							"__grid": [109,52],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 22,
+							"defUid": 29,
+							"px": [1749,845],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 2,
+								"__type": "Int",
+								"defUid": 33,
+								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+							}]
+						},
+						{
+							"__identifier": "UnitStatus_Health",
+							"__grid": [113,59],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 64,
+							"height": 22,
+							"defUid": 29,
+							"px": [1810,949],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 3,
+								"__type": "Int",
+								"defUid": 33,
+								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+							}]
+						}
+					]
+				},
 				{
 					"__identifier": "Card_SpawnPosition",
 					"__type": "Entities",
@@ -534,7 +1509,121 @@
 					"seed": 9266,
 					"overrideTilesetUid": null,
 					"gridTiles": [],
-					"entityInstances": []
+					"entityInstances": [
+						{
+							"__identifier": "CardSpawnPosition",
+							"__grid": [37,50],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 300,
+							"height": 512,
+							"defUid": 23,
+							"px": [600,808],
+							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 24, "realEditorValues": [] }]
+						},
+						{
+							"__identifier": "CardSpawnPosition",
+							"__grid": [43,50],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 300,
+							"height": 512,
+							"defUid": 23,
+							"px": [696,808],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 1,
+								"__type": "Int",
+								"defUid": 24,
+								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+							}]
+						},
+						{
+							"__identifier": "CardSpawnPosition",
+							"__grid": [49,50],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 300,
+							"height": 512,
+							"defUid": 23,
+							"px": [792,808],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 2,
+								"__type": "Int",
+								"defUid": 24,
+								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+							}]
+						},
+						{
+							"__identifier": "CardSpawnPosition",
+							"__grid": [54,50],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 300,
+							"height": 512,
+							"defUid": 23,
+							"px": [872,808],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 3,
+								"__type": "Int",
+								"defUid": 24,
+								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+							}]
+						},
+						{
+							"__identifier": "CardSpawnPosition",
+							"__grid": [61,50],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 300,
+							"height": 512,
+							"defUid": 23,
+							"px": [984,808],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 4,
+								"__type": "Int",
+								"defUid": 24,
+								"realEditorValues": [{ "id": "V_Int", "params": [4] }]
+							}]
+						},
+						{
+							"__identifier": "CardSpawnPosition",
+							"__grid": [72,50],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 300,
+							"height": 512,
+							"defUid": 23,
+							"px": [1160,808],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 5,
+								"__type": "Int",
+								"defUid": 24,
+								"realEditorValues": [{ "id": "V_Int", "params": [5] }]
+							}]
+						},
+						{
+							"__identifier": "CardSpawnPosition",
+							"__grid": [77,50],
+							"__pivot": [0.5,0.5],
+							"__tile": null,
+							"width": 300,
+							"height": 512,
+							"defUid": 23,
+							"px": [1240,808],
+							"fieldInstances": [{
+								"__identifier": "SpawnID",
+								"__value": 6,
+								"__type": "Int",
+								"defUid": 24,
+								"realEditorValues": [{ "id": "V_Int", "params": [6] }]
+							}]
+						}
+					]
 				},
 				{
 					"__identifier": "EnemyUnits_Spawn_Position",
@@ -769,17 +1858,6 @@
 					"entityInstances": [
 						{
 							"__identifier": "Card",
-							"__grid": [319,517],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 7, "srcRect": [0,0,512,512] },
-							"width": 512,
-							"height": 512,
-							"defUid": 9,
-							"px": [319,517],
-							"fieldInstances": []
-						},
-						{
-							"__identifier": "Card",
 							"__grid": [1295,506],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 7, "srcRect": [0,0,512,512] },
@@ -831,17 +1909,6 @@
 							"height": 60,
 							"defUid": 14,
 							"px": [1422,868],
-							"fieldInstances": []
-						},
-						{
-							"__identifier": "Card_Abilities",
-							"__grid": [899,729],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 60,
-							"defUid": 14,
-							"px": [899,729],
 							"fieldInstances": []
 						}
 					]
