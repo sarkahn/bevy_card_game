@@ -280,7 +280,7 @@
 		{
 			"identifier": "BeginCombat",
 			"uid": 33,
-			"tags": ["begincombat"],
+			"tags": [],
 			"width": 16,
 			"height": 16,
 			"resizableX": false,
@@ -300,28 +300,7 @@
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
 			"pivotY": 0,
-			"fieldDefs": [
-				{
-					"identifier": "Animations",
-					"__type": "String",
-					"uid": 34,
-					"type": "F_Text",
-					"isArray": false,
-					"canBeNull": true,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": null,
-					"textLanguageMode": null
-				}
-			]
+			"fieldDefs": []
 		},
 		{
 			"identifier": "Card_Name",
@@ -451,7 +430,7 @@
 			"enumTags": [ { "enumValueId": "Player", "tileIds": [0,1,2] }, { "enumValueId": "Enemy", "tileIds": [3] }, { "enumValueId": "Collider", "tileIds": [4,5] } ],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a000000000000000000000000000000000000" }
+			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a000039750000000000000000000000000000" }
 		},
 		{
 			"__cWid": 4,

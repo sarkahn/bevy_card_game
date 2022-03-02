@@ -27,13 +27,15 @@ pub struct AnimationController {
 }
 
 impl AnimationController {
-
     pub fn play(&mut self, name: &str) {
         if let Some(anim) = self.animations.get(name) {
+            println!("Playing animation {}. Speed {}", name, anim.speed);
             self.current = Some(name.to_string());
             self.timer.set_duration(Duration::from_secs_f32(anim.speed));
+            self.timer.set_repeating(true);
             self.timer.reset();
             self.frame_index = 0;
+            self.paused = false;
         } else {
             //println!("Animation {} not found", name);
         }
@@ -57,12 +59,12 @@ fn animate(
 ) {
     for (mut controller, mut sprite) in q_units.iter_mut() {
         if controller.paused || controller.current.is_none() {
-            return;
+            continue;
         }
         let len = controller.current_anim().unwrap().frames.len();
         controller.timer.tick(time.delta());
         if controller.timer.just_finished() {
-            //println!("Should tick?");
+            //println!("Should be animating?");
             controller.timer.reset();
             controller.frame_index = (controller.frame_index + 1) % len;
             let index = controller.frame_index;

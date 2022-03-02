@@ -3,7 +3,7 @@ use bevy_tiled_camera::TiledProjection;
 
 use crate::GameState;
 
-use super::{ MapUnits, Map};
+use super::{Map, MapUnits};
 
 pub struct InputPlugin;
 
@@ -35,9 +35,7 @@ fn on_enter(mut commands: Commands) {
         transform: Transform::from_xyz(0.0, 0.0, 2.0),
         ..Default::default()
     };
-    commands
-        .spawn_bundle(cursor)
-        .insert(Cursor);
+    commands.spawn_bundle(cursor).insert(Cursor);
 }
 
 fn on_exit(mut commands: Commands, q_cursor: Query<Entity, With<Cursor>>) {

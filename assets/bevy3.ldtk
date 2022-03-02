@@ -652,6 +652,17 @@
 							"defUid": 28,
 							"px": [832,640],
 							"fieldInstances": []
+						},
+						{
+							"__identifier": "Soldier",
+							"__grid": [9,14],
+							"__pivot": [0,1],
+							"__tile": { "tilesetUid": 20, "srcRect": [128,0,64,64] },
+							"width": 64,
+							"height": 64,
+							"defUid": 30,
+							"px": [576,960],
+							"fieldInstances": []
 						}
 					]
 				},

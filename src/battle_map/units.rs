@@ -1,30 +1,34 @@
-use std::{collections::VecDeque, time::Duration, cmp::Ordering};
+use std::{cmp::Ordering, collections::VecDeque, time::Duration};
 
-use bevy::{ecs::system::EntityCommands, prelude::*, math::Vec3Swizzles};
+use bevy::{ecs::system::EntityCommands, math::Vec3Swizzles, prelude::*};
 use bevy_ascii_terminal::Point2d;
 use bevy_easings::*;
-use rand::{prelude::{ThreadRng, StdRng, IteratorRandom, Distribution}, thread_rng, distributions::WeightedIndex, RngCore, Rng};
+use rand::{
+    distributions::WeightedIndex,
+    prelude::{Distribution, IteratorRandom, StdRng, ThreadRng},
+    thread_rng, Rng, RngCore,
+};
 use sark_pathfinding::AStar;
 
 use crate::GameState;
 
 use super::{
-    //components::MapPosition, 
-    BattleMapState, Map, MapUnits, map::CollisionMap};
+    map::CollisionMap,
+    //components::MapPosition,
+    Map,
+    MapUnits,
+};
 
 pub struct UnitsPlugin;
 
 impl Plugin for UnitsPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_system_set(
-                SystemSet::on_update(GameState::BattleMap)
-                    //.with_system(update_sprite_position)
-                    .with_system(update_map_units),
-            )
-            .add_system_set(
-                SystemSet::on_update(GameState::BattleMap).with_system(process_commands),
-            );
+        app.add_system_set(
+            SystemSet::on_update(GameState::BattleMap)
+                //.with_system(update_sprite_position)
+                .with_system(update_map_units),
+        )
+        .add_system_set(SystemSet::on_update(GameState::BattleMap).with_system(process_commands));
     }
 }
 
@@ -37,10 +41,8 @@ pub struct PlayerBase;
 #[derive(Component)]
 pub struct EnemyUnit;
 
-
 #[derive(Component)]
 pub struct EnemyBase;
-
 
 #[derive(Component, Default)]
 pub struct MapUnit;
@@ -60,7 +62,6 @@ pub struct MapUnitBundle {
     commands: UnitCommands,
     speed: MapUnitSpeed,
 }
-
 
 // impl MapUnitBundle {
 //     pub fn new(xy: IVec2) -> Self {
@@ -88,11 +89,11 @@ pub struct UnitCommands {
 
 impl Default for UnitCommands {
     fn default() -> Self {
-        Self { 
-            move_timer: Timer::from_seconds(0.6, false), 
-            wait_timer: Timer::from_seconds(0.3, false), 
-            queue: Default::default(), 
-            current: Default::default() 
+        Self {
+            move_timer: Timer::from_seconds(0.6, false),
+            wait_timer: Timer::from_seconds(0.3, false),
+            queue: Default::default(),
+            current: Default::default(),
         }
     }
 }
@@ -117,12 +118,10 @@ impl UnitCommands {
 
     pub fn push(&mut self, command: UnitCommand) {
         match command {
-            UnitCommand::Wait(wait) => self.wait_timer.set_duration(
-                Duration::from_secs_f32(wait)
-            ),
-            UnitCommand::MoveToTile(_,_) => {
+            UnitCommand::Wait(wait) => self.wait_timer.set_duration(Duration::from_secs_f32(wait)),
+            UnitCommand::MoveToTile(_, _) => {
                 self.move_timer.reset();
-            },
+            }
             _ => {}
         };
         self.queue.push_back(command);
@@ -146,7 +145,12 @@ fn process_commands(
     mut player_positions: Local<Vec<IVec2>>,
 ) {
     player_positions.clear();
-    player_positions.extend(q_set.q1().iter().map(|t|map.to_index_2d(t.translation.xy())));
+    player_positions.extend(
+        q_set
+            .q1()
+            .iter()
+            .map(|t| map.to_index_2d(t.translation.xy())),
+    );
     for (entity, mut unit_commands, mut transform, speed) in q_set.q0().iter_mut() {
         //println!("{:?} Command count {}", entity, unit_commands.queue.len());
         if unit_commands.current.is_none() {
@@ -158,13 +162,13 @@ fn process_commands(
                 UnitCommand::MoveToTile(a, b) => {
                     unit_commands.move_timer.tick(time.delta());
                     let t = unit_commands.move_timer.percent();
-                    let (a,b) = (a.as_vec2(),b.as_vec2());
+                    let (a, b) = (a.as_vec2(), b.as_vec2());
                     if t < 1.0 {
                         let p = a.lerp(b, t);
                         transform.translation = p.extend(transform.translation.z);
                     } else {
                         transform.translation = b.extend(transform.translation.z);
-                        //println!("Done moving from {} to {} Final Pos {}", 
+                        //println!("Done moving from {} to {} Final Pos {}",
                         //a, b, transform.translation.xy());
                         unit_commands.move_timer.reset();
                         unit_commands.next();
@@ -177,15 +181,15 @@ fn process_commands(
                         unit_commands.wait_timer.reset();
                         unit_commands.next();
                     }
-                },
+                }
                 UnitCommand::AiThink() => {
                     //println!("{:?} Thinking!", entity);
                     let mut rng = thread_rng();
                     let choices = ["wait", "attack"];
-                    let weights = [1_i32,5];
+                    let weights = [1_i32, 5];
                     let dist = WeightedIndex::new(&weights).unwrap();
                     if choices[dist.sample(&mut rng)] == "wait" {
-                        let wait:f32 = rng.gen_range(0.15..1.5);
+                        let wait: f32 = rng.gen_range(0.15..1.5);
                         //println!("Slime {:?} is gonna wait for {} seconds!", entity, wait);
                         unit_commands.push(UnitCommand::Wait(wait));
                         unit_commands.push(UnitCommand::AiThink());
@@ -195,7 +199,7 @@ fn process_commands(
 
                     let a = map.to_index_2d(transform.translation.xy());
                     //println!("{:?} at {}, Finding nearest player", entity, a);
-                    if let Some(b) = get_nearest_player_position(a,&player_positions) {
+                    if let Some(b) = get_nearest_player_position(a, &player_positions) {
                         //let b = map.to_index_2d(b.as_vec2());
                         let mut astar = AStar::new(10);
                         if let Some(path) = astar.find_path(&collision_map.0, a.into(), b.into()) {
@@ -213,9 +217,9 @@ fn process_commands(
                             }
                         } else {
                             // Couldn't find a player to path to. Go for the kill!
+                            //println!("Couldn't find a player!");
                         }
                     }
-
                 }
             }
         }
@@ -223,13 +227,11 @@ fn process_commands(
 }
 
 fn get_nearest_player_position(a: IVec2, positions: &Vec<IVec2>) -> Option<IVec2> {
-
-    let res = positions.iter().map(|b|
-        (a-*b).as_vec2().length());
-    let res = res.enumerate()
-        .min_by(|(_,a),(_,b)|
-        a.partial_cmp(&b).unwrap_or(Ordering::Less)
-    ).map(|(index,_)|index);
+    let res = positions.iter().map(|b| (a - *b).as_vec2().length());
+    let res = res
+        .enumerate()
+        .min_by(|(_, a), (_, b)| a.partial_cmp(&b).unwrap_or(Ordering::Less))
+        .map(|(index, _)| index);
     if let Some(i) = res {
         return Some(positions[i]);
     }

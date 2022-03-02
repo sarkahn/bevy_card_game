@@ -20,6 +20,8 @@ mod config;
 mod grid;
 mod ldtk_loader;
 mod util;
+mod party;
+mod unit;
 
 pub use grid::*;
 
@@ -66,35 +68,33 @@ pub fn main() {
         .add_plugin(AssetsPlugin)
         .add_plugin(EguiPlugin)
         .add_plugin(AnimationPlugin)
-        .add_state(GameState::StartScreen)
-        .add_startup_system(start)
-        .add_system(load_config)
+        .add_state(GameState::Starting)
+        .add_startup_system(load_configs)
+        .add_system_set(
+            SystemSet::on_update(GameState::Starting)
+            .with_system(start)
+        )
         .run();
 }
 
-fn start(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let config: Handle<ConfigAsset> = asset_server.load("game_settings.config");
-    commands.insert_resource(config);
+fn load_configs(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+) {
+    let handle: Handle<ConfigAsset> = asset_server.load(SETTINGS_PATH);
+    commands.insert_resource(handle);
 }
 
-fn load_config(
-    mut commands: Commands,
-    mut game_state: ResMut<State<GameState>>,
+fn start(
+    mut state: ResMut<State<GameState>>,
     configs: Res<Assets<ConfigAsset>>,
-    mut ev_config: EventReader<AssetEvent<ConfigAsset>>,
 ) {
-    for ev in ev_config.iter() {
-        match ev {
-            AssetEvent::Created { handle } => {
-                let config = &configs.get(handle).unwrap();
-                //println!("Settings {:?}. Setting state", config.settings);
-                game_state.set(config.settings.begin_state).unwrap();
-                commands.insert_resource(config.settings.clone());
-            }
-            _ => {}
-        }
+    if let Some(config) = configs.get(SETTINGS_PATH) {
+        state.set(config.settings.begin_state).unwrap();
     }
 }
+
+
 
 #[derive(Default)]
 pub struct AtlasHandles(HashMap<String, Handle<TextureAtlas>>);

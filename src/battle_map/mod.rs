@@ -5,50 +5,54 @@ use serde::{Deserialize, Serialize};
 use crate::{
     config::{ConfigAsset, GameSettings},
     grid::*,
-    GameState, SETTINGS_PATH,
+    GameState, SETTINGS_PATH, ldtk_loader::LdtkMap,
 };
 
 use self::{
-    animated::AnimScenePlugin, input::InputPlugin, map::MapPlugin, 
-    units::UnitsPlugin, spawn::MapSpawnPlugin, enemies::EnemiesPlugin, selection::BattleMapSelectionPlugin, combat::MapCombatPlugin,
+    combat::MapCombatPlugin, enemies::EnemiesPlugin, input::InputPlugin,
+    map::MapPlugin, selection::BattleMapSelectionPlugin, spawn::MapSpawnPlugin, units::UnitsPlugin,
 };
 
-mod animated;
+mod combat;
 mod components;
+mod enemies;
 mod input;
 mod map;
-mod units;
-mod enemies;
-mod spawn;
 mod selection;
-mod combat;
+mod spawn;
+mod units;
 
 pub use components::*;
 pub use map::{Map, MapUnits};
 
 pub struct BattleMapPlugin;
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Serialize, Deserialize)]
-pub enum BattleMapState {
-    Inactive,
-    BuildingMap,
-    EnemyTurn,
-    SelectUnit,
-    ChooseTarget,
-    UnitMoving,
-}
+
 
 impl Plugin for BattleMapPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_state(BattleMapState::Inactive)
+        app
             .add_plugin(UnitsPlugin)
             .add_plugin(InputPlugin)
             .add_plugin(MapPlugin)
-            .add_plugin(AnimScenePlugin)
             .add_plugin(MapSpawnPlugin)
             .add_plugin(EnemiesPlugin)
             .add_plugin(BattleMapSelectionPlugin)
             .add_plugin(MapCombatPlugin)
+            .add_system_set(
+                SystemSet::on_enter(GameState::LoadBattleMap)
+                .with_system(load_map)
+            )
             ;
     }
+}
+
+fn load_map(
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+    configs: Res<Assets<ConfigAsset>>,
+) {
+    let config = configs.get(SETTINGS_PATH).unwrap();
+    let handle: Handle<LdtkMap> = asset_server.load(&config.settings.map_file);
+    commands.insert_resource(handle);
 }

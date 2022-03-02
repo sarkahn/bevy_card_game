@@ -1,22 +1,25 @@
-use bevy::{prelude::*, math::Vec3Swizzles, ecs::system::EntityCommands};
+use bevy::{ecs::system::EntityCommands, math::Vec3Swizzles, prelude::*};
 use bevy_tiled_camera::TiledProjection;
 use sark_pathfinding::AStar;
 
-use crate::{GameState, SETTINGS_PATH, config::ConfigAsset, make_sprite};
+use crate::{config::ConfigAsset, make_sprite, GameState, SETTINGS_PATH};
 
-use super::{input::{TileClickedEvent, Cursor}, map::CollisionMap, Map, units::{UnitCommand, UnitCommands, PlayerUnit}};
+use super::{
+    input::{Cursor, TileClickedEvent},
+    map::CollisionMap,
+    units::{PlayerUnit, UnitCommand, UnitCommands},
+    Map,
+};
 
 pub struct BattleMapSelectionPlugin;
 
 impl Plugin for BattleMapSelectionPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Selection>()
-        .add_system_set(
+        app.init_resource::<Selection>().add_system_set(
             SystemSet::on_update(GameState::BattleMap)
-            .with_system(on_select)
-            .with_system(path_sprites)
-        )
-        ;
+                .with_system(on_select)
+                .with_system(path_sprites),
+        );
     }
 }
 
@@ -39,20 +42,23 @@ fn on_select(
     mut q_unit_commands: Query<&mut UnitCommands>,
     q_pos: Query<&Transform>,
     q_player: Query<&PlayerUnit>,
-    q_highlight: Query<Entity,With<HighlightSprite>>,
+    q_highlight: Query<Entity, With<HighlightSprite>>,
     q_cursor: Query<&Transform, With<Cursor>>,
 ) {
     if let Some(config) = configs.get(SETTINGS_PATH) {
-        q_highlight.iter().for_each(|e|commands.entity(e).despawn());
+        q_highlight
+            .iter()
+            .for_each(|e| commands.entity(e).despawn());
         if let Some(selected) = selection.selected_unit {
             if let Ok(transform) = q_pos.get(selected) {
-                let xy = transform.translation.xy();
                 //let xy = xy + map.size().as_vec2() / 2.0;
                 make_sprite(
-                    &mut commands, 
-                    xy, 
-                    Color::rgba_u8(55,155,255,150)
-                ).insert(PathSprite);
+                    &mut commands,
+                    transform.translation.xy(),
+                    3,
+                    Color::rgba_u8(55, 155, 255, 150),
+                )
+                .insert(PathSprite);
             }
 
             if let Ok(cursor_transform) = q_cursor.get_single() {
@@ -62,7 +68,7 @@ fn on_select(
                 if a == b {
                     return;
                 }
-                selection.path = get_path(a,b, &collision_map);
+                selection.path = get_path(a, b, &collision_map);
             }
         }
 
@@ -73,36 +79,34 @@ fn on_select(
                     //println!("Highlighting unit {:?}", clicked_unit);
                     selection.selected_unit = Some(clicked_unit);
                     selection.path = None;
-                } 
+                }
                 //println!("PAth from {} to {}?", a, b);
             }
-            
+
             if let (Some(path), Some(selected)) = (&selection.path, selection.selected_unit) {
                 if let Ok(mut commands) = q_unit_commands.get_mut(selected) {
                     commands.clear();
                     for window in path.as_slice().windows(2) {
-                        let [a,b] = [window[0],window[1]];
-                        let [a,b] = [map.xy_from_index_2d(a), map.xy_from_index_2d(b)];
-                        commands.push(UnitCommand::MoveToTile(a.as_ivec2(),b.as_ivec2()));
+                        let [a, b] = [window[0], window[1]];
+                        let [a, b] = [map.xy_from_index_2d(a), map.xy_from_index_2d(b)];
+                        commands.push(UnitCommand::MoveToTile(a.as_ivec2(), b.as_ivec2()));
                         commands.push(UnitCommand::Wait(config.settings.map_move_wait));
                     }
                 }
                 selection.path = None;
                 selection.selected_unit = None;
             }
-
         }
     }
-
 }
 
 fn get_path(a: IVec2, b: IVec2, map: &CollisionMap) -> Option<Vec<IVec2>> {
     let mut astar = AStar::new(10);
-    if let Some(path) = astar.find_path(&map.0,a.into(),b.into()) {
-        return Some(path.iter().map(|p|IVec2::from(*p)).collect::<Vec<IVec2>>());
+    if let Some(path) = astar.find_path(&map.0, a.into(), b.into()) {
+        return Some(path.iter().map(|p| IVec2::from(*p)).collect::<Vec<IVec2>>());
     }
-    None    
-} 
+    None
+}
 
 #[derive(Component)]
 struct PathSprite;
@@ -118,8 +122,8 @@ fn path_sprites(
         for p in path.iter() {
             let xy = IVec2::from(*p).as_vec2() - map.size().as_vec2() / 2.0;
             let xy = xy + Vec2::new(0.5, 0.5);
-            make_sprite(&mut commands, xy, Color::rgba_u8(200, 200, 200, 200))
-            .insert(PathSprite);
+            let xyz = Vec3::new(xy.x, xy.y, 2.0);
+            make_sprite(&mut commands, xy, 2, Color::rgba_u8(200, 200, 200, 200)).insert(PathSprite);
         }
     }
 }

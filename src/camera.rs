@@ -1,4 +1,4 @@
-use bevy::{prelude::*, input::mouse::MouseWheel};
+use bevy::{input::mouse::MouseWheel, prelude::*};
 use bevy_tiled_camera::{TiledCameraBundle, TiledCameraPlugin, TiledProjection};
 
 use crate::ResizeCamera;
@@ -7,7 +7,7 @@ pub struct GameCameraPlugin;
 
 pub enum ZoomCamera {
     In,
-    Out
+    Out,
 }
 impl Default for ZoomCamera {
     fn default() -> Self {
@@ -51,21 +51,21 @@ fn input(
             proj.pixels_per_tile = zoom * 16;
         }
 
-        let pixel = 1.0 / 64.0; 
+        let pixel = 1.0 / 64.0;
         let speed = 64.0 * 5.0;
         let vel = speed * pixel * time.delta_seconds();
-        let up = Vec3::new(0.0,vel,0.0);
+        let up = Vec3::new(0.0, vel, 0.0);
         let right = Vec3::new(vel, 0.0, 0.0);
         let mut movement = Vec3::ZERO;
-        
+
         if keyboard.pressed(KeyCode::W) {
             movement += up;
         }
-        
+
         if keyboard.pressed(KeyCode::S) {
             movement += -up;
         }
-        
+
         if keyboard.pressed(KeyCode::A) {
             movement += -right;
         }
@@ -77,7 +77,6 @@ fn input(
             transform.translation += movement;
         }
     }
-    
 }
 
 fn resize(
@@ -93,12 +92,11 @@ fn resize(
     }
 }
 
-
 // fn zoom(
 //     mut ev_zoom: EventReader<ZoomCamera>,
 //     mut q_cam: Query<&mut TiledProjection>,
 // ) {
-//     for ev in ev_zoom.iter() {  
+//     for ev in ev_zoom.iter() {
 //         for mut proj in q_cam.iter_mut() {
 //             let zoom = proj.pixels_per_tile / 16;
 //             let zoom = match ev {

@@ -9,7 +9,6 @@ pub struct Selectable;
 // //     xy: IVec2,
 // // }
 
-
 // impl Point2d for MapPosition {
 //     fn x(&self) -> i32 {
 //         self.xy.x
