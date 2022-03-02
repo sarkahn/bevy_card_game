@@ -72,7 +72,7 @@ fn begin_combat(
 
     for (entity,mut begin, timer) in q_begin.iter_mut() {
         if timer.0.finished() {
-            println!("LOAD ARENA");
+            state.set(GameState::LoadArena).unwrap();
         }
     }
 }

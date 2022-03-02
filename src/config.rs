@@ -29,6 +29,8 @@ pub struct GameSettings {
     pub map_move_wait: f32,
     #[serde(default)]
     pub map_file: String,
+    #[serde(default)]
+    pub arena_file: String,
 }
 
 #[derive(TypeUuid)]
@@ -53,22 +55,6 @@ impl AssetLoader for ConfigAssetLoader {
         load_context: &'a mut bevy::asset::LoadContext,
     ) -> BoxedFuture<'a, anyhow::Result<()>> {
         Box::pin(async move {
-            // println!("Loading config");
-            // let string = std::str::from_utf8(bytes)?;
-            // let mut chars = string.chars();
-            // if let Some(i) = chars.position(|c|c=='(') {
-            //     let header = &string[0..i];
-            //     let content = &string[i..];
-            //     let asset = LoadedAsset::new(ConfigAsset2 {
-            //         prefab_string: content.to_string(),
-            //     });
-            //     println!("Setting config asset for {}", header);
-            //     load_context.set_labeled_asset(header, asset);
-            // } else {
-            //     panic!("Error loading config asset {}, couldn't find header",
-            //         load_context.path().to_str().unwrap());
-            // }
-
             let settings: GameSettings = ron::de::from_bytes(bytes).unwrap();
 
             let asset = LoadedAsset::new(ConfigAsset { settings });

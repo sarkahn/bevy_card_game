@@ -4,7 +4,7 @@ use bevy::{
     reflect::TypeUuid,
     utils::{HashMap, HashSet},
 };
-use ldtk_rust::{Project, TilesetDefinition, LayerInstance, EntityDefinition};
+use ldtk_rust::{Project, TilesetDefinition, LayerInstance, EntityDefinition, FieldInstance};
 use serde_json::Value;
 
 use crate::UnitAnimation;
@@ -27,6 +27,8 @@ pub struct LdtkMap {
     pub images: HashMap<i32, Handle<Image>>,
     // Maps tileset id to data
     pub tilesets: HashMap<i32, MapTileset>,
+    // Maps depths to backgrounds
+    pub background: Option<Handle<Image>>,
     // Maps tileset name to it's id
     id_map: HashMap<String, i32>,
     //pub atlases: HashMap<i32, Handle<TextureAtlas>>,
@@ -99,6 +101,16 @@ impl AssetLoader for LdtkAssetLoader {
                 atlases.insert(id, atlas);
             }
 
+            let mut bg = None;
+            for level in project.levels.iter() {
+                if let Some(bg_path) = &level.bg_rel_path {
+                    let path: AssetPath = path.join(&bg_path).into();
+                    dep_paths.push(path.clone());
+                    let image: Handle<Image> = load_context.get_handle(bg_path);
+                    bg = Some(image);
+                }
+            }
+
             let mut entity_defs = HashMap::default();
             for def in project.defs.entities.iter() {
                 entity_defs.insert(def.uid, def);
@@ -142,6 +154,7 @@ impl AssetLoader for LdtkAssetLoader {
                 images,
                 tilesets,
                 id_map,
+                background: bg,
                 tile_size: IVec2::splat(max_tile_size),
                 entity_defs: MapEntityDefinitions::from_defs(&entity_defs)
             };
@@ -309,6 +322,28 @@ fn anims_from_def(
 pub struct MapTile {
     pub id: i32,
     pub xy: IVec2,
+}
+
+
+#[derive(Default, Debug)]
+pub struct MapEntityFields {
+    pub map: HashMap<String, Value>,
+}
+
+impl MapEntityFields {
+    pub fn from_ldtk_defs(fields: &Vec<FieldInstance>) -> Self {
+        let mut map = HashMap::default();
+        for field in fields.iter() {
+            let name = field.identifier.to_lowercase();
+            if let Some(value) = &field.value {
+                map.insert(name, value.clone());
+            }
+        }
+
+        Self {
+            map
+        }
+    }
 }
 
 #[derive(Debug,Default)]

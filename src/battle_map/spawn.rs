@@ -114,13 +114,10 @@ fn spawn_from_entity(
 ) {
     if let Some(config) = configs.get(SETTINGS_PATH) {
         for (entity,spawn) in q_spawns.iter() {
-            println!("SPAWNING {}", spawn.name);
             if let Some(ldtk) = ldtk_assets.get(spawn.ldtk.clone()) {
                 let name = spawn.name.to_lowercase();
                 let defs = &ldtk.entity_defs;                    
-                if name == "begincombat" {
-                    println!("WHAT THE EHELL");
-                }
+
                 //println!("DEFS {:?}", defs);
                 //println!("Slime? :{:?}", defs.def_from_name("slime"));
                 if let Some(def) = defs.def_from_name(&name) {
@@ -162,7 +159,6 @@ fn spawn_from_entity(
                                     new.insert(unit_commands);
                                 }
                             }
-                            
                         }
                     }
                 } else {

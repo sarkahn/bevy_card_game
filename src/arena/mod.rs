@@ -1,5 +1,4 @@
-mod config;
-mod render;
+mod load;
 mod units;
 
 use bevy::prelude::*;
@@ -7,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::GameState;
 
-use self::render::RenderPlugin;
+use self::load::RenderPlugin;
 
 pub struct ArenaPlugin;
 
