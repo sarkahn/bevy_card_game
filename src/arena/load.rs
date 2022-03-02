@@ -20,7 +20,7 @@ fn setup(
 ) {
     if let Some(config) = config.get(SETTINGS_PATH) {
         let ldtk_handle: Handle<LdtkMap> = asset_server.load(&config.settings.arena_file);
-        if let Some(ldtk) = ldtk_maps.get(ldtk_handle.clone()) {
+        if let Some(ldtk) = ldtk_maps.get(ldtk_handle.clone()) { 
 
         }
     }
