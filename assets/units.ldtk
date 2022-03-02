@@ -313,21 +313,21 @@
 			"cachedPixelData": { "opaqueTiles": "000000000", "averageColors": "000008de07de17de17de17de17de28de0000" }
 		},
 		{
-			"__cWid": 3,
+			"__cWid": 2,
 			"__cHei": 2,
 			"identifier": "Wizard",
 			"uid": 20,
-			"relPath": "textures/unitWizard_animation_x2.png",
-			"pxWid": 384,
-			"pxHei": 256,
-			"tileGridSize": 128,
+			"relPath": "textures/unitWizard_animation_Holy.png",
+			"pxWid": 128,
+			"pxHei": 128,
+			"tileGridSize": 64,
 			"spacing": 0,
 			"padding": 0,
 			"tagsSourceEnumUid": null,
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "000000", "averageColors": "4b684a784a784a784a780000" }
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4a784a784a784a78" }
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -423,7 +423,7 @@
 							"__identifier": "PlayerUnitType",
 							"__grid": [5,4],
 							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 20, "srcRect": [0,0,128,128] },
+							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 1,
