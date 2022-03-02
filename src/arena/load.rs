@@ -19,8 +19,10 @@ fn setup(
     asset_server: Res<AssetServer>,
 ) {
     if let Some(config) = config.get(SETTINGS_PATH) {
-        let ldtk_handle = asset_server.load(&config.settings.arena_file);
-        
+        let ldtk_handle: Handle<LdtkMap> = asset_server.load(&config.settings.arena_file);
+        if let Some(ldtk) = ldtk_maps.get(ldtk_handle.clone()) {
+
+        }
     }
         println!("Load arena!");
     // println!("Spawning bg");
@@ -37,7 +39,6 @@ fn setup(
 
     // commands.spawn_bundle(bg);
 }
-
 
 fn spawn_tile(
     commands: &mut Commands,
