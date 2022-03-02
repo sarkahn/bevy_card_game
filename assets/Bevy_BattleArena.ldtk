@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 50,
+	"nextUid": 49,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -146,7 +146,7 @@
 		},
 		{
 			"__type": "Entities",
-			"identifier": "Card_Data",
+			"identifier": "Cards",
 			"type": "Entities",
 			"uid": 10,
 			"gridSize": 1,
@@ -288,31 +288,10 @@
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
 			"pivotY": 0,
-			"fieldDefs": [
-				{
-					"identifier": "offset",
-					"__type": "Array<Float>",
-					"uid": 49,
-					"type": "F_Float",
-					"isArray": true,
-					"canBeNull": false,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": null,
-					"textLanguageMode": null
-				}
-			]
+			"fieldDefs": []
 		},
 		{
-			"identifier": "Card_Rarity",
+			"identifier": "Card_Commonness",
 			"uid": 12,
 			"tags": [],
 			"width": 240,
@@ -935,6 +914,23 @@
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "89998aa989998aaa" }
+		},
+		{
+			"__cWid": 3,
+			"__cHei": 3,
+			"identifier": "WizardSpellsHoly_animation",
+			"uid": 48,
+			"relPath": "textures/wizardSpellsHoly_animation.png",
+			"pxWid": 192,
+			"pxHei": 192,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "000000000", "averageColors": "000008de07de17de17de17de17de28de0000" }
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -952,7 +948,7 @@
 			"bgPos": "Cover",
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
-			"__bgPos": { "topLeftPx": [0,0], "scale": [1,1], "cropRect": [0,4,1920,1072] },
+			"__bgPos": { "topLeftPx": [0,0], "scale": [3.9703703703703703,3.9703703703703703], "cropRect": [2.2089552238805936,0,483.5820895522388,270] },
 			"externalRelPath": null,
 			"fieldInstances": [],
 			"layerInstances": [
@@ -971,7 +967,7 @@
 					"layerDefUid": 42,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGrid": [],
 					"intGridCsv": [],
@@ -1245,7 +1241,7 @@
 					"layerDefUid": 26,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGrid": [],
 					"intGridCsv": [],
@@ -1519,7 +1515,7 @@
 					"layerDefUid": 22,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGrid": [],
 					"intGridCsv": [],
@@ -1658,7 +1654,7 @@
 					"layerDefUid": 21,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGrid": [],
 					"intGridCsv": [],
@@ -1746,7 +1742,7 @@
 					"layerDefUid": 17,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGrid": [],
 					"intGridCsv": [],
@@ -1851,7 +1847,7 @@
 					"entityInstances": []
 				},
 				{
-					"__identifier": "Card_Data",
+					"__identifier": "Cards",
 					"__type": "Entities",
 					"__cWid": 1920,
 					"__cHei": 1072,
@@ -1894,16 +1890,10 @@
 							"height": 30,
 							"defUid": 11,
 							"px": [1430,526],
-							"fieldInstances": [{
-								"__identifier": "offset",
-								"__value": [-1.6,3.7,0],
-								"__type": "Array<Float>",
-								"defUid": 49,
-								"realEditorValues": [ { "id": "V_Float", "params": [-1.6] }, { "id": "V_Float", "params": [3.7] }, null ]
-							}]
+							"fieldInstances": []
 						},
 						{
-							"__identifier": "Card_Rarity",
+							"__identifier": "Card_Commonness",
 							"__grid": [1420,764],
 							"__pivot": [0,0],
 							"__tile": null,
@@ -1952,7 +1942,7 @@
 					"layerDefUid": 8,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGrid": [],
 					"intGridCsv": [],
@@ -1977,7 +1967,7 @@
 					"layerDefUid": 6,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGrid": [],
 					"intGridCsv": [],
@@ -2002,7 +1992,7 @@
 					"layerDefUid": 47,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGrid": [],
 					"intGridCsv": [],
@@ -2030,7 +2020,7 @@
 					"layerDefUid": 4,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGrid": [],
 					"intGridCsv": [],
