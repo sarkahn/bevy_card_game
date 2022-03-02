@@ -1,5 +1,29 @@
 use bevy::{ecs::system::EntityCommands, prelude::*};
 use bevy_egui::egui::Pos2;
+use serde_json::Value;
+
+
+pub trait GetValue {
+    fn as_f32(&self) -> Option<f32>;
+    fn as_i32(&self) -> Option<i32>;
+    fn as_vec2(&self) -> Option<Vec2>;
+}
+impl GetValue for Value {
+    fn as_f32(&self) -> Option<f32> {
+        self.as_f64().map(|v|v as f32)
+    }
+
+    fn as_i32(&self) -> Option<i32> {
+        self.as_i64().map(|v|v as i32)
+    }
+
+    fn as_vec2(&self) -> Option<Vec2> {
+        if let Some(arr) = self.as_array() {
+            
+        }
+        None
+    }
+}
 
 pub fn make_sprite<'w, 's, 'a>(
     commands: &'a mut Commands<'w, 's>,

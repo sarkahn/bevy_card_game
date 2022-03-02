@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::GameState;
+use crate::{GameState, ldtk_loader::LdtkMap};
 
 use super::ArenaState;
 
@@ -8,7 +8,8 @@ pub struct ArenaUnitsPlugin;
 
 impl Plugin for ArenaUnitsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::LoadArena).with_system(spawn));
+        app.add_system_set(SystemSet::on_enter(GameState::LoadArena)
+        .with_system(spawn));
     }
 }
 
@@ -16,3 +17,4 @@ impl Plugin for ArenaUnitsPlugin {
 pub struct ArenaUnit;
 
 pub fn spawn() {}
+

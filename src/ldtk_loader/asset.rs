@@ -1,3 +1,4 @@
+use core::f32;
 use std::collections::BTreeMap;
 
 use bevy::{
@@ -506,13 +507,52 @@ pub struct TilesLayer {
 #[derive(Default, Debug)]
 pub struct MapEntity {
     pub name: String,
-    pub fields: HashMap<String, Value>,
+    fields: HashMap<String, Value>,
     pub xy: IVec2,
     pub grid_xy: IVec2,
     pub size: IVec2,
     pub def_id: i32,
     pub tile_id: Option<i32>,
     pub tileset_id: Option<i32>,
+}
+
+// trait Val<T> {
+//     fn get_val<Q: Into<T>>(&self) -> T;
+// }
+
+// impl Val<f32> for &Value {
+//     fn get_val<Q: Into<f32>>(&self) -> f32 {
+//         self.as_f64().unwrap() as f32
+//     }
+// }
+
+pub trait Values {
+    fn as_f32(&self) -> Option<f32>;
+    fn as_i32(&self) -> Option<i32>;
+    fn as_vec<T>(&self) -> Option<Vec<T>>;
+}
+
+// impl Values for Value {
+//     fn as_f32(&self) -> Option<f32> {
+//         self.as_f64().map(|v| v as f32)
+//     }
+
+//     fn as_i32(&self) -> Option<i32> {
+//         self.as_i64().map(|v| v as i32)
+//     }
+
+// }
+
+
+impl MapEntity {
+    pub fn get_field(&self, field_name: &str) -> &Value
+    {
+        let val = self.fields.get("offset").unwrap_or_else(||
+            panic!("Couldn't find field {} for entity {}", field_name, self.name)
+        );
+  
+        val
+    }
 }
 
 #[derive(Default, Debug)]

@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 50,
+	"nextUid": 59,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -308,6 +308,46 @@
 					"acceptFileTypes": null,
 					"defaultOverride": null,
 					"textLanguageMode": null
+				},
+				{
+					"identifier": "name",
+					"__type": "String",
+					"uid": 52,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "id",
+					"__type": "String",
+					"uid": 56,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
 				}
 			]
 		},
@@ -334,7 +374,68 @@
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
 			"pivotY": 0,
-			"fieldDefs": []
+			"fieldDefs": [
+				{
+					"identifier": "offset",
+					"__type": "Array<Float>",
+					"uid": 50,
+					"type": "F_Float",
+					"isArray": true,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "name",
+					"__type": "String",
+					"uid": 53,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "id",
+					"__type": "String",
+					"uid": 57,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
 		},
 		{
 			"identifier": "Card_Abilities",
@@ -359,7 +460,68 @@
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
 			"pivotY": 0,
-			"fieldDefs": []
+			"fieldDefs": [
+				{
+					"identifier": "offset",
+					"__type": "Array<Float>",
+					"uid": 51,
+					"type": "F_Float",
+					"isArray": true,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "name",
+					"__type": "String",
+					"uid": 54,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "id",
+					"__type": "String",
+					"uid": 58,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
 		},
 		{
 			"identifier": "PlayerSpawnPoints",
@@ -1894,13 +2056,35 @@
 							"height": 30,
 							"defUid": 11,
 							"px": [1430,526],
-							"fieldInstances": [{
-								"__identifier": "offset",
-								"__value": [-1.6,3.7,0],
-								"__type": "Array<Float>",
-								"defUid": 49,
-								"realEditorValues": [ { "id": "V_Float", "params": [-1.6] }, { "id": "V_Float", "params": [3.7] }, null ]
-							}]
+							"fieldInstances": [
+								{
+									"__identifier": "offset",
+									"__value": [-1.6,3.7],
+									"__type": "Array<Float>",
+									"defUid": 49,
+									"realEditorValues": [ { "id": "V_Float", "params": [-1.6] }, { "id": "V_Float", "params": [3.7] } ]
+								},
+								{
+									"__identifier": "name",
+									"__value": "Title",
+									"__type": "String",
+									"defUid": 52,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Title"]
+									}]
+								},
+								{
+									"__identifier": "id",
+									"__value": "title",
+									"__type": "String",
+									"defUid": 56,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["title"]
+									}]
+								}
+							]
 						},
 						{
 							"__identifier": "Card_Rarity",
@@ -1911,7 +2095,35 @@
 							"height": 32,
 							"defUid": 12,
 							"px": [1420,764],
-							"fieldInstances": []
+							"fieldInstances": [
+								{
+									"__identifier": "offset",
+									"__value": [0,0],
+									"__type": "Array<Float>",
+									"defUid": 50,
+									"realEditorValues": [ null, null ]
+								},
+								{
+									"__identifier": "name",
+									"__value": "Rarity",
+									"__type": "String",
+									"defUid": 53,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Rarity"]
+									}]
+								},
+								{
+									"__identifier": "id",
+									"__value": "rarity",
+									"__type": "String",
+									"defUid": 57,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["rarity"]
+									}]
+								}
+							]
 						},
 						{
 							"__identifier": "Card_Abilities",
@@ -1922,7 +2134,35 @@
 							"height": 60,
 							"defUid": 14,
 							"px": [1422,806],
-							"fieldInstances": []
+							"fieldInstances": [
+								{
+									"__identifier": "offset",
+									"__value": [0,0],
+									"__type": "Array<Float>",
+									"defUid": 51,
+									"realEditorValues": [ null, null ]
+								},
+								{
+									"__identifier": "name",
+									"__value": "Ability",
+									"__type": "String",
+									"defUid": 54,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Ability"]
+									}]
+								},
+								{
+									"__identifier": "id",
+									"__value": "ability0",
+									"__type": "String",
+									"defUid": 58,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["ability0"]
+									}]
+								}
+							]
 						},
 						{
 							"__identifier": "Card_Abilities",
@@ -1933,7 +2173,35 @@
 							"height": 60,
 							"defUid": 14,
 							"px": [1422,868],
-							"fieldInstances": []
+							"fieldInstances": [
+								{
+									"__identifier": "offset",
+									"__value": [0,0],
+									"__type": "Array<Float>",
+									"defUid": 51,
+									"realEditorValues": [ null, null ]
+								},
+								{
+									"__identifier": "name",
+									"__value": "Ability",
+									"__type": "String",
+									"defUid": 54,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Ability"]
+									}]
+								},
+								{
+									"__identifier": "id",
+									"__value": "ability1",
+									"__type": "String",
+									"defUid": 58,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["ability1"]
+									}]
+								}
+							]
 						}
 					]
 				},

@@ -7,6 +7,7 @@ use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
 use config::{ConfigAsset, ConfigPlugin};
 use ldtk_loader::LdtkPlugin;
+use prefabs::PrefabsPlugin;
 use serde::{Deserialize, Serialize};
 
 use self::battle_map::BattleMapPlugin;
@@ -22,6 +23,7 @@ mod ldtk_loader;
 mod util;
 mod party;
 mod unit;
+mod prefabs;
 
 pub use grid::*;
 
@@ -68,6 +70,7 @@ pub fn main() {
         .add_plugin(AssetsPlugin)
         .add_plugin(EguiPlugin)
         .add_plugin(AnimationPlugin)
+        .add_plugin(PrefabsPlugin)
         .add_state(GameState::Starting)
         .add_startup_system(load_configs)
         .add_system_set(

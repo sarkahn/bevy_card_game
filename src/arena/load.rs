@@ -107,6 +107,7 @@ fn on_spawn(
 #[derive(Default)]
 pub struct CardsAtlas(Handle<TextureAtlas>);
 
+
 /// Build a card entity with it's labels as child entities
 fn spawn_card(
     commands: &mut Commands,
@@ -141,53 +142,17 @@ fn spawn_card(
         element.get_sprite_id(),
     ).id();
 
-    let title_offset = title.fields.get("offset").as_ref().unwrap().as_array().unwrap();
-    let title_offset = title_offset.iter().map(|v|v.as_f64().unwrap() as f32);
-    let xy: Vec<f32> = title_offset.collect();
-    let xy = Vec2::new(xy[0], xy[1]);
-    println!("XY {:?}", xy);
-    let title = get_label(title, "a");
-    let title = commands.spawn().insert(title)
-    .insert(CardLabelType::Title)
-    .insert(Transform::from_xyz(xy.x, xy.y, 0.0))
-    .insert(GlobalTransform::default())
-    .id();
 
-    //let title = get_label(title, "Title", root_offset);
-    //let title = commands.spawn().insert(title)
-    //.insert(CardLabelType::Title)
-    // .insert_bundle(Text2dBundle {
-    //     text: Text::with_section(
-    //         "Hello",
-    //         style.clone(),
-    //         text_alignment,
-    //     ),
-    //     transform: ttransform,
-    //     ..Default::default()
-    // })
-    //.id();
-
-    // let rarity = get_label(rarity, "Rarity", root_offset);
-    // let xy = rarity.xy();
-    // let rarity = commands.spawn().insert(rarity)
-    // .insert(Transform::from_translation(xy.extend(0.0)))
-    // .insert(CardLabelType::Rarity)
-    // .id();
+    let title = get_label_entity(commands, title);
+    let rarity = get_label_entity(commands, rarity);
 
     let mut children = Vec::new();
 
     children.push(title);
 
-    //make_sprite(commands, xy, 20, Color::ORANGE);
-    // children.push(rarity);
-
-    // for (i,ability) in abilities.enumerate() {
-    //     let ability = get_label(ability, &format!("Ability{}", i), root_offset);
-    //     let ability = commands.spawn().insert(ability)
-    //     .insert(CardLabelType::Ability(i as i32))
-    //     .id();
-    //     children.push(ability);
-    // } 
+    for (i,ability) in abilities.enumerate() {
+        let ability = get_label_entity(commands, ability);
+    }
 
     commands.entity(root).push_children(
         &children
@@ -212,10 +177,32 @@ fn find_all_entities<'a>(
     entities.iter().filter(move |e|e.name==name)
 }
 
+fn get_label_entity(commands: &mut Commands, label: &MapEntity) -> Entity {
+    let xyz = get_label_pos(label);
+    let title = get_label(label, &label.name);
+    commands.spawn().insert(title)
+    .insert(CardLabelType::Title)
+    .insert(Transform::from_translation(xyz))
+    .insert(GlobalTransform::default())
+    .id()
+}
 
 fn get_label(entity: &MapEntity, name: &str) -> CardLabel {
     let area = get_area(entity);
     CardLabel::new(name, area)
+}
+
+fn get_label_pos(label: &MapEntity) -> Vec3 {
+    // let xy = label.fields.get("offset").unwrap_or_else(||
+    //     panic!("Couldn't find offset fields for entity {}", label.name)
+    // );
+
+    // let xy = xy.as_array().unwrap_or_else(||
+    //     panic!("Offset field was an unexpected type! Should be an Array"));
+    // let xy = xy.iter().map(|v|v.as_f64().unwrap() as f32);
+    // let xy: Vec<f32> = xy.collect();
+    // Vec2::new(xy[0], xy[1]).extend(0.0)
+    Vec3::ZERO
 }
 
 fn get_area(entity: &MapEntity) -> Rect<f32> {
