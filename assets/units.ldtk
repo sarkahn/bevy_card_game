@@ -92,8 +92,8 @@
 			"identifier": "Unit",
 			"uid": 1,
 			"tags": ["root"],
-			"width": 248,
-			"height": 248,
+			"width": 256,
+			"height": 256,
 			"resizableX": false,
 			"resizableY": false,
 			"keepAspectRatio": false,
@@ -221,8 +221,8 @@
 			"identifier": "Spell",
 			"uid": 15,
 			"tags": ["spell"],
-			"width": 128,
-			"height": 128,
+			"width": 256,
+			"height": 256,
 			"resizableX": false,
 			"resizableY": false,
 			"keepAspectRatio": false,
@@ -479,7 +479,7 @@
 		{
 			"__cWid": 3,
 			"__cHei": 3,
-			"identifier": "Spell",
+			"identifier": "WizardSpell_Holy",
 			"uid": 13,
 			"relPath": "textures/wizardSpellsHoly_animation.png",
 			"pxWid": 192,
@@ -496,7 +496,7 @@
 		{
 			"__cWid": 2,
 			"__cHei": 2,
-			"identifier": "Wizard",
+			"identifier": "Wizard_holy",
 			"uid": 20,
 			"relPath": "textures/unitWizard_animation_Holy.png",
 			"pxWid": 128,
@@ -624,13 +624,13 @@
 					"entityInstances": [
 						{
 							"__identifier": "Spell",
-							"__grid": [210,157],
+							"__grid": [68,165],
 							"__pivot": [0.5,0.5],
 							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
-							"width": 128,
-							"height": 128,
+							"width": 256,
+							"height": 256,
 							"defUid": 15,
-							"px": [210,157],
+							"px": [68,165],
 							"fieldInstances": [
 								{
 									"__identifier": "Name",
@@ -644,20 +644,29 @@
 								},
 								{
 									"__identifier": "speed",
-									"__value": 0.2,
+									"__value": 0.02,
 									"__type": "Float",
 									"defUid": 34,
-									"realEditorValues": [{ "id": "V_Float", "params": [0.2] }]
+									"realEditorValues": [{ "id": "V_Float", "params": [0.02] }]
 								},
-								{ "__identifier": "Element", "__value": null, "__type": "String", "defUid": 42, "realEditorValues": [] },
+								{
+									"__identifier": "Element",
+									"__value": "Lightning",
+									"__type": "String",
+									"defUid": 42,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Lightning"]
+									}]
+								},
 								{
 									"__identifier": "Frames",
-									"__value": "[0,1,2,3,2,1,0]",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10,11,12,5,4,3,2,1,0]",
 									"__type": "String",
 									"defUid": 44,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["[0,1,2,3,2,1,0]"]
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10,11,12,5,4,3,2,1,0]"]
 									}]
 								},
 								{
@@ -711,6 +720,56 @@
 									"realEditorValues": [{
 										"id": "V_String",
 										"params": ["textures/unitWizard_animation_Lightning.png"]
+									}]
+								}
+							]
+						},
+						{
+							"__identifier": "Spell",
+							"__grid": [60,244],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
+							"width": 256,
+							"height": 256,
+							"defUid": 15,
+							"px": [60,244],
+							"fieldInstances": [
+								{ "__identifier": "Name", "__value": "Holy", "__type": "String", "defUid": 16, "realEditorValues": [] },
+								{
+									"__identifier": "speed",
+									"__value": 0.08,
+									"__type": "Float",
+									"defUid": 34,
+									"realEditorValues": [{ "id": "V_Float", "params": [0.08] }]
+								},
+								{
+									"__identifier": "Element",
+									"__value": "Holy",
+									"__type": "String",
+									"defUid": 42,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Holy"]
+									}]
+								},
+								{
+									"__identifier": "Frames",
+									"__value": "[0,1,2,3,4,5,6,5,4,5,6,7,6,5,4,3,2,1,0]",
+									"__type": "String",
+									"defUid": 44,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["[0,1,2,3,4,5,6,5,4,5,6,7,6,5,4,3,2,1,0]"]
+									}]
+								},
+								{
+									"__identifier": "Texture",
+									"__value": "textures/wizardSpellsHoly_animation.png",
+									"__type": "FilePath",
+									"defUid": 45,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/wizardSpellsHoly_animation.png"]
 									}]
 								}
 							]
@@ -768,13 +827,13 @@
 					"entityInstances": [
 						{
 							"__identifier": "Unit",
-							"__grid": [157,106],
+							"__grid": [246,200],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
-							"width": 248,
-							"height": 248,
+							"width": 256,
+							"height": 256,
 							"defUid": 1,
-							"px": [157,106],
+							"px": [246,200],
 							"fieldInstances": [
 								{ "__identifier": "name", "__value": "Wizard", "__type": "String", "defUid": 3, "realEditorValues": [] },
 								{ "__identifier": "hp", "__value": 0, "__type": "Int", "defUid": 5, "realEditorValues": [] },
