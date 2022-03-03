@@ -52,7 +52,7 @@ impl LdtkMap {
     }
 
     pub fn tileset_from_name(&self, name: &str) -> Option<&MapTileset> {
-        if let Some(id) = self.id_map.get(&name.to_lowercase()) {
+        if let Some(id) = self.path_map.get(&name.to_lowercase()) {
             return self.tilesets.get(&id);
         }
         None
@@ -121,7 +121,6 @@ impl AssetLoader for LdtkAssetLoader {
 
             for def in project.defs.tilesets.iter() {
                 let path: AssetPath = path.join(&def.rel_path).into();
-                println!("loading {}", path.path().to_string_lossy());
                 dep_paths.push(path.clone());
                 let image: Handle<Image> = load_context.get_handle(path);
                 let ts = build_tileset(def, image.clone());
@@ -139,7 +138,10 @@ impl AssetLoader for LdtkAssetLoader {
                 tilesets.insert(id, ts);
                 images.insert(id, image.clone());
                 atlases.insert(id, atlas);
-                path_map.insert(def.rel_path.to_lowercase(), id);
+
+                let path = def.rel_path.to_lowercase().replace("\"", "");
+                println!("Adding {} to path map, id {}", path, id);
+                path_map.insert(path, id);
             }
 
             let mut bg = None;
@@ -171,9 +173,6 @@ impl AssetLoader for LdtkAssetLoader {
                 if let Some(layers) = &level.layer_instances {
                     for layer in layers {
                         let name = layer.identifier.clone();
-
-
-
                         match layer.layer_instance_type.as_str() {
                             "IntGrid" => {}
                             "Entities" => {
@@ -719,7 +718,13 @@ impl MapEntity {
     }
 
     pub fn get_str(&self, name: &str) -> &str {
-        self.fields.field(name).unwrap().as_str().unwrap()
+        let field = self.fields.field(name).unwrap_or_else(||
+            panic!("Error loading field {}, content: {:?}", name, self)
+        );
+        let str = field.as_str().unwrap_or_else(||
+            panic!("Error loading field {}, not a string! Content {:?}", name, self)
+        ); 
+        str
     }
     pub fn get_f32(&self, name: &str) -> f32 {
         self.fields.field(name).unwrap().as_f32().unwrap()

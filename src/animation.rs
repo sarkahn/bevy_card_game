@@ -50,6 +50,15 @@ impl AnimationController {
         }
     }
 
+    pub fn play_any(&mut self) {
+        let k = self.animations.iter().next();
+        if k.is_none() {
+            return;
+        }
+        let k = k.unwrap().0.clone();
+        self.play(&k);   
+    }
+
     pub fn add(&mut self, name: &str, anim: AnimationData) {
         let name = name.to_lowercase();
         //let anim_count = self.animations.len();
@@ -91,6 +100,7 @@ fn animate(
                     panic!("Error switching sprites, couldn't find tileset {}", new)
                 );
                 *atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
+                sprite.index = 0;
                 println!("Changing to tileset {}", new);
                 controller.change = None;
             } else {
