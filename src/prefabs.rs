@@ -107,26 +107,28 @@ fn get_root<'a>(
 ) -> Option<&'a MapEntity> {
     for layer in ldtk.layers() {
         let mut entity = commands.entity(entity);
-        let entities = layer.as_entities();
 
-        let unit = entities.get_tagged("root").next();
-        if unit.is_none() {
-            continue;
+        if let Some(entities) = layer.as_entities() {
+            let unit = entities.get_tagged("root").next();
+            if unit.is_none() {
+                continue;
+            }
+            let unit = unit.unwrap();
+            // println!("Pivot for {}: {}", unit.name(), unit.pivot());
+       
+            let unit_name = unit.field("name").unwrap().as_str().unwrap();
+            let tileset_id = unit.tileset_id().unwrap_or_else(||
+                panic!("Error building prefab, {} has no attached tileset", unit_name)
+            );
+    
+            let tileset = ldtk.tileset_from_id(tileset_id).unwrap();
+            let atlas = get_atlas(atlases, atlas_handles, tileset);
+            let sprite = sprite_from_entity(unit, atlas, 0);
+    
+            entity.insert_bundle(sprite);
+            return Some(unit)
         }
-        let unit = unit.unwrap();
-        // println!("Pivot for {}: {}", unit.name(), unit.pivot());
-   
-        let unit_name = unit.field("name").unwrap().as_str().unwrap();
-        let tileset_id = unit.tileset_id().unwrap_or_else(||
-            panic!("Error building prefab, {} has no attached tileset", unit_name)
-        );
 
-        let tileset = ldtk.tileset_from_id(tileset_id).unwrap();
-        let atlas = get_atlas(atlases, atlas_handles, tileset);
-        let sprite = sprite_from_entity(unit, atlas, 0);
-
-        entity.insert_bundle(sprite);
-        return Some(unit)
     }
     None
 }
@@ -135,9 +137,12 @@ fn get_animations(
     ldtk: &LdtkMap,
     unit: &MapEntity,
 ) -> Option<AnimationController> {
-    let anims = ldtk.layers().flat_map(
-        |l|l.as_entities().get_tagged("animation")
-    );
+    let anims: Vec<_> = ldtk.layers().filter(|l|l.is_entities()).flat_map(
+        |l|l.as_entities().unwrap().get_tagged("animation")
+    ).collect();
+    if anims.len() == 0 {
+        return None;
+    } 
     let mut all = Vec::new();
     for anim in anims {
         let anim = anim_from_entity(anim, ldtk);
@@ -232,8 +237,8 @@ fn make_spells(
     atlas_handles: &mut AtlasHandles,
     commands: &mut Commands,
 ) {
-    for layer in ldtk.layers() {
-        let entities = layer.as_entities();
+    for layer in ldtk.layers().filter(|l|l.is_entities()) {
+        let entities = layer.as_entities().unwrap();
         for spell in entities.get_tagged("spell") {
             //println!("Found spell");
             let tex = spell.get_str("texture");

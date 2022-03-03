@@ -101,7 +101,7 @@ fn on_spawn(
                 let entities = data_layer.as_entities();
              
                 let font = asset_server.load("fonts/DejaVuSerif.ttf");
-                spawn_card(&mut commands, entities, atlas.0.clone(), spawn.element, font);
+                spawn_card(&mut commands, entities.unwrap(), atlas.0.clone(), spawn.element, font);
             }
         }
     }

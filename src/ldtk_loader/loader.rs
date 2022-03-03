@@ -550,17 +550,25 @@ pub enum MapLayer {
     Entities(EntitiesLayer),
 }
 impl MapLayer {
-    pub fn as_tiles(&self) -> &TilesLayer {
+    pub fn as_tiles(&self) -> Option<&TilesLayer> {
         match self {
-            MapLayer::Tiles(t) => t,
-            MapLayer::Entities(_) => panic!("Attempting to access tiles layer as entities"),
+            MapLayer::Tiles(t) => Some(t),
+            MapLayer::Entities(_) => None,
         }
     }
-    pub fn as_entities(&self) -> &EntitiesLayer {
+    pub fn as_entities(&self) -> Option<&EntitiesLayer> {
         match self {
-            MapLayer::Tiles(_) => panic!("Attempting to access tiles layer as entities"),
-            MapLayer::Entities(e) => e,
+            MapLayer::Tiles(_) => None,
+            MapLayer::Entities(e) => Some(e),
         }
+    }
+
+    pub fn is_entities(&self) -> bool {
+        self.as_entities().is_some()
+    }
+    
+    pub fn is_tiles(&self) -> bool {
+        self.as_tiles().is_some()
     }
 }
 
