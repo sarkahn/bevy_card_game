@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 42,
+	"nextUid": 48,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -246,12 +246,52 @@
 					"textLanguageMode": null
 				},
 				{
-					"identifier": "frames",
-					"__type": "Int",
-					"uid": 35,
-					"type": "F_Int",
+					"identifier": "Element",
+					"__type": "String",
+					"uid": 42,
+					"type": "F_String",
 					"isArray": false,
-					"canBeNull": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Frames",
+					"__type": "String",
+					"uid": 44,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Texture",
+					"__type": "FilePath",
+					"uid": 45,
+					"type": "F_Path",
+					"isArray": false,
+					"canBeNull": true,
 					"arrayMinLength": null,
 					"arrayMaxLength": null,
 					"editorDisplayMode": "Hidden",
@@ -356,6 +396,26 @@
 						"params": ["[0,1,2,1]"]
 					},
 					"textLanguageMode": null
+				},
+				{
+					"identifier": "Texture",
+					"__type": "FilePath",
+					"uid": 46,
+					"type": "F_Path",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
 				}
 			]
 		}
@@ -410,6 +470,23 @@
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4a784a784a784a78" }
+		},
+		{
+			"__cWid": 0,
+			"__cHei": 0,
+			"identifier": "Tileset",
+			"uid": 47,
+			"relPath": null,
+			"pxWid": 0,
+			"pxHei": 0,
+			"tileGridSize": 16,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": null
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -467,7 +544,71 @@
 							"fieldInstances": [
 								{ "__identifier": "Name", "__value": "Holy", "__type": "String", "defUid": 16, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0, "__type": "Float", "defUid": 34, "realEditorValues": [] },
-								{ "__identifier": "frames", "__value": 0, "__type": "Int", "defUid": 35, "realEditorValues": [] }
+								{
+									"__identifier": "Element",
+									"__value": "Holy",
+									"__type": "String",
+									"defUid": 42,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Holy"]
+									}]
+								},
+								{
+									"__identifier": "Frames",
+									"__value": "[0,1,2,3,4,5,6,7,6,5]",
+									"__type": "String",
+									"defUid": 44,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["[0,1,2,3,4,5,6,7,6,5]"]
+									}]
+								},
+								{ "__identifier": "Texture", "__value": null, "__type": "FilePath", "defUid": 45, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "Spell",
+							"__grid": [3,93],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
+							"width": 64,
+							"height": 64,
+							"defUid": 15,
+							"px": [3,93],
+							"fieldInstances": [
+								{
+									"__identifier": "Name",
+									"__value": "Lightning",
+									"__type": "String",
+									"defUid": 16,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Lightning"]
+									}]
+								},
+								{ "__identifier": "speed", "__value": 0, "__type": "Float", "defUid": 34, "realEditorValues": [] },
+								{
+									"__identifier": "Element",
+									"__value": "Lightning",
+									"__type": "String",
+									"defUid": 42,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Lightning"]
+									}]
+								},
+								{ "__identifier": "Frames", "__value": null, "__type": "String", "defUid": 44, "realEditorValues": [] },
+								{
+									"__identifier": "Texture",
+									"__value": "textures/wizardSpellsLightning_animation.png",
+									"__type": "FilePath",
+									"defUid": 45,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/wizardSpellsLightning_animation.png"]
+									}]
+								}
 							]
 						}
 					]
