@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{ldtk_loader::{LdtkMap, MapEntityDef, MapTileset}, make_sprite_atlas_sized, AnimationData, AtlasHandles, make_sprite_atlas, AnimationController};
+use crate::{ldtk_loader::{LdtkMap, MapEntityDef, MapTileset, MapEntity}, make_sprite_atlas_sized, AnimationData, AtlasHandles, make_sprite_atlas, AnimationController};
 
 pub const PREFAB_ASSET_PATH: &str = "units.ldtk";
 
@@ -67,44 +67,58 @@ fn build(
 ) {
     for (entity, load) in q_prefabs.iter() {
         if let Some(ldtk) = ldtk.get(&load.0) {
-            let defs = ldtk.entity_defs();
-            //println!("DEFS {:?}", defs);
-            let unit = defs.def_from_name("Unit")
-                .unwrap_or_else(||panic!("Error building prefab - couldn't find 'Unit' definition in {}", ldtk.name));
+            let layer = ldtk.layer_from_name("unit").unwrap_or_else(||
+                panic!("Error building prefab, no 'Unit' layer found")
+            );
 
-            let unit_name = unit.get_str("name");
+            let entities = layer.as_entities();
+       
+            let unit = entities.get_from_name("unit").unwrap_or_else(||
+                panic!("Error building prefab, no 'unit' entity found")
+            );
 
+            let unit_name = unit.field("name").unwrap().as_str().unwrap();
             let tileset_id = unit.tileset_id().unwrap_or_else(||
                 panic!("Error building prefab, {} has no attached tileset", unit_name));
+
 
             let tileset = ldtk.tileset_from_id(tileset_id).unwrap();
             let atlas = get_atlas(&mut atlases, &mut atlas_handles, tileset);
             
+            // let defs = ldtk.entity_defs();
+            // //println!("DEFS {:?}", defs);
+            // let unit = defs.def_from_name("Unit")
+            //     .unwrap_or_else(||panic!("Error building prefab - couldn't find 'Unit' definition in {}", ldtk.name()));
+
+
             let mut entity = commands.entity(entity);
 
-            let sprite = sprite_from_def(unit, atlas, Vec2::ZERO, 0);
+            let sprite = sprite_from_entity(unit, atlas, Vec2::ZERO, 0);
             entity.insert_bundle(sprite);
             
-            let anims = defs.all_from_name("animation");
-            let anims: Vec<_> = anims.map(|a|animation_from_def(a)).collect();
+            let defs = ldtk.entity_defs();
+
+            let anims = defs.get_tagged("animation");
+
+            let anims: Vec<_> = anims.map(|a|anim_from_def(a)).collect();
 
             if !anims.is_empty() {
-                println!("Inserting animation!");
                 let mut controller = AnimationController::default();
                 for anim in anims.iter() {
+                    println!("Adding anim {}", anim.name);
                     controller.add(&anim.name, anim.clone());
                 }
                 entity.insert(controller);
             }
 
-            println!("REMOVING loadprefab??");
+            // println!("REMOVING loadprefab??");
             entity.remove::<LoadPrefab>();
         }
     }
 }
 
-fn sprite_from_def(
-    def: &MapEntityDef,
+fn sprite_from_entity(
+    def: &MapEntity,
     atlas: Handle<TextureAtlas>,
     pos: Vec2,
     layer: i32,
@@ -124,12 +138,14 @@ fn sprite_from_def(
     }
 }
 
-fn animation_from_def(def: &MapEntityDef) -> AnimationData {
+fn anim_from_def(def: &MapEntityDef) -> AnimationData {
+    
     let name = def.get_str("name");
     let frames = def.get_str("frames");
     let speed = def.get_f32("speed");
 
-    let frames: Vec<usize> = ron::de::from_str(frames).expect("Error parsing animation frames: {} should be array of indices");
+    let frames: Vec<usize> = ron::de::from_str(frames)
+        .expect("Error parsing animation frames: {} should be array of indices");
     AnimationData {
         name: name.to_lowercase(),
         frames,

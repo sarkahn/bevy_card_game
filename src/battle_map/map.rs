@@ -146,14 +146,14 @@ fn build_map(
     let configs = configs.get(SETTINGS_PATH).unwrap();
     if let Some(ldtk) = ldtk.get(&configs.settings.map_file) {
         println!("Loading map!");
-        if map.size().as_ivec2() != ldtk.size {
-            map.0 = Grid::new(TerrainTile::default(), ldtk.size.as_uvec2().into());
+        if map.size().as_ivec2() != ldtk.size() {
+            map.0 = Grid::new(TerrainTile::default(), ldtk.size().as_uvec2().into());
             collision_map.0 = PathMap2d::new(map.size().into());
             units.0 = Grid::default(collision_map.size().into());
         }
         if let Ok(mut cam) = q_cam.get_single_mut() {
             cam.pixels_per_tile = 64;
-            cam.set_tile_count(ldtk.size.as_uvec2().into());
+            cam.set_tile_count(ldtk.size().as_uvec2().into());
         }
 
         for (depth, layer) in ldtk.layers().rev().enumerate() {
@@ -162,7 +162,7 @@ fn build_map(
                     let tileset = ldtk.tileset_from_id(layer.tileset_id).unwrap();
 
                     let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
-                    let axis_offset = axis_offset(ldtk.size);
+                    let axis_offset = axis_offset(ldtk.size());
 
                     for tile in layer.tiles.iter() {
                         spawn_tile(
@@ -177,7 +177,7 @@ fn build_map(
                     }
                 }
                 MapLayer::Entities(layer) => {
-                    let animations = &layer.animations;
+                    //let animations = Default::default();
                     for entity in layer.entities() {
                         spawn_entity(
                             ldtk,
@@ -186,7 +186,7 @@ fn build_map(
                             entity,
                             &mut units,
                             depth,
-                            animations,
+                            //animations,
                             &mut ev_spawn,
                         );
                     }
@@ -239,21 +239,21 @@ fn spawn_entity(
     entity: &MapEntity,
     units: &mut MapUnits,
     depth: usize,
-    animations: &HashMap<i32, HashMap<String, AnimationData>>,
+    //animations: &HashMap<i32, HashMap<String, AnimationData>>,
     ev_spawn: &mut EventWriter<SpawnUnit>,
 ) {
     let axis_offset = axis_offset(units.size().as_ivec2());
-    if let (Some(tile_id), Some(tileset_id)) = (entity.tile_id, entity.tileset_id) {
+    if let (Some(tile_id), Some(tileset_id)) = (entity.tile_id(), entity.tileset_id()) {
         let tileset = ldtk.tileset_from_id(tileset_id).unwrap();
         let atlas = get_atlas(atlases, atlas_handles, tileset);
-        let xy = entity.grid_xy;
+        let xy = entity.grid_xy();
         //let position = (entity.grid_xy.as_vec2() + axis_offset)
         //    .floor()
         //    .extend(depth as f32)
         //    .as_ivec3();
         //println!("Spawn pos for entity {}: {}", entity.name, position);
         let position = xy.extend(depth as i32);
-        let animations = animations.get(&entity.def_id);
+        //let animations = animations.get(&entity.def_id());
 
         let enums = tileset.enums.get(&tile_id);
 
@@ -261,7 +261,7 @@ fn spawn_entity(
             atlas: atlas.clone(),
             sprite_index: tile_id,
             position,
-            animations: animations.cloned(),
+            //animations: animations.cloned(),
             enums: enums.cloned(),
         };
 

@@ -1,13 +1,13 @@
 // This module reuses a lot of code from bevy_ecs_ldtk:
 // https://github.com/Trouv/bevy_ecs_ldtk
 
-mod asset;
+mod loader;
 
 use bevy::prelude::*;
 
-pub use asset::*;
+pub use loader::*;
 
-use self::asset::LdtkAssetPlugin;
+use self::loader::LdtkAssetPlugin;
 pub struct LdtkPlugin;
 
 impl Plugin for LdtkPlugin {

@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 34,
+	"nextUid": 42,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -51,7 +51,7 @@
 		},
 		{
 			"__type": "Entities",
-			"identifier": "UnitType",
+			"identifier": "Unit",
 			"type": "Entities",
 			"uid": 18,
 			"gridSize": 1,
@@ -72,7 +72,7 @@
 		{
 			"identifier": "Unit",
 			"uid": 1,
-			"tags": [],
+			"tags": ["root"],
 			"width": 248,
 			"height": 248,
 			"resizableX": false,
@@ -181,7 +181,7 @@
 		{
 			"identifier": "Spell",
 			"uid": 15,
-			"tags": [],
+			"tags": ["spell"],
 			"width": 64,
 			"height": 64,
 			"resizableX": false,
@@ -194,7 +194,7 @@
 			"renderMode": "Tile",
 			"showName": true,
 			"tilesetId": 13,
-			"tileId": 0,
+			"tileId": 1,
 			"tileRenderMode": "FitInside",
 			"maxCount": 0,
 			"limitScope": "PerLevel",
@@ -226,12 +226,12 @@
 					"textLanguageMode": null
 				},
 				{
-					"identifier": "Animations",
-					"__type": "String",
-					"uid": 17,
-					"type": "F_Text",
+					"identifier": "speed",
+					"__type": "Float",
+					"uid": 34,
+					"type": "F_Float",
 					"isArray": false,
-					"canBeNull": true,
+					"canBeNull": false,
 					"arrayMinLength": null,
 					"arrayMaxLength": null,
 					"editorDisplayMode": "Hidden",
@@ -242,20 +242,35 @@
 					"max": null,
 					"regex": null,
 					"acceptFileTypes": null,
-					"defaultOverride": {
-						"id": "V_String",
-						"params": [
-							"{     \"Idle\": (         frames: [1,2,3,4,5,6,7,6,5,4,3,2,1,0],         speed: 0.2,  )} "
-						]
-					},
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "frames",
+					"__type": "Int",
+					"uid": 35,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
 					"textLanguageMode": null
 				}
 			]
 		},
 		{
-			"identifier": "Holy2",
-			"uid": 23,
-			"tags": [ "animation", "moveable" ],
+			"identifier": "Animation",
+			"uid": 36,
+			"tags": ["animation"],
 			"width": 16,
 			"height": 16,
 			"resizableX": false,
@@ -265,10 +280,10 @@
 			"lineOpacity": 1,
 			"hollow": false,
 			"color": "#94D9B3",
-			"renderMode": "Rectangle",
+			"renderMode": "Tile",
 			"showName": true,
-			"tilesetId": null,
-			"tileId": null,
+			"tilesetId": 20,
+			"tileId": 0,
 			"tileRenderMode": "FitInside",
 			"maxCount": 0,
 			"limitScope": "PerLevel",
@@ -279,7 +294,7 @@
 				{
 					"identifier": "name",
 					"__type": "String",
-					"uid": 24,
+					"uid": 37,
 					"type": "F_String",
 					"isArray": false,
 					"canBeNull": true,
@@ -295,14 +310,34 @@
 					"acceptFileTypes": null,
 					"defaultOverride": {
 						"id": "V_String",
-						"params": ["Idle"]
+						"params": ["blah"]
 					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "speed",
+					"__type": "Float",
+					"uid": 38,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Float", "params": [0.2] },
 					"textLanguageMode": null
 				},
 				{
 					"identifier": "frames",
 					"__type": "String",
-					"uid": 26,
+					"uid": 41,
 					"type": "F_String",
 					"isArray": false,
 					"canBeNull": true,
@@ -320,141 +355,6 @@
 						"id": "V_String",
 						"params": ["[0,1,2,1]"]
 					},
-					"textLanguageMode": null
-				},
-				{
-					"identifier": "speed",
-					"__type": "Float",
-					"uid": 28,
-					"type": "F_Float",
-					"isArray": false,
-					"canBeNull": false,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Float", "params": [0.8] },
-					"textLanguageMode": null
-				},
-				{
-					"identifier": "Motion",
-					"__type": "String",
-					"uid": 33,
-					"type": "F_Text",
-					"isArray": false,
-					"canBeNull": true,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": {
-						"id": "V_String",
-						"params": ["{     direction: Left,     speed: 0.5, }"]
-					},
-					"textLanguageMode": null
-				}
-			]
-		},
-		{
-			"identifier": "Holy",
-			"uid": 29,
-			"tags": [ "animation", "Unit" ],
-			"width": 16,
-			"height": 16,
-			"resizableX": false,
-			"resizableY": false,
-			"keepAspectRatio": false,
-			"fillOpacity": 1,
-			"lineOpacity": 1,
-			"hollow": false,
-			"color": "#94D9B3",
-			"renderMode": "Rectangle",
-			"showName": true,
-			"tilesetId": null,
-			"tileId": null,
-			"tileRenderMode": "FitInside",
-			"maxCount": 0,
-			"limitScope": "PerLevel",
-			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
-			"fieldDefs": [
-				{
-					"identifier": "name",
-					"__type": "String",
-					"uid": 30,
-					"type": "F_String",
-					"isArray": false,
-					"canBeNull": true,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": {
-						"id": "V_String",
-						"params": ["Idle"]
-					},
-					"textLanguageMode": null
-				},
-				{
-					"identifier": "frames",
-					"__type": "String",
-					"uid": 31,
-					"type": "F_String",
-					"isArray": false,
-					"canBeNull": true,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": {
-						"id": "V_String",
-						"params": ["[0,1,2,1]"]
-					},
-					"textLanguageMode": null
-				},
-				{
-					"identifier": "speed",
-					"__type": "Float",
-					"uid": 32,
-					"type": "F_Float",
-					"isArray": false,
-					"canBeNull": false,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Float", "params": [0.8] },
 					"textLanguageMode": null
 				}
 			]
@@ -559,26 +459,21 @@
 							"__identifier": "Spell",
 							"__grid": [33,30],
 							"__pivot": [0.5,0.5],
-							"__tile": { "tilesetUid": 13, "srcRect": [0,0,64,64] },
+							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 15,
 							"px": [33,30],
 							"fieldInstances": [
 								{ "__identifier": "Name", "__value": "Holy", "__type": "String", "defUid": 16, "realEditorValues": [] },
-								{
-									"__identifier": "Animations",
-									"__value": "{     \"Idle\": (         frames: [1,2,3,4,5,6,7,6,5,4,3,2,1,0],         speed: 0.2,  )} ",
-									"__type": "String",
-									"defUid": 17,
-									"realEditorValues": []
-								}
+								{ "__identifier": "speed", "__value": 0, "__type": "Float", "defUid": 34, "realEditorValues": [] },
+								{ "__identifier": "frames", "__value": 0, "__type": "Int", "defUid": 35, "realEditorValues": [] }
 							]
 						}
 					]
 				},
 				{
-					"__identifier": "UnitType",
+					"__identifier": "Unit",
 					"__type": "Entities",
 					"__cWid": 129,
 					"__cHei": 129,

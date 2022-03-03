@@ -41,7 +41,7 @@ pub struct SpawnUnit {
     pub atlas: Handle<TextureAtlas>,
     pub sprite_index: i32,
     pub position: IVec3, // X, Y, Depth
-    pub animations: Option<HashMap<String, AnimationData>>,
+    //pub animations: Option<HashMap<String, AnimationData>>,
     pub enums: Option<Vec<String>>,
 }
 
@@ -66,15 +66,15 @@ fn spawn_from_event(mut commands: Commands, mut ev_spawn: EventReader<SpawnUnit>
         let mut new = commands.spawn_bundle(sprite);
         new.insert_bundle(MapUnitBundle::default());
 
-        if let Some(anims) = &spawn.animations {
-            let mut controller = AnimationController::default();
-            for (name, anim) in anims {
-                println!("Adding {} animation", name);
-                controller.add(&name, anim.clone());
-            }
-            controller.play("idle");
-            new.insert(controller);
-        }
+        // if let Some(anims) = &spawn.animations {
+        //     let mut controller = AnimationController::default();
+        //     for (name, anim) in anims {
+        //         println!("Adding {} animation", name);
+        //         controller.add(&name, anim.clone());
+        //     }
+        //     controller.play("idle");
+        //     new.insert(controller);
+        // }
 
         if let Some(enums) = &spawn.enums {
             if enums.iter().any(|s| s == "player") {
@@ -166,7 +166,7 @@ fn spawn_from_entity(
                 }
             } else {
                 panic!("Attempting to spawn entity {}, but no definition was found in the ldtk file {}",
-                name, ldtk.name,
+                name, ldtk.name(),
                 );
             }
         }

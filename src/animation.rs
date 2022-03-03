@@ -44,7 +44,6 @@ impl AnimationController {
     }
 
     pub fn add(&mut self, name: &str, anim: AnimationData) {
-        println!("Inserting animation {:?}!", anim);
         let name = name.to_lowercase();
         let anim_count = self.animations.len();
         self.animations.insert(name.clone(), anim);

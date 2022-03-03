@@ -51,7 +51,7 @@ fn setup(
     let config = config.get(SETTINGS_PATH).unwrap();
     if let Some(ldtk) = ldtk.get(&config.settings.arena_file) {
 
-        if let Some(bg) = &ldtk.background {
+        if let Some(bg) = &ldtk.background() {
             //println!("Spawned background, Size {}",  bg.size);
             let size = bg.size;
             let size = size / 64;
@@ -93,7 +93,7 @@ fn on_spawn(
                 commands.entity(entity).despawn();
 
                 let data_layer = ldtk.layer_from_name("Card_Data").unwrap_or_else(||
-                    panic!("Couldn't find 'Card_Data' in ldtk file {}", ldtk.name));
+                    panic!("Couldn't find 'Card_Data' in ldtk file {}", ldtk.name()));
                 
                 let entities = data_layer.as_entities();
              
@@ -165,7 +165,7 @@ fn find_entity<'a>(
     entities: &'a Vec<MapEntity>,
     name: &str 
 ) -> &'a MapEntity {
-    entities.iter().find(|e|e.name == name).unwrap_or_else(||
+    entities.iter().find(|e|e.name() == name).unwrap_or_else(||
         panic!("Arena build error: Couldn't find entity '{}'", name)
     )
 }
@@ -174,12 +174,12 @@ fn find_all_entities<'a>(
     entities: &'a Vec<MapEntity>,
     name: &'a str
 ) -> impl Iterator<Item=&'a MapEntity> {
-    entities.iter().filter(move |e|e.name==name)
+    entities.iter().filter(move |e|e.name()==name)
 }
 
 fn get_label_entity(commands: &mut Commands, label: &MapEntity) -> Entity {
     let xyz = get_label_pos(label);
-    let title = get_label(label, &label.name);
+    let title = get_label(label, &label.name());
     commands.spawn().insert(title)
     .insert(CardLabelType::Title)
     .insert(Transform::from_translation(xyz))
@@ -218,11 +218,11 @@ fn get_area(entity: &MapEntity) -> Rect<f32> {
 }
 
 fn get_xy(entity: &MapEntity) -> Vec2 {
-    entity.xy.as_vec2() / 64.0
+    entity.xy().as_vec2() / 64.0
 }
 
 fn get_size(entity: &MapEntity) -> Vec2 {
-    entity.size.as_vec2() / 64.0
+    entity.size().as_vec2() / 64.0
 }
 
 fn get_atlas(
