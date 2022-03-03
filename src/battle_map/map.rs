@@ -11,7 +11,7 @@ use sark_pathfinding::PathMap2d;
 use crate::{
     config::{ConfigAsset, GameSettings},
     ldtk_loader::{LdtkMap, MapEntity, MapLayer, MapTile, MapTileset},
-    AnimationController, AtlasHandles, GameState, UnitAnimation, SETTINGS_PATH,
+    AnimationController, AtlasHandles, GameState, AnimationData, SETTINGS_PATH,
 };
 
 use super::{spawn::SpawnUnit};
@@ -239,7 +239,7 @@ fn spawn_entity(
     entity: &MapEntity,
     units: &mut MapUnits,
     depth: usize,
-    animations: &HashMap<i32, HashMap<String, UnitAnimation>>,
+    animations: &HashMap<i32, HashMap<String, AnimationData>>,
     ev_spawn: &mut EventWriter<SpawnUnit>,
 ) {
     let axis_offset = axis_offset(units.size().as_ivec2());

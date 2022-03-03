@@ -12,16 +12,18 @@ impl Plugin for AnimationPlugin {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
-pub struct UnitAnimation {
-    frames: Vec<usize>,
-    speed: f32,
+pub struct AnimationData {
+    #[serde(default)]
+    pub name: String,
+    pub frames: Vec<usize>,
+    pub speed: f32,
 }
 
 #[derive(Component, Default)]
 pub struct AnimationController {
     frame_index: usize,
     current: Option<String>,
-    animations: HashMap<String, UnitAnimation>,
+    animations: HashMap<String, AnimationData>,
     paused: bool,
     timer: Timer,
 }
@@ -41,11 +43,15 @@ impl AnimationController {
         }
     }
 
-    pub fn add(&mut self, name: &str, anim: UnitAnimation) {
-        self.animations.insert(name.to_string(), anim);
+    pub fn add(&mut self, name: &str, anim: AnimationData) {
+        let name = name.to_lowercase();
+        if self.current.is_none() {
+            self.current = Some(name.clone());
+        }
+        self.animations.insert(name, anim);
     }
 
-    pub fn current_anim(&self) -> Option<&UnitAnimation> {
+    pub fn current_anim(&self) -> Option<&AnimationData> {
         if let Some(name) = &self.current {
             return self.animations.get(name);
         }

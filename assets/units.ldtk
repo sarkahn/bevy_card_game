@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 22,
+	"nextUid": 29,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -70,7 +70,7 @@
 		}
 	], "entities": [
 		{
-			"identifier": "PlayerUnitType",
+			"identifier": "Unit",
 			"uid": 1,
 			"tags": [],
 			"width": 248,
@@ -175,36 +175,11 @@
 					"acceptFileTypes": null,
 					"defaultOverride": { "id": "V_Int", "params": [0] },
 					"textLanguageMode": null
-				},
-				{
-					"identifier": "Animations",
-					"__type": "String",
-					"uid": 21,
-					"type": "F_Text",
-					"isArray": false,
-					"canBeNull": true,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "Hidden",
-					"editorDisplayPos": "Above",
-					"editorAlwaysShow": false,
-					"editorCutLongValues": true,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": {
-						"id": "V_String",
-						"params": [
-							"{     \"Idle\": (         frames: [1,2,3,4,3,4,3,4,3,4,3,4,2,1,0],         speed: 0.2,  )} "
-						]
-					},
-					"textLanguageMode": null
 				}
 			]
 		},
 		{
-			"identifier": "PlayerSpell",
+			"identifier": "Spell",
 			"uid": 15,
 			"tags": [],
 			"width": 64,
@@ -273,6 +248,98 @@
 							"{     \"Idle\": (         frames: [1,2,3,4,5,6,7,6,5,4,3,2,1,0],         speed: 0.2,  )} "
 						]
 					},
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "Animation",
+			"uid": 23,
+			"tags": [],
+			"width": 16,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "name",
+					"__type": "String",
+					"uid": 24,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["Idle"]
+					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "frames",
+					"__type": "String",
+					"uid": 26,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["[0,1,2,1]"]
+					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "speed",
+					"__type": "Float",
+					"uid": 28,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Float", "params": [0.2] },
 					"textLanguageMode": null
 				}
 			]
@@ -374,7 +441,7 @@
 					"gridTiles": [],
 					"entityInstances": [
 						{
-							"__identifier": "PlayerSpell",
+							"__identifier": "Spell",
 							"__grid": [32,34],
 							"__pivot": [0.5,0.5],
 							"__tile": { "tilesetUid": 13, "srcRect": [0,0,64,64] },
@@ -420,7 +487,7 @@
 					"gridTiles": [],
 					"entityInstances": [
 						{
-							"__identifier": "PlayerUnitType",
+							"__identifier": "Unit",
 							"__grid": [5,4],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
@@ -432,14 +499,7 @@
 								{ "__identifier": "name", "__value": "Wizard", "__type": "String", "defUid": 3, "realEditorValues": [] },
 								{ "__identifier": "hp", "__value": 0, "__type": "Int", "defUid": 5, "realEditorValues": [] },
 								{ "__identifier": "strength", "__value": 5, "__type": "Int", "defUid": 6, "realEditorValues": [] },
-								{ "__identifier": "defense", "__value": 0, "__type": "Int", "defUid": 7, "realEditorValues": [] },
-								{
-									"__identifier": "Animations",
-									"__value": "{     \"Idle\": (         frames: [1,2,3,4,3,4,3,4,3,4,3,4,2,1,0],         speed: 0.2,  )} ",
-									"__type": "String",
-									"defUid": 21,
-									"realEditorValues": []
-								}
+								{ "__identifier": "defense", "__value": 0, "__type": "Int", "defUid": 7, "realEditorValues": [] }
 							]
 						}
 					]

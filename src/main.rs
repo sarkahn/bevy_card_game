@@ -29,7 +29,7 @@ pub use grid::*;
 
 pub const SETTINGS_PATH: &str = "game_settings.config";
 
-pub use animation::{AnimationController, UnitAnimation};
+pub use animation::{AnimationController, AnimationData};
 pub use util::*;
 
 #[derive(Component)]

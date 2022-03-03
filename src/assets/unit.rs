@@ -7,7 +7,7 @@ use bevy::{
 use bevy_ascii_terminal::ldtk::LdtkAsset;
 use serde::{Deserialize, Serialize};
 
-use crate::UnitAnimation;
+use crate::AnimationData;
 
 pub struct UnitAssetPlugin;
 
@@ -24,7 +24,7 @@ pub struct SpriteData {
     pub tileset_name: String,
     pub index: i32,
     #[serde(default)]
-    pub animations: Option<HashMap<String, UnitAnimation>>,
+    pub animations: Option<HashMap<String, AnimationData>>,
     #[serde(default)]
     pub default_animation: Option<String>,
 }

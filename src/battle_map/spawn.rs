@@ -7,7 +7,7 @@ use crate::{
     },
     config::ConfigAsset,
     ldtk_loader::{LdtkMap, MapTileset},
-    AnimationController, AtlasHandles, GameState, UnitAnimation, SETTINGS_PATH,
+    AnimationController, AtlasHandles, GameState, AnimationData, SETTINGS_PATH,
 };
 
 use super::{
@@ -41,7 +41,7 @@ pub struct SpawnUnit {
     pub atlas: Handle<TextureAtlas>,
     pub sprite_index: i32,
     pub position: IVec3, // X, Y, Depth
-    pub animations: Option<HashMap<String, UnitAnimation>>,
+    pub animations: Option<HashMap<String, AnimationData>>,
     pub enums: Option<Vec<String>>,
 }
 
@@ -121,13 +121,13 @@ fn spawn_from_entity(
         if let (Some(ldtk),Some(configs)) = 
                (ldtk_assets.get(spawn.ldtk.clone()), configs.get(SETTINGS_PATH)) {
             let name = spawn.name.to_lowercase();
-            let defs = &ldtk.entity_defs;
+            let defs = ldtk.entity_defs();
 
             //println!("Spawn entity running");
             //println!("DEFS {:?}", defs);
             //println!("Slime? :{:?}", defs.def_from_name("slime"));
             if let Some(def) = defs.def_from_name(&name) {
-                if let (Some(tileset_id), Some(tile_id)) = (def.tileset_id, def.tile_id) {
+                if let (Some(tileset_id), Some(tile_id)) = (def.tileset_id(), def.tile_id()) {
                     if let Some(tileset) = ldtk.tileset_from_id(tileset_id) {
                         let pos = spawn.pos;
                         let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
@@ -140,16 +140,15 @@ fn spawn_from_entity(
                             .insert_bundle(comps.1)
                             .insert_bundle(comps.2);
 
-                        if !def.animations.is_empty() {
-                            println!("Loading animations for {}", spawn.name);
-                            let mut controller = AnimationController::default();
-                            for (name, anim) in def.animations.iter() {
-                                controller.add(&name, anim.clone());
-                            }
-                            controller.play("idle");
-                            new.insert(controller);
-                        }
-
+                        // if let Some(animations) = def.animations() {
+                        //     println!("Loading animations for {}", spawn.name);
+                        //     let mut controller = AnimationController::default();
+                        //     for (name, anim) in animations.iter() {
+                        //         controller.add(&name, anim.clone());
+                        //     }
+                        //     controller.play("idle");
+                        //     new.insert(controller);
+                        // }
                         if let Some(enums) = tileset.enums.get(&tile_id) {
                             if enums.iter().any(|s| s == "enemy") {
                                 //println!("Adding AI!");
