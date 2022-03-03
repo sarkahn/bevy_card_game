@@ -53,7 +53,7 @@ fn load(
     q_load: Query<(Entity,&LoadPrefab), Without<Prefab>>,
 ) {
     for (entity, load) in q_load.iter() {
-        //println!("Spawning prefab");
+        println!("Loading {}", load.0);
         let handle: Handle<LdtkMap> = asset_server.load(&load.0);
         commands.spawn().insert(Prefab(handle))
         .insert(load.clone());
@@ -75,10 +75,14 @@ fn build_prefab(
             if let Some(tile_count) = ldtk.tile_count() {
                 println!("Setting tile count to {}", tile_count);
                 q_cam.single_mut().set_tile_count(tile_count.as_uvec2().into());
+            } else {
+                q_cam.single_mut().set_tile_count([20,20]);
             }
             if let Some(pixels_per_tile) = ldtk.pixels_per_tile() {
                 println!("Setting pixels per unit to {}", pixels_per_tile);
                 q_cam.single_mut().pixels_per_tile = pixels_per_tile as u32;
+            } else {
+                q_cam.single_mut().pixels_per_tile = 128;
             }
 
             commands.entity(entity).remove::<LoadPrefab>();
@@ -116,9 +120,9 @@ fn get_root<'a>(
             let unit = unit.unwrap();
             // println!("Pivot for {}: {}", unit.name(), unit.pivot());
        
-            let unit_name = unit.field("name").unwrap().as_str().unwrap();
+            //let unit_name = unit.field("name").unwrap().as_str().unwrap();
             let tileset_id = unit.tileset_id().unwrap_or_else(||
-                panic!("Error building prefab, {} has no attached tileset", unit_name)
+                panic!("Error building prefab, has no attached tileset")
             );
     
             let tileset = ldtk.tileset_from_id(tileset_id).unwrap();
