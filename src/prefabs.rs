@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{ldtk_loader::{LdtkMap, MapEntityDef, MapTileset, MapEntity, MapLayer}, make_sprite_atlas_sized, AnimationData, AtlasHandles, make_sprite_atlas, AnimationController};
+use crate::{ldtk_loader::{LdtkMap, MapEntityDef, MapTileset, MapEntity, MapLayer}, make_sprite_atlas_sized, AnimationData, AtlasHandles, make_sprite_atlas, AnimationController, GameState};
 
 pub const PREFAB_ASSET_PATH: &str = "units.ldtk";
 
@@ -9,15 +9,15 @@ impl Plugin for PrefabsPlugin {
     fn build(&self, app: &mut App) {
         app.add_state(PrefabState::Loading)
         .add_system_set(
-            SystemSet::on_enter(PrefabState::Loading)
+            SystemSet::on_enter(GameState::AssetTest)
             .with_system(setup)
         )
         .add_system_set(
-            SystemSet::on_update(PrefabState::Loading)
+            SystemSet::on_update(GameState::AssetTest)
             .with_system(load.label("prefab_load"))
         )
         .add_system_set(
-            SystemSet::on_update(PrefabState::Loading)
+            SystemSet::on_update(GameState::AssetTest)
             .with_system(build.after("prefab_load"))
         )
         ;
@@ -34,7 +34,7 @@ fn setup(
     mut commands: Commands,
 ) {
     //println!("SPAWNING SPAWN SPAWN");
-    //commands.spawn().insert(LoadPrefab("units.ldtk".to_string()));
+    commands.spawn().insert(LoadPrefab("units.ldtk".to_string()));
 }
 
 

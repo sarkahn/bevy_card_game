@@ -43,6 +43,7 @@ pub enum GameState {
     BattleMap,
     LoadArena,
     Arena,
+    AssetTestLoad,
     AssetTest,
     BeginningCombat,
 }
