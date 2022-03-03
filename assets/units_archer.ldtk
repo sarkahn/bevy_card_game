@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 57,
+	"nextUid": 62,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -103,7 +103,7 @@
 			"color": "#94D9B3",
 			"renderMode": "Tile",
 			"showName": true,
-			"tilesetId": 20,
+			"tilesetId": 59,
 			"tileId": 0,
 			"tileRenderMode": "FitInside",
 			"maxCount": 0,
@@ -232,8 +232,8 @@
 			"color": "#94D9B3",
 			"renderMode": "Tile",
 			"showName": true,
-			"tilesetId": 13,
-			"tileId": 1,
+			"tilesetId": 56,
+			"tileId": 0,
 			"tileRenderMode": "FitInside",
 			"maxCount": 0,
 			"limitScope": "PerLevel",
@@ -361,7 +361,7 @@
 			"color": "#94D9B3",
 			"renderMode": "Tile",
 			"showName": true,
-			"tilesetId": 20,
+			"tilesetId": 59,
 			"tileId": 0,
 			"tileRenderMode": "FitInside",
 			"maxCount": 0,
@@ -460,6 +460,23 @@
 		}
 	], "tilesets": [
 		{
+			"__cWid": 4,
+			"__cHei": 4,
+			"identifier": "FigurinesSmall_spriteSheet",
+			"uid": 2,
+			"relPath": "textures/figurinesSmall_spriteSheet.png",
+			"pxWid": 256,
+			"pxHei": 256,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a000039750000000000000000000000000000" }
+		},
+		{
 			"__cWid": 1,
 			"__cHei": 1,
 			"identifier": "UnitWizard_idle",
@@ -545,23 +562,6 @@
 			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4a784a784a784a78" }
 		},
 		{
-			"__cWid": 3,
-			"__cHei": 2,
-			"identifier": "WizardSpell_Fire",
-			"uid": 55,
-			"relPath": "textures/wizardSpellsFire_animation.png",
-			"pxWid": 192,
-			"pxHei": 128,
-			"tileGridSize": 64,
-			"spacing": 0,
-			"padding": 0,
-			"tagsSourceEnumUid": null,
-			"enumTags": [],
-			"customData": [],
-			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "000000", "averageColors": "000009530964196419640000" }
-		},
-		{
 			"__cWid": 4,
 			"__cHei": 4,
 			"identifier": "WizardSpell_Lightning",
@@ -594,8 +594,146 @@
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "000000000", "averageColors": "000008de07de17de17de17de17de28de0000" }
+		},
+		{
+			"__cWid": 5,
+			"__cHei": 5,
+			"identifier": "WeaponArrow_Fire_animation",
+			"uid": 56,
+			"relPath": "textures/weaponArrow_Fire_animation.png",
+			"pxWid": 320,
+			"pxHei": 320,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": {
+				"opaqueTiles": "0000000000000000000000000",
+				"averageColors": "0766087809890a990a990baa0bab0a760a7609650b541b541b541b541a421a3219221a221a220a220a210000000000000000"
+			}
+		},
+		{
+			"__cWid": 5,
+			"__cHei": 4,
+			"identifier": "WeaponArrow_Lightning_animation",
+			"uid": 58,
+			"relPath": "textures/weaponArrow_Lightning_animation.png",
+			"pxWid": 320,
+			"pxHei": 256,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": {
+				"opaqueTiles": "00000000000000000000",
+				"averageColors": "0766086609850b950bb60cb60cb60cb60cc51dc51dc51dc61dc60dc50dc60dc60dc60dc50dd50000"
+			}
+		},
+		{
+			"__cWid": 5,
+			"__cHei": 4,
+			"identifier": "WeaponArrow_Death_animation",
+			"uid": 55,
+			"relPath": "textures/weaponArrow_Death_animation.png",
+			"pxWid": 320,
+			"pxHei": 256,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": {
+				"opaqueTiles": "00000000000000000000",
+				"averageColors": "07660655055515441544144414441444144414441444144407440622073307330944000000000000"
+			}
+		},
+		{
+			"__cWid": 5,
+			"__cHei": 4,
+			"identifier": "WeaponArrow_Holy_animation",
+			"uid": 57,
+			"relPath": "textures/weaponArrow_Holy_animation.png",
+			"pxWid": 320,
+			"pxHei": 256,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": {
+				"opaqueTiles": "00000000000000000000",
+				"averageColors": "076608780a9b0abc0bbd1bbd1bbd0bbd1bbd1cdf1ddf1def1eef1eef1eef0eef0eef0eef00000000"
+			}
+		},
+		{
+			"__cWid": 4,
+			"__cHei": 3,
+			"identifier": "UnitArcher_animation",
+			"uid": 59,
+			"relPath": "textures/unitArcher_animation.png",
+			"pxWid": 256,
+			"pxHei": 192,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "000000000000", "averageColors": "498549854985498549854985498549854985498549850000" }
 		}
-	], "enums": [], "externalEnums": [], "levelFields": [] },
+	], "enums": [], "externalEnums": [], "levelFields": [
+		{
+			"identifier": "tile_count",
+			"__type": "String",
+			"uid": 60,
+			"type": "F_String",
+			"isArray": false,
+			"canBeNull": true,
+			"arrayMinLength": null,
+			"arrayMaxLength": null,
+			"editorDisplayMode": "Hidden",
+			"editorDisplayPos": "Above",
+			"editorAlwaysShow": false,
+			"editorCutLongValues": true,
+			"min": null,
+			"max": null,
+			"regex": null,
+			"acceptFileTypes": null,
+			"defaultOverride": null,
+			"textLanguageMode": null
+		},
+		{
+			"identifier": "pixels_per_tile",
+			"__type": "String",
+			"uid": 61,
+			"type": "F_String",
+			"isArray": false,
+			"canBeNull": true,
+			"arrayMinLength": null,
+			"arrayMaxLength": null,
+			"editorDisplayMode": "Hidden",
+			"editorDisplayPos": "Above",
+			"editorAlwaysShow": false,
+			"editorCutLongValues": true,
+			"min": null,
+			"max": null,
+			"regex": null,
+			"acceptFileTypes": null,
+			"defaultOverride": null,
+			"textLanguageMode": null
+		}
+	] },
 	"levels": [
 		{
 			"identifier": "Level_0",
@@ -613,7 +751,28 @@
 			"bgPivotY": 0.5,
 			"__bgPos": null,
 			"externalRelPath": null,
-			"fieldInstances": [],
+			"fieldInstances": [
+				{
+					"__identifier": "tile_count",
+					"__value": "[20,20]",
+					"__type": "String",
+					"defUid": 60,
+					"realEditorValues": [{
+						"id": "V_String",
+						"params": ["[20,20]"]
+					}]
+				},
+				{
+					"__identifier": "pixels_per_tile",
+					"__value": "[64,64]",
+					"__type": "String",
+					"defUid": 61,
+					"realEditorValues": [{
+						"id": "V_String",
+						"params": ["[64,64]"]
+					}]
+				}
+			],
 			"layerInstances": [
 				{
 					"__identifier": "Animation",
@@ -641,62 +800,13 @@
 					"entityInstances": [
 						{
 							"__identifier": "Animation",
-							"__grid": [601,322],
+							"__grid": [717,199],
 							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
+							"__tile": { "tilesetUid": 59, "srcRect": [0,0,64,64] },
 							"width": 16,
 							"height": 16,
 							"defUid": 36,
-							"px": [601,322],
-							"fieldInstances": [
-								{
-									"__identifier": "name",
-									"__value": "holy",
-									"__type": "String",
-									"defUid": 37,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["holy"]
-									}]
-								},
-								{
-									"__identifier": "speed",
-									"__value": 0.1,
-									"__type": "Float",
-									"defUid": 38,
-									"realEditorValues": [{ "id": "V_Float", "params": [0.1] }]
-								},
-								{
-									"__identifier": "frames",
-									"__value": "[0,1,2,1]",
-									"__type": "String",
-									"defUid": 41,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["[0,1,2,1]"]
-									}]
-								},
-								{
-									"__identifier": "Texture",
-									"__value": "textures/unitWizard_animation_Holy.png",
-									"__type": "FilePath",
-									"defUid": 46,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["textures/unitWizard_animation_Holy.png"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Animation",
-							"__grid": [592,191],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
-							"width": 16,
-							"height": 16,
-							"defUid": 36,
-							"px": [592,191],
+							"px": [717,199],
 							"fieldInstances": [
 								{
 									"__identifier": "name",
@@ -717,35 +827,35 @@
 								},
 								{
 									"__identifier": "frames",
-									"__value": "[0,1,2,1,2,1,0]",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10]",
 									"__type": "String",
 									"defUid": 41,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["[0,1,2,1,2,1,0]"]
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10]"]
 									}]
 								},
 								{
 									"__identifier": "Texture",
-									"__value": "textures/unitWizard_animation_Fire.png",
+									"__value": "textures/unitArcher_animation.png",
 									"__type": "FilePath",
 									"defUid": 46,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["textures/unitWizard_animation_Fire.png"]
+										"params": ["textures/unitArcher_animation.png"]
 									}]
 								}
 							]
 						},
 						{
 							"__identifier": "Spell",
-							"__grid": [78,255],
+							"__grid": [114,347],
 							"__pivot": [0.5,0.5],
-							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
+							"__tile": { "tilesetUid": 56, "srcRect": [0,0,64,64] },
 							"width": 256,
 							"height": 256,
 							"defUid": 15,
-							"px": [78,255],
+							"px": [114,347],
 							"fieldInstances": [
 								{
 									"__identifier": "Name",
@@ -776,35 +886,212 @@
 								},
 								{
 									"__identifier": "Frames",
-									"__value": "[0,1,2,3,4,5,6,7,6,5,4,5,6,7,6,5,4,3,2,1,0]",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]",
 									"__type": "String",
 									"defUid": 44,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["[0,1,2,3,4,5,6,7,6,5,4,5,6,7,6,5,4,3,2,1,0]"]
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]"]
 									}]
 								},
 								{
 									"__identifier": "Texture",
-									"__value": "textures/wizardSpellsHoly_animation.png",
+									"__value": "textures/weaponArrow_Holy_animation.png",
 									"__type": "FilePath",
 									"defUid": 45,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["textures/wizardSpellsHoly_animation.png"]
+										"params": ["textures/weaponArrow_Holy_animation.png"]
+									}]
+								}
+							]
+						},
+						{
+							"__identifier": "Spell",
+							"__grid": [117,347],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 56, "srcRect": [0,0,64,64] },
+							"width": 256,
+							"height": 256,
+							"defUid": 15,
+							"px": [117,347],
+							"fieldInstances": [
+								{
+									"__identifier": "Name",
+									"__value": "lightning",
+									"__type": "String",
+									"defUid": 16,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["lightning"]
+									}]
+								},
+								{
+									"__identifier": "speed",
+									"__value": 0.07,
+									"__type": "Float",
+									"defUid": 34,
+									"realEditorValues": [{ "id": "V_Float", "params": [0.07] }]
+								},
+								{
+									"__identifier": "Element",
+									"__value": "lightning",
+									"__type": "String",
+									"defUid": 42,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["lightning"]
+									}]
+								},
+								{
+									"__identifier": "Frames",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]",
+									"__type": "String",
+									"defUid": 44,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]"]
+									}]
+								},
+								{
+									"__identifier": "Texture",
+									"__value": "textures/weaponArrow_Lightning_animation.png",
+									"__type": "FilePath",
+									"defUid": 45,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/weaponArrow_Lightning_animation.png"]
+									}]
+								}
+							]
+						},
+						{
+							"__identifier": "Spell",
+							"__grid": [116,345],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 56, "srcRect": [0,0,64,64] },
+							"width": 256,
+							"height": 256,
+							"defUid": 15,
+							"px": [116,345],
+							"fieldInstances": [
+								{
+									"__identifier": "Name",
+									"__value": "death",
+									"__type": "String",
+									"defUid": 16,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["death"]
+									}]
+								},
+								{
+									"__identifier": "speed",
+									"__value": 0.1,
+									"__type": "Float",
+									"defUid": 34,
+									"realEditorValues": [{ "id": "V_Float", "params": [0.1] }]
+								},
+								{
+									"__identifier": "Element",
+									"__value": "death",
+									"__type": "String",
+									"defUid": 42,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["death"]
+									}]
+								},
+								{
+									"__identifier": "Frames",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]",
+									"__type": "String",
+									"defUid": 44,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]"]
+									}]
+								},
+								{
+									"__identifier": "Texture",
+									"__value": "textures/weaponArrow_Death_animation.png",
+									"__type": "FilePath",
+									"defUid": 45,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/weaponArrow_Death_animation.png"]
+									}]
+								}
+							]
+						},
+						{
+							"__identifier": "Spell",
+							"__grid": [118,347],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 56, "srcRect": [0,0,64,64] },
+							"width": 256,
+							"height": 256,
+							"defUid": 15,
+							"px": [118,347],
+							"fieldInstances": [
+								{
+									"__identifier": "Name",
+									"__value": "fire",
+									"__type": "String",
+									"defUid": 16,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["fire"]
+									}]
+								},
+								{
+									"__identifier": "speed",
+									"__value": 0.05,
+									"__type": "Float",
+									"defUid": 34,
+									"realEditorValues": [{ "id": "V_Float", "params": [0.05] }]
+								},
+								{
+									"__identifier": "Element",
+									"__value": "fire",
+									"__type": "String",
+									"defUid": 42,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["fire"]
+									}]
+								},
+								{
+									"__identifier": "Frames",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]",
+									"__type": "String",
+									"defUid": 44,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]"]
+									}]
+								},
+								{
+									"__identifier": "Texture",
+									"__value": "textures/weaponArrow_Fire_animation.png",
+									"__type": "FilePath",
+									"defUid": 45,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/weaponArrow_Fire_animation.png"]
 									}]
 								}
 							]
 						},
 						{
 							"__identifier": "Animation",
-							"__grid": [594,252],
+							"__grid": [679,243],
 							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
+							"__tile": { "tilesetUid": 59, "srcRect": [0,0,64,64] },
 							"width": 16,
 							"height": 16,
 							"defUid": 36,
-							"px": [594,252],
+							"px": [679,243],
 							"fieldInstances": [
 								{
 									"__identifier": "name",
@@ -825,35 +1112,35 @@
 								},
 								{
 									"__identifier": "frames",
-									"__value": "[0,1,2,1,2,1,0]",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10]",
 									"__type": "String",
 									"defUid": 41,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["[0,1,2,1,2,1,0]"]
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10]"]
 									}]
 								},
 								{
 									"__identifier": "Texture",
-									"__value": "textures/unitWizard_animation_Lightning.png",
+									"__value": "textures/unitArcher_animation.png",
 									"__type": "FilePath",
 									"defUid": 46,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["textures/unitWizard_animation_Lightning.png"]
+										"params": ["textures/unitArcher_animation.png"]
 									}]
 								}
 							]
 						},
 						{
 							"__identifier": "Animation",
-							"__grid": [596,290],
+							"__grid": [705,287],
 							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
+							"__tile": { "tilesetUid": 59, "srcRect": [0,0,64,64] },
 							"width": 16,
 							"height": 16,
 							"defUid": 36,
-							"px": [596,290],
+							"px": [705,287],
 							"fieldInstances": [
 								{
 									"__identifier": "name",
@@ -874,81 +1161,71 @@
 								},
 								{
 									"__identifier": "frames",
-									"__value": "[0,1,2,1,0]",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10]",
 									"__type": "String",
 									"defUid": 41,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["[0,1,2,1,0]"]
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10]"]
 									}]
 								},
 								{
 									"__identifier": "Texture",
-									"__value": "textures/unitWizard_animation_Death.png",
+									"__value": "textures/unitArcher_animation.png",
 									"__type": "FilePath",
 									"defUid": 46,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["textures/unitWizard_animation_Death.png"]
+										"params": ["textures/unitArcher_animation.png"]
 									}]
 								}
 							]
 						},
 						{
-							"__identifier": "Spell",
-							"__grid": [77,148],
-							"__pivot": [0.5,0.5],
-							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
-							"width": 256,
-							"height": 256,
-							"defUid": 15,
-							"px": [77,148],
+							"__identifier": "Animation",
+							"__grid": [684,327],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 59, "srcRect": [0,0,64,64] },
+							"width": 16,
+							"height": 16,
+							"defUid": 36,
+							"px": [684,327],
 							"fieldInstances": [
 								{
-									"__identifier": "Name",
-									"__value": "lightning",
+									"__identifier": "name",
+									"__value": "holy",
 									"__type": "String",
-									"defUid": 16,
+									"defUid": 37,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["lightning"]
+										"params": ["holy"]
 									}]
 								},
 								{
 									"__identifier": "speed",
-									"__value": 0.03,
+									"__value": 0.1,
 									"__type": "Float",
-									"defUid": 34,
-									"realEditorValues": [{ "id": "V_Float", "params": [0.03] }]
+									"defUid": 38,
+									"realEditorValues": [{ "id": "V_Float", "params": [0.1] }]
 								},
 								{
-									"__identifier": "Element",
-									"__value": "lightning",
+									"__identifier": "frames",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10]",
 									"__type": "String",
-									"defUid": 42,
+									"defUid": 41,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["lightning"]
-									}]
-								},
-								{
-									"__identifier": "Frames",
-									"__value": "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0]",
-									"__type": "String",
-									"defUid": 44,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["[0,1,2,3,4,5,6,7,8,9,10,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0]"]
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10]"]
 									}]
 								},
 								{
 									"__identifier": "Texture",
-									"__value": "textures/wizardSpellsLightning_animation.png",
+									"__value": "textures/unitArcher_animation.png",
 									"__type": "FilePath",
-									"defUid": 45,
+									"defUid": 46,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["textures/wizardSpellsLightning_animation.png"]
+										"params": ["textures/unitArcher_animation.png"]
 									}]
 								}
 							]
@@ -1008,101 +1285,33 @@
 							"__identifier": "Unit",
 							"__grid": [286,216],
 							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
+							"__tile": { "tilesetUid": 59, "srcRect": [0,0,64,64] },
 							"width": 256,
 							"height": 256,
 							"defUid": 1,
 							"px": [286,216],
 							"fieldInstances": [
-								{ "__identifier": "name", "__value": "Wizard", "__type": "String", "defUid": 3, "realEditorValues": [] },
 								{
-									"__identifier": "hp",
-									"__value": 10,
-									"__type": "Int",
-									"defUid": 5,
-									"realEditorValues": [{ "id": "V_Int", "params": [10] }]
+									"__identifier": "name",
+									"__value": "Archer",
+									"__type": "String",
+									"defUid": 3,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Archer"]
+									}]
 								},
-								{
-									"__identifier": "strength",
-									"__value": 3,
-									"__type": "Int",
-									"defUid": 6,
-									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
-								},
-								{
-									"__identifier": "defense",
-									"__value": 2,
-									"__type": "Int",
-									"defUid": 7,
-									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
-								},
+								{ "__identifier": "hp", "__value": 0, "__type": "Int", "defUid": 5, "realEditorValues": [] },
+								{ "__identifier": "strength", "__value": 5, "__type": "Int", "defUid": 6, "realEditorValues": [] },
+								{ "__identifier": "defense", "__value": 0, "__type": "Int", "defUid": 7, "realEditorValues": [] },
 								{
 									"__identifier": "Initial_Animation",
-									"__value": "fire",
+									"__value": "death",
 									"__type": "String",
 									"defUid": 51,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["fire"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Spell",
-							"__grid": [35,167],
-							"__pivot": [0.5,0.5],
-							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
-							"width": 256,
-							"height": 256,
-							"defUid": 15,
-							"px": [35,167],
-							"fieldInstances": [
-								{
-									"__identifier": "Name",
-									"__value": "fire",
-									"__type": "String",
-									"defUid": 16,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["fire"]
-									}]
-								},
-								{
-									"__identifier": "speed",
-									"__value": 0.2,
-									"__type": "Float",
-									"defUid": 34,
-									"realEditorValues": [{ "id": "V_Float", "params": [0.2] }]
-								},
-								{
-									"__identifier": "Element",
-									"__value": "fire",
-									"__type": "String",
-									"defUid": 42,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["fire"]
-									}]
-								},
-								{
-									"__identifier": "Frames",
-									"__value": "[0,1,2,3,4]",
-									"__type": "String",
-									"defUid": 44,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["[0,1,2,3,4]"]
-									}]
-								},
-								{
-									"__identifier": "Texture",
-									"__value": "textures/wizardSpellsFire_animation.png",
-									"__type": "FilePath",
-									"defUid": 45,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["textures/wizardSpellsFire_animation.png"]
+										"params": ["death"]
 									}]
 								}
 							]

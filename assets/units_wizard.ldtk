@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 57,
+	"nextUid": 58,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -594,6 +594,23 @@
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "000000000", "averageColors": "000008de07de17de17de17de17de28de0000" }
+		},
+		{
+			"__cWid": 4,
+			"__cHei": 3,
+			"identifier": "WizardSpell_Death",
+			"uid": 57,
+			"relPath": "textures/wizardSpellsDeath_animation.png",
+			"pxWid": 256,
+			"pxHei": 192,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "000000000000", "averageColors": "000002220222022212321232123202320232023202320000" }
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -952,6 +969,65 @@
 									}]
 								}
 							]
+						},
+						{
+							"__identifier": "Spell",
+							"__grid": [63,202],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
+							"width": 256,
+							"height": 256,
+							"defUid": 15,
+							"px": [63,202],
+							"fieldInstances": [
+								{
+									"__identifier": "Name",
+									"__value": "death",
+									"__type": "String",
+									"defUid": 16,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["death"]
+									}]
+								},
+								{
+									"__identifier": "speed",
+									"__value": 0.2,
+									"__type": "Float",
+									"defUid": 34,
+									"realEditorValues": [{ "id": "V_Float", "params": [0.2] }]
+								},
+								{
+									"__identifier": "Element",
+									"__value": "death",
+									"__type": "String",
+									"defUid": 42,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["death"]
+									}]
+								},
+								{
+									"__identifier": "Frames",
+									"__value": "[0,1,2,3,4,5,6,7,8,9,10]",
+									"__type": "String",
+									"defUid": 44,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["[0,1,2,3,4,5,6,7,8,9,10]"]
+									}]
+								},
+								{
+									"__identifier": "Texture",
+									"__value": "textures/wizardSpellsDeath_animation.png",
+									"__type": "FilePath",
+									"defUid": 45,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/wizardSpellsDeath_animation.png"]
+									}]
+								}
+							]
 						}
 					]
 				},
@@ -1070,10 +1146,10 @@
 								},
 								{
 									"__identifier": "speed",
-									"__value": 0.2,
+									"__value": 0.15,
 									"__type": "Float",
 									"defUid": 34,
-									"realEditorValues": [{ "id": "V_Float", "params": [0.2] }]
+									"realEditorValues": [{ "id": "V_Float", "params": [0.15] }]
 								},
 								{
 									"__identifier": "Element",
@@ -1087,12 +1163,12 @@
 								},
 								{
 									"__identifier": "Frames",
-									"__value": "[0,1,2,3,4]",
+									"__value": "[0,1,2,3,4,3,2,3,2,1,0]",
 									"__type": "String",
 									"defUid": 44,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["[0,1,2,3,4]"]
+										"params": ["[0,1,2,3,4,3,2,3,2,1,0]"]
 									}]
 								},
 								{
