@@ -91,7 +91,22 @@ fn build(
             let sprite = sprite_from_entity(unit, atlas, 0);
 
             let prefab_entity = entity.insert_bundle(sprite).id();
-            
+                  
+            let layer = ldtk.layer_from_name("animation").unwrap_or_else(||
+                panic!("Error building prefab, no 'Unit' layer found")
+            );
+            let anims = layer.as_entities().get_tagged("animation");
+
+            let mut all = Vec::new();
+            for anim in anims {
+                let anim = anim_from_entity(anim, ldtk);
+                all.push(anim);
+            }
+            if !all.is_empty() {
+                if let Some(controller) = make_animations(unit, &all) {
+                    entity.insert(controller);
+                }
+            }
             // let defs = ldtk.entity_defs();
 
             // let anims = defs.get_tagged("animation");
@@ -121,8 +136,9 @@ fn build(
                             let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
                             let sprite = sprite_from_entity(spell, atlas.clone(), 1);
                             
-                            let anim = anim_from_entity(spell, ldtk);
                             println!("Spawning spell");
+
+                            let anim = anim_from_entity(spell, ldtk);
                             let mut spell_entity = commands.spawn();
                             spell_entity.insert_bundle(sprite);
                             if let Some(anims) = make_animations(spell, &[anim]) {
@@ -151,8 +167,10 @@ fn sprite_from_entity(
         ..Default::default()
     };
 
-    //let pos = def.xy().as_vec2().extend(layer as f32) / 64.0;
-    let pos = Vec3::ZERO;
+    println!("{} pos {} size: {}", def.name(), def.xy(), def.size());
+
+    let pos = def.xy().as_vec2().extend(layer as f32) / 64.0;
+    //let pos = Vec3::ZERO;
 
     SpriteSheetBundle {
         sprite,
