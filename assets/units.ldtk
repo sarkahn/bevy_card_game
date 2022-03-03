@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 50,
+	"nextUid": 52,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -193,6 +193,26 @@
 					"regex": null,
 					"acceptFileTypes": null,
 					"defaultOverride": { "id": "V_Int", "params": [0] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Initial_Animation",
+					"__type": "String",
+					"uid": 51,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
 					"textLanguageMode": null
 				}
 			]
@@ -506,6 +526,23 @@
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "0", "averageColors": "4b68" }
+		},
+		{
+			"__cWid": 2,
+			"__cHei": 2,
+			"identifier": "UnitWizard_animation_Fire",
+			"uid": 50,
+			"relPath": "textures/unitWizard_animation_Fire.png",
+			"pxWid": 128,
+			"pxHei": 128,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4b674b674b674b67" }
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -553,25 +590,34 @@
 					"entityInstances": [
 						{
 							"__identifier": "Animation",
-							"__grid": [160,46],
+							"__grid": [192,16],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
 							"width": 16,
 							"height": 16,
 							"defUid": 36,
-							"px": [160,46],
+							"px": [192,16],
 							"fieldInstances": [
-								{ "__identifier": "name", "__value": "blah", "__type": "String", "defUid": 37, "realEditorValues": [] },
+								{
+									"__identifier": "name",
+									"__value": "Fire",
+									"__type": "String",
+									"defUid": 37,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Fire"]
+									}]
+								},
 								{ "__identifier": "speed", "__value": 0.2, "__type": "Float", "defUid": 38, "realEditorValues": [] },
 								{ "__identifier": "frames", "__value": "[0,1,2,1]", "__type": "String", "defUid": 41, "realEditorValues": [] },
 								{
 									"__identifier": "Texture",
-									"__value": "textures/unitWizard_animation_Holy.png",
+									"__value": "textures/unitWizard_animation_Fire.png",
 									"__type": "FilePath",
 									"defUid": 46,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["textures/unitWizard_animation_Holy.png"]
+										"params": ["textures/unitWizard_animation_Fire.png"]
 									}]
 								}
 							]
@@ -729,7 +775,17 @@
 								{ "__identifier": "name", "__value": "Wizard", "__type": "String", "defUid": 3, "realEditorValues": [] },
 								{ "__identifier": "hp", "__value": 0, "__type": "Int", "defUid": 5, "realEditorValues": [] },
 								{ "__identifier": "strength", "__value": 5, "__type": "Int", "defUid": 6, "realEditorValues": [] },
-								{ "__identifier": "defense", "__value": 0, "__type": "Int", "defUid": 7, "realEditorValues": [] }
+								{ "__identifier": "defense", "__value": 0, "__type": "Int", "defUid": 7, "realEditorValues": [] },
+								{
+									"__identifier": "Initial_Animation",
+									"__value": "Fire",
+									"__type": "String",
+									"defUid": 51,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Fire"]
+									}]
+								}
 							]
 						}
 					]
