@@ -20,7 +20,7 @@ pub struct AnimationData {
     pub frames: Vec<usize>,
     pub speed: f32,
     pub tileset_path: String,
-    pub ldtk_path: String,
+    pub ldtk_name: String,
 }
 
 #[derive(Component, Default)]
@@ -31,13 +31,28 @@ pub struct AnimationController {
     paused: bool,
     timer: Timer,
     change: Option<String>,
-    map: Handle<LdtkMap>,
+}
+
+impl From<AnimationData> for AnimationController {
+    fn from(d: AnimationData) -> Self {
+        let speed = d.speed;
+        let mut animations = HashMap::default();
+        let name = d.name.to_string();
+        animations.insert(d.name.to_string(), d);
+        let mut c = Self {
+            animations,
+            timer: Timer::from_seconds(speed, false),
+            ..Default::default()
+        };
+        c.play(&name);
+        c
+    }
 }
 
 impl AnimationController {
     pub fn play(&mut self, name: &str) {
         if let Some(anim) = self.animations.get(name) {
-            println!("Playing animation {}. Speed {}. Path {}", name, anim.speed, &anim.tileset_path);
+            //println!("Playing animation {}. Speed {}. Path {}", name, anim.speed, &anim.tileset_path);
             self.change = Some(anim.tileset_path.to_string());
             self.current = Some(name.to_string());
             self.timer.set_duration(Duration::from_secs_f32(anim.speed));
@@ -76,6 +91,16 @@ impl AnimationController {
     }
 }
 
+// impl From<SimpleAnimationData> for AnimationController {
+//     fn from(d: SimpleAnimationData) -> Self {
+//         AnimationController {
+//             timer: Timer::from_seconds(d.speed, false),
+//             frames: 
+//             ..Default::default()
+//         }
+//     }
+// }
+
 fn animate(
     time: Res<Time>,
     mut commands: Commands,
@@ -92,16 +117,16 @@ fn animate(
 
         if let Some(new) = &controller.change {
             let current = controller.current_anim().unwrap();
-            let handle: Handle<LdtkMap> = asset_server.load(&current.ldtk_path);
+            let handle: Handle<LdtkMap> = asset_server.load(&current.ldtk_name);
             commands.entity(entity).insert(handle.clone());
             if let Some(ldtk) = ldtk.get(handle) {
-                println!("Found handle...");
+                //println!("Found handle...");
                 let tileset = ldtk.tileset_from_path(&current.tileset_path).unwrap_or_else(||
                     panic!("Error switching sprites, couldn't find tileset {}", new)
                 );
                 *atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
                 sprite.index = 0;
-                println!("Changing to tileset {}", new);
+                //println!("Changing to tileset {}", new);
                 controller.change = None;
             } else {
                 continue;

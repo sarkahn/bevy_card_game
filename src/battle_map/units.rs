@@ -1,12 +1,11 @@
 use std::{cmp::Ordering, collections::VecDeque, time::Duration};
 
-use bevy::{ecs::system::EntityCommands, math::Vec3Swizzles, prelude::*};
-use bevy_ascii_terminal::Point2d;
-use bevy_easings::*;
+use bevy::{ math::Vec3Swizzles, prelude::*};
+
 use rand::{
     distributions::WeightedIndex,
-    prelude::{Distribution, IteratorRandom, StdRng, ThreadRng},
-    thread_rng, Rng, RngCore,
+    prelude::Distribution,
+    thread_rng, Rng, 
 };
 use sark_pathfinding::AStar;
 
@@ -14,9 +13,6 @@ use crate::GameState;
 
 use super::{
     map::CollisionMap,
-    //components::MapPosition,
-    Map,
-    MapUnits,
 };
 
 pub struct UnitsPlugin;
@@ -25,10 +21,9 @@ impl Plugin for UnitsPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
             SystemSet::on_update(GameState::BattleMap)
-                //.with_system(update_sprite_position)
-                .with_system(update_map_units),
         )
-        .add_system_set(SystemSet::on_update(GameState::BattleMap).with_system(process_commands));
+        .add_system_set(SystemSet::on_update(GameState::BattleMap)
+            .with_system(process_commands));
     }
 }
 
@@ -63,14 +58,18 @@ pub struct MapUnitBundle {
     speed: MapUnitSpeed,
 }
 
-// impl MapUnitBundle {
-//     pub fn new(xy: IVec2) -> Self {
-//         Self {
-//             //pos: MapPosition { xy },
-//             ..Default::default()
-//         }
-//     }
-// }
+impl MapUnitBundle {
+    pub fn with_commands(commands: &[UnitCommand]) -> Self {
+        let mut me = Self {
+            ..Default::default()
+        };
+        for c in commands {
+            me.commands.push(*c);
+        }
+
+        me
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum UnitCommand {
@@ -140,8 +139,8 @@ fn process_commands(
         QueryState<(Entity, &mut UnitCommands, &mut Transform, &MapUnitSpeed)>,
         QueryState<&Transform, With<PlayerUnit>>,
     )>,
-    map: Res<Map>,
-    collision_map: Res<CollisionMap>,
+    //map: Res<Map>,
+    map: Res<CollisionMap>,
     mut player_positions: Local<Vec<IVec2>>,
 ) {
     player_positions.clear();
@@ -149,7 +148,7 @@ fn process_commands(
         q_set
             .q1()
             .iter()
-            .map(|t| map.to_index_2d(t.translation.xy())),
+            .map(|t| t.translation.xy().as_ivec2() - map.half_offset()),
     );
     for (entity, mut unit_commands, mut transform, speed) in q_set.q0().iter_mut() {
         //println!("{:?} Command count {}", entity, unit_commands.queue.len());
@@ -157,6 +156,7 @@ fn process_commands(
             unit_commands.next();
         }
 
+        //println!("Reading commands");
         if let Some(command) = unit_commands.current {
             match command {
                 UnitCommand::MoveToTile(a, b) => {
@@ -197,20 +197,21 @@ fn process_commands(
                         continue;
                     }
 
-                    let a = map.to_index_2d(transform.translation.xy());
+                    let a = transform.translation.xy().as_ivec2() - map.half_offset();
+                    //let a -= collisiotin.axis_offset();
                     //println!("{:?} at {}, Finding nearest player", entity, a);
                     if let Some(b) = get_nearest_player_position(a, &player_positions) {
+                    //println!("{:?} at {}, Finding nearest player {:?}", entity, a, player_positions);
                         //let b = map.to_index_2d(b.as_vec2());
                         let mut astar = AStar::new(10);
-                        if let Some(path) = astar.find_path(&collision_map.0, a.into(), b.into()) {
+                        if let Some(path) = astar.find_path(&map.0, a.into(), b.into()) {
                             if let Some(next) = path.get(1) {
                                 let b = IVec2::from(*next);
-                                //println!("Moving from {} to {}", a, b);
-                                let a = map.to_xy(transform.translation.xy());
-                                let b = map.xy_from_index_2d(b);
+                                let a = a + map.half_offset();
+                                let b = b + map.half_offset();
 
                                 //println!("Should see 'done moving' next");
-                                unit_commands.push(UnitCommand::MoveToTile(a, b.as_ivec2()));
+                                unit_commands.push(UnitCommand::MoveToTile(a, b));
                                 unit_commands.push(UnitCommand::AiThink());
                                 //println!("{:?} pushed {} to {} to commands for move. Stack state: {:?}. Calling next",entity, a, b, unit_commands.queue);
                                 unit_commands.next();
@@ -236,22 +237,4 @@ fn get_nearest_player_position(a: IVec2, positions: &Vec<IVec2>) -> Option<IVec2
         return Some(positions[i]);
     }
     None
-}
-
-fn update_map_units(
-    mut units: ResMut<MapUnits>,
-    map: Res<Map>,
-    q_moved_units: Query<(Entity, &Transform), (With<MapUnit>, Changed<Transform>)>,
-    q_units: Query<(Entity, &Transform), (With<MapUnit>, With<PlayerUnit>)>,
-) {
-    if q_moved_units.is_empty() {
-        return;
-    }
-    units.0.iter_mut().for_each(|f| *f = None);
-    for (entity, transform) in q_units.iter() {
-        let xy = map.to_index_2d(transform.translation.xy());
-        //println!("Update Map unit pos {} index {}", transform.translation.xy(), xy);
-        units.0[xy] = Some(entity);
-        //let xy = map.to_index_2d(pos.xy());
-    }
 }

@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 38,
+	"nextUid": 44,
 	"worldLayout": "Free",
 	"worldGridWidth": 1920,
 	"worldGridHeight": 1080,
@@ -129,7 +129,7 @@
 		{
 			"identifier": "Spawner_Cave",
 			"uid": 4,
-			"tags": [],
+			"tags": [ "animation", "collider", "spawner" ],
 			"width": 64,
 			"height": 64,
 			"resizableX": false,
@@ -151,10 +151,10 @@
 			"pivotY": 1,
 			"fieldDefs": [
 				{
-					"identifier": "Animations",
+					"identifier": "frames",
 					"__type": "String",
-					"uid": 13,
-					"type": "F_Text",
+					"uid": 42,
+					"type": "F_String",
 					"isArray": false,
 					"canBeNull": true,
 					"arrayMinLength": null,
@@ -169,10 +169,28 @@
 					"acceptFileTypes": null,
 					"defaultOverride": {
 						"id": "V_String",
-						"params": [
-							"{     \"hi\": (         frames: [1],         speed: 0.2,  ),       \"idle\": (         frames: [1,2,3,4,5,6,7,6,5,4,3,2],         speed: 0.05,),      } "
-						]
+						"params": ["[0,1,2,3,4,5,6,7,6,5,4,3,2,1]"]
 					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "speed",
+					"__type": "Float",
+					"uid": 43,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Float", "params": [0.1] },
 					"textLanguageMode": null
 				}
 			]
@@ -180,7 +198,7 @@
 		{
 			"identifier": "Archer",
 			"uid": 28,
-			"tags": [],
+			"tags": ["player"],
 			"width": 64,
 			"height": 64,
 			"resizableX": false,
@@ -205,7 +223,7 @@
 		{
 			"identifier": "Wizard",
 			"uid": 29,
-			"tags": [],
+			"tags": ["player"],
 			"width": 64,
 			"height": 64,
 			"resizableX": false,
@@ -230,7 +248,7 @@
 		{
 			"identifier": "Soldier",
 			"uid": 30,
-			"tags": [],
+			"tags": ["player"],
 			"width": 64,
 			"height": 64,
 			"resizableX": false,
@@ -255,7 +273,7 @@
 		{
 			"identifier": "Slime",
 			"uid": 31,
-			"tags": [],
+			"tags": ["monster"],
 			"width": 64,
 			"height": 64,
 			"resizableX": false,
@@ -454,7 +472,7 @@
 			"__cHei": 2,
 			"identifier": "Unit_Wizard",
 			"uid": 22,
-			"relPath": "textures/unitWizard_animation.png",
+			"relPath": "textures/unitWizard_animation_Death.png",
 			"pxWid": 128,
 			"pxHei": 128,
 			"tileGridSize": 64,
@@ -464,7 +482,7 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4b684b674b670000" }
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4a674a674a674a67" }
 		},
 		{
 			"__cWid": 2,
@@ -572,13 +590,10 @@
 							"height": 64,
 							"defUid": 4,
 							"px": [192,448],
-							"fieldInstances": [{
-								"__identifier": "Animations",
-								"__value": "{     \"hi\": (         frames: [1],         speed: 0.2,  ),       \"idle\": (         frames: [1,2,3,4,5,6,7,6,5,4,3,2],         speed: 0.05,),      } ",
-								"__type": "String",
-								"defUid": 13,
-								"realEditorValues": []
-							}]
+							"fieldInstances": [
+								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
+								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] }
+							]
 						},
 						{
 							"__identifier": "Spawner_Cave",
@@ -589,13 +604,10 @@
 							"height": 64,
 							"defUid": 4,
 							"px": [320,832],
-							"fieldInstances": [{
-								"__identifier": "Animations",
-								"__value": "{     \"hi\": (         frames: [1],         speed: 0.2,  ),       \"idle\": (         frames: [1,2,3,4,5,6,7,6,5,4,3,2],         speed: 0.05,),      } ",
-								"__type": "String",
-								"defUid": 13,
-								"realEditorValues": []
-							}]
+							"fieldInstances": [
+								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
+								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] }
+							]
 						},
 						{
 							"__identifier": "Spawner_Cave",
@@ -606,13 +618,10 @@
 							"height": 64,
 							"defUid": 4,
 							"px": [640,896],
-							"fieldInstances": [{
-								"__identifier": "Animations",
-								"__value": "{     \"hi\": (         frames: [1],         speed: 0.2,  ),       \"idle\": (         frames: [1,2,3,4,5,6,7,6,5,4,3,2],         speed: 0.05,),      } ",
-								"__type": "String",
-								"defUid": 13,
-								"realEditorValues": []
-							}]
+							"fieldInstances": [
+								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
+								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] }
+							]
 						},
 						{
 							"__identifier": "Spawner_Cave",
@@ -623,13 +632,10 @@
 							"height": 64,
 							"defUid": 4,
 							"px": [1152,832],
-							"fieldInstances": [{
-								"__identifier": "Animations",
-								"__value": "{     \"hi\": (         frames: [1],         speed: 0.2,  ),       \"idle\": (         frames: [1,2,3,4,5,6,7,6,5,4,3,2],         speed: 0.05,),      } ",
-								"__type": "String",
-								"defUid": 13,
-								"realEditorValues": []
-							}]
+							"fieldInstances": [
+								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
+								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] }
+							]
 						}
 					]
 				},

@@ -2,7 +2,7 @@ use bevy::{ecs::system::EntityCommands, math::Vec3Swizzles, prelude::*, utils::H
 
 use crate::{
     battle_map::{
-        enemies::EnemySpawner,
+        enemies::Spawner,
         units::{EnemyUnit, MapUnitBundle, PlayerUnit},
     },
     config::ConfigAsset,
@@ -84,7 +84,7 @@ fn spawn_from_event(mut commands: Commands, mut ev_spawn: EventReader<SpawnUnit>
                 new.insert(EnemyUnit);
             }
             if enums.iter().any(|s| s == "spawner") {
-                new.insert(EnemySpawner {
+                new.insert(Spawner {
                     timer: Timer::from_seconds(1.5, true),
                 });
             }
@@ -149,18 +149,16 @@ fn spawn_from_entity(
                         //     controller.play("idle");
                         //     new.insert(controller);
                         // }
-                        if let Some(enums) = tileset.enums.get(&tile_id) {
-                            if enums.iter().any(|s| s == "enemy") {
-                                //println!("Adding AI!");
-                                new.insert(EnemyUnit);
-                                let settings = &configs.settings;
-                                let mut unit_commands = UnitCommands::new(
-                                    settings.map_move_speed,
-                                    settings.map_move_speed,
-                                );
-                                unit_commands.push(UnitCommand::AiThink());
-                                new.insert(unit_commands);
-                            }
+                        if tileset.tile_id_has_enum(tile_id, "enemy") {
+                              //println!("Adding AI!");
+                              new.insert(EnemyUnit);
+                              let settings = &configs.settings;
+                              let mut unit_commands = UnitCommands::new(
+                                  settings.map_move_speed,
+                                  settings.map_move_speed,
+                              );
+                              unit_commands.push(UnitCommand::AiThink());
+                              new.insert(unit_commands);
                         }
                     }
                 }

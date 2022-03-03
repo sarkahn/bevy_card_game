@@ -33,8 +33,8 @@ enum PrefabState {
 fn setup(
     mut commands: Commands,
 ) {
-    println!("SPAWNING SPAWN SPAWN");
-    commands.spawn().insert(LoadPrefab("units.ldtk".to_string()));
+    //println!("SPAWNING SPAWN SPAWN");
+    //commands.spawn().insert(LoadPrefab("units.ldtk".to_string()));
 }
 
 
@@ -67,92 +67,77 @@ fn build(
 ) {
     for (entity, load) in q_prefabs.iter() {
         if let Some(ldtk) = ldtk.get(&load.0) {
-            let layer = ldtk.layer_from_name("unit").unwrap_or_else(||
-                panic!("Error building prefab, no 'Unit' layer found")
-            );
-            let entities = layer.as_entities();
+            commands.entity(entity).remove::<LoadPrefab>();
+            let entity = commands.entity(entity).id();
 
-            let unit = entities.get_tagged("root").next();
-            if unit.is_none() {
-                break;
-            }
-            let unit = unit.unwrap();
-       
-            let unit_name = unit.field("name").unwrap().as_str().unwrap();
-            let tileset_id = unit.tileset_id().unwrap_or_else(||
-                panic!("Error building prefab, {} has no attached tileset", unit_name)
-            );
-
-            let tileset = ldtk.tileset_from_id(tileset_id).unwrap();
-            let atlas = get_atlas(&mut atlases, &mut atlas_handles, tileset);
-
-            let mut entity = commands.entity(entity);
-
-            let sprite = sprite_from_entity(unit, atlas, 0);
-
-            let prefab_entity = entity.insert_bundle(sprite).id();
-                  
-            let layer = ldtk.layer_from_name("animation").unwrap_or_else(||
-                panic!("Error building prefab, no 'Unit' layer found")
-            );
-            let anims = layer.as_entities().get_tagged("animation");
-
-            let mut all = Vec::new();
-            for anim in anims {
-                let anim = anim_from_entity(anim, ldtk);
-                all.push(anim);
-            }
-            if !all.is_empty() {
-                if let Some(controller) = make_animations(unit, &all) {
-                    entity.insert(controller);
+            let root = get_root(ldtk, &mut commands, entity, &mut atlases, &mut atlas_handles);
+            
+            if let Some(root) = root {
+                if let Some(anims) = get_animations(ldtk, root) {    
+                    commands.entity(entity).insert(anims);
                 }
             }
-            // let defs = ldtk.entity_defs();
 
-            // let anims = defs.get_tagged("animation");
-            
-
-
-
-            // println!("REMOVING loadprefab??");
-            commands.entity(prefab_entity).remove::<LoadPrefab>();
+            make_spells(ldtk, &mut atlases, &mut atlas_handles, &mut commands);
         }
     }
     
-    for (entity, load) in q_prefabs.iter() {
-        if let Some(ldtk) = ldtk.get(&load.0) {
-            // Spells
-            for layer in ldtk.layers() {
-                match layer {
-                    MapLayer::Tiles(_) => {},
-                    MapLayer::Entities(entities) => {
-                        for spell in entities.get_tagged("spell") {
-                            println!("Found spell");
-                            let tex = spell.get_str("texture");
-                            let tileset = ldtk.tileset_from_name(tex).unwrap_or_else(||
-                                panic!("Error loading prefab {}, couldn't find tileset {}. Is it included in the ldtk file?",
-                                spell.name(), tex)
-                            );
-                            let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
-                            let sprite = sprite_from_entity(spell, atlas.clone(), 1);
-                            
-                            println!("Spawning spell");
+}
 
-                            let anim = anim_from_entity(spell, ldtk);
-                            let mut spell_entity = commands.spawn();
-                            spell_entity.insert_bundle(sprite);
-                            if let Some(anims) = make_animations(spell, &[anim]) {
-                                spell_entity.insert(anims);
-                            }
-                        }
-                        
-                        commands.entity(entity).remove::<LoadPrefab>();
-                    },
+fn get_root<'a>(
+    ldtk: &'a LdtkMap,
+    commands: &mut Commands,
+    entity: Entity,
+    atlases: &mut Assets<TextureAtlas>,
+    atlas_handles: &mut AtlasHandles,
+) -> Option<&'a MapEntity> {
+    for layer in ldtk.layers() {
+        let mut entity = commands.entity(entity);
+        let entities = layer.as_entities();
+
+        let unit = entities.get_tagged("root").next();
+        if unit.is_none() {
+            continue;
+        }
+        let unit = unit.unwrap();
+   
+        let unit_name = unit.field("name").unwrap().as_str().unwrap();
+        let tileset_id = unit.tileset_id().unwrap_or_else(||
+            panic!("Error building prefab, {} has no attached tileset", unit_name)
+        );
+
+        let tileset = ldtk.tileset_from_id(tileset_id).unwrap();
+        let atlas = get_atlas(atlases, atlas_handles, tileset);
+        let sprite = sprite_from_entity(unit, atlas, 0);
+
+        entity.insert_bundle(sprite);
+        return Some(unit)
+    }
+    None
+}
+
+fn get_animations(
+    ldtk: &LdtkMap,
+    unit: &MapEntity,
+) -> Option<AnimationController> {
+    for layer in ldtk.layers() {
+        let anims = layer.as_entities().get_tagged("animation");
+
+        let mut all = Vec::new();
+        for anim in anims {
+            let anim = anim_from_entity(anim, ldtk);
+            all.push(anim);
+        }
+        if !all.is_empty() {
+            if let Some(mut controller) = make_animation_controller(unit, &all) {
+                if let Some(initial) = unit.field("initial_animation") {
+                    controller.play(initial.as_str().unwrap());
                 }
+                return Some(controller);
             }
-            
         }
     }
+    None
 }
 
 fn sprite_from_entity(
@@ -180,7 +165,7 @@ fn sprite_from_entity(
     }
 }
 
-fn make_animations(
+fn make_animation_controller(
     entity: &MapEntity,
     animations: &[AnimationData],
 ) -> Option<AnimationController> {
@@ -202,23 +187,6 @@ fn make_animations(
     None
 }
 
-// fn anim_from_def(
-//     def: &MapEntityDef,
-// ) -> AnimationData {
-
-
-//     let name = def.get_str("name");
-//     let frames = def.get_str("frames");
-//     let speed = def.get_f32("speed");
-
-//     let frames: Vec<usize> = ron::de::from_str(frames)
-//         .expect("Error parsing animation frames: {} should be array of indices");
-//     AnimationData {
-//         name: name.to_lowercase(),
-//         frames,
-//         speed,
-//     }
-// }
 fn anim_from_entity(
     def: &MapEntity,
     ldtk: &LdtkMap,
@@ -236,7 +204,37 @@ fn anim_from_entity(
         frames,
         speed,
         tileset_path: path.to_string(),
-        ldtk_path: ldtk.name().to_string(),
+        ldtk_name: ldtk.name().to_string(),
+    }
+}
+
+fn make_spells(
+    ldtk: &LdtkMap,
+    atlases: &mut Assets<TextureAtlas>,
+    atlas_handles: &mut AtlasHandles,
+    commands: &mut Commands,
+) {
+    for layer in ldtk.layers() {
+        let entities = layer.as_entities();
+        for spell in entities.get_tagged("spell") {
+            println!("Found spell");
+            let tex = spell.get_str("texture");
+            let tileset = ldtk.tileset_from_name(tex).unwrap_or_else(||
+                panic!("Error loading prefab {}, couldn't find tileset {}. Is it included in the ldtk file?",
+                spell.name(), tex)
+            );
+            let atlas = get_atlas(atlases, atlas_handles, &tileset);
+            let sprite = sprite_from_entity(spell, atlas.clone(), 1);
+            
+            println!("Spawning spell");
+
+            let anim = anim_from_entity(spell, ldtk);
+            let mut spell_entity = commands.spawn();
+            spell_entity.insert_bundle(sprite);
+            if let Some(anims) = make_animation_controller(spell, &[anim]) {
+                spell_entity.insert(anims);
+            }
+        }
     }
 }
 

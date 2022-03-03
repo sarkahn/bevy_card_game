@@ -64,8 +64,8 @@ fn setup(
             );
         }
 
-        let card_tileset = ldtk.tileset_from_name("Battle_Cards").expect(
-            "Couldn't find 'Battle_Cards' tileset in arena ldtk file!"
+        let card_tileset = ldtk.tileset_from_name("Battle_Cards").unwrap_or_else(||
+            panic!("Couldn't find 'Battle_Cards' tileset in {} file!", "Battle_Cards")
         );
 
         let atlas = get_atlas(&mut atlases, &mut atlas_handles, &card_tileset);

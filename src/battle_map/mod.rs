@@ -23,7 +23,7 @@ mod spawn;
 mod units;
 
 pub use components::*;
-pub use map::{Map, MapUnits};
+pub use map::{MapUnits};
 
 pub struct BattleMapPlugin;
 

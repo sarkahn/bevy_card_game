@@ -21,14 +21,14 @@ impl Plugin for EnemiesPlugin {
 }
 
 #[derive(Component)]
-pub struct EnemySpawner {
+pub struct Spawner {
     pub timer: Timer,
 }
 
 fn spawn(
     mut commands: Commands,
     time: Res<Time>,
-    mut q_spawner: Query<(&mut EnemySpawner, &Transform)>,
+    mut q_spawner: Query<(&mut Spawner, &Transform)>,
     asset: Res<AssetServer>,
     config: Res<Assets<ConfigAsset>>,
 ) {

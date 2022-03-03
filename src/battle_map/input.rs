@@ -3,7 +3,7 @@ use bevy_tiled_camera::TiledProjection;
 
 use crate::GameState;
 
-use super::{Map, MapUnits};
+use super::{MapUnits};
 
 pub struct InputPlugin;
 
@@ -51,7 +51,6 @@ fn cursor_system(
     mut q_cursor: Query<(&mut Transform, &mut Visibility), With<Cursor>>,
     mut ev_tile_clicked: EventWriter<TileClickedEvent>,
     units: Res<MapUnits>,
-    map: Res<Map>,
 ) {
     let window = windows.get_primary().unwrap();
 
@@ -68,8 +67,13 @@ fn cursor_system(
 
                     if input.just_pressed(MouseButton::Left) {
                         let xy = proj.world_to_tile(cam_transform, p).unwrap();
-                        let index = map.to_index_2d(xy.as_vec2());
+                        let offset = units.size().as_ivec2() / 2;
+                        let xy = xy + offset;
+                        println!("Click XY {}", xy);
+                        let index = units.0.pos_to_index(xy.into());
                         let unit = units[index];
+
+                        let xy = xy -  offset;
                         //println!("Sending click event! {}: {:?}", xy, unit);
                         //ev_tile_clicked.send(TileClickedEvent { xy, unit });
                         ev_tile_clicked.send(TileClickedEvent { xy, unit });
