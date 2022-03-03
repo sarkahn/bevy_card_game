@@ -64,8 +64,11 @@ fn setup(
             );
         }
 
+        for ts in ldtk.tilesets() {
+            println!("{}", ts.name);
+        }
         let card_tileset = ldtk.tileset_from_name("Battle_Cards").unwrap_or_else(||
-            panic!("Couldn't find 'Battle_Cards' tileset in {} file!", "Battle_Cards")
+            panic!("Couldn't find 'Battle_Cards' tileset in {} file {}", "Battle_Cards", ldtk.name())
         );
 
         let atlas = get_atlas(&mut atlases, &mut atlas_handles, &card_tileset);

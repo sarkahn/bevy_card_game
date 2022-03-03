@@ -1,6 +1,7 @@
 use bevy::prelude::*;
+use bevy_tiled_camera::TiledProjection;
 
-use crate::{ldtk_loader::{LdtkMap, MapEntityDef, MapTileset, MapEntity, MapLayer}, make_sprite_atlas_sized, AnimationData, AtlasHandles, make_sprite_atlas, AnimationController, GameState};
+use crate::{ldtk_loader::{LdtkMap, MapEntityDef, MapTileset, MapEntity, MapLayer}, make_sprite_atlas_sized, AnimationData, AtlasHandles, make_sprite_atlas, AnimationController, GameState, config::ConfigAsset, SETTINGS_PATH};
 
 pub const PREFAB_ASSET_PATH: &str = "units.ldtk";
 
@@ -32,9 +33,11 @@ enum PrefabState {
 
 fn setup(
     mut commands: Commands,
+    config: Res<Assets<ConfigAsset>>,
 ) {
+    let config = config.get(SETTINGS_PATH).unwrap();
     //println!("SPAWNING SPAWN SPAWN");
-    commands.spawn().insert(LoadPrefab("units.ldtk".to_string()));
+    commands.spawn().insert(LoadPrefab(config.settings.asset_test_file.clone()));
 }
 
 
@@ -64,9 +67,12 @@ fn build(
     ldtk: Res<Assets<LdtkMap>>,
     mut atlas_handles: ResMut<AtlasHandles>,
     mut atlases: ResMut<Assets<TextureAtlas>>,
+    mut q_cam: Query<&mut TiledProjection>,
 ) {
     for (entity, load) in q_prefabs.iter() {
         if let Some(ldtk) = ldtk.get(&load.0) {
+            println!("Level size {}", ldtk.size());
+            q_cam.single_mut().set_tile_count(ldtk.size().as_uvec2().into());
             commands.entity(entity).remove::<LoadPrefab>();
             let entity = commands.entity(entity).id();
 
@@ -100,6 +106,7 @@ fn get_root<'a>(
             continue;
         }
         let unit = unit.unwrap();
+        println!("Pivot for {}: {}", unit.name(), unit.pivot());
    
         let unit_name = unit.field("name").unwrap().as_str().unwrap();
         let tileset_id = unit.tileset_id().unwrap_or_else(||
@@ -152,7 +159,7 @@ fn sprite_from_entity(
         ..Default::default()
     };
 
-    println!("{} pos {} size: {}", def.name(), def.xy(), def.size());
+    println!("{} pos: {}, pivot: {}, size: {}, grid_size: {}", def.name(), def.xy(), def.pivot(), def.size(), def.grid_size());
 
     let pos = def.xy().as_vec2().extend(layer as f32) / 64.0;
     //let pos = Vec3::ZERO;
@@ -219,7 +226,7 @@ fn make_spells(
         for spell in entities.get_tagged("spell") {
             println!("Found spell");
             let tex = spell.get_str("texture");
-            let tileset = ldtk.tileset_from_name(tex).unwrap_or_else(||
+            let tileset = ldtk.tileset_from_path(tex).unwrap_or_else(||
                 panic!("Error loading prefab {}, couldn't find tileset {}. Is it included in the ldtk file?",
                 spell.name(), tex)
             );

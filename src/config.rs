@@ -31,6 +31,8 @@ pub struct GameSettings {
     pub map_file: String,
     #[serde(default)]
     pub arena_file: String,
+    #[serde(default)]
+    pub asset_test_file: String,
 }
 
 #[derive(TypeUuid)]

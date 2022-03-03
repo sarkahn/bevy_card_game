@@ -25,7 +25,7 @@ impl Plugin for LdtkAssetPlugin {
 #[uuid = "ac23ab52-5393-4bbe-178f-16c414aaa0eb"]
 pub struct LdtkMap {
     name: String,
-     size: IVec2,
+    size: IVec2,
     layers: BTreeMap<String,MapLayer>,
     // Maps tileset id to it's image handle
     images: HashMap<i32, Handle<Image>>,
@@ -34,7 +34,7 @@ pub struct LdtkMap {
     // Maps depths to backgrounds
     background: Option<MapBackground>,
     // Maps tileset name to it's id
-    id_map: HashMap<String, i32>,
+    name_map: HashMap<String, i32>,
     // Map tileset path to it's id
     path_map: HashMap<String,i32>,
     //pub atlases: HashMap<i32, Handle<TextureAtlas>>,
@@ -52,7 +52,7 @@ impl LdtkMap {
     }
 
     pub fn tileset_from_name(&self, name: &str) -> Option<&MapTileset> {
-        if let Some(id) = self.path_map.get(&name.to_lowercase()) {
+        if let Some(id) = self.name_map.get(&name.to_lowercase()) {
             return self.tilesets.get(&id);
         }
         None
@@ -65,7 +65,7 @@ impl LdtkMap {
     }
 
     pub fn image_from_name(&self, name: &str) -> Option<&Handle<Image>> {
-        if let Some(id) = self.id_map.get(&name.to_lowercase()) {
+        if let Some(id) = self.name_map.get(&name.to_lowercase()) {
             return self.images.get(&id);
         }
         None
@@ -95,6 +95,10 @@ impl LdtkMap {
     /// Get a reference to the ldtk map's background.
     pub fn background(&self) -> Option<&MapBackground> {
         self.background.as_ref()
+    }
+
+    pub fn tilesets(&self) -> impl Iterator<Item=&MapTileset> {
+        self.tilesets.iter().map(|(_,t)|t)
     }
     // pub fn has_enum(&self, name: &str, tileset_id: i32, tile_id: i32) -> bool {
     //     if let Some(tileset) = self.tileset_from_id(tileset_id) {
@@ -219,7 +223,7 @@ impl AssetLoader for LdtkAssetLoader {
                 layers: map_layers,
                 images,
                 tilesets,
-                id_map,
+                name_map: id_map,
                 path_map,
                 background: bg,
                 max_tile_size: IVec2::splat(max_tile_size),
@@ -300,7 +304,7 @@ fn build_tileset(def: &TilesetDefinition, image: Handle<Image>) -> MapTileset {
         tile_count: IVec2::new(def.c_wid as i32, def.c_hei as i32),
         tile_size: def.tile_grid_size as i32,
         tile_data,
-        name: def.identifier.clone(),
+        name: def.identifier.to_lowercase(),
         image: image,
         path: def.rel_path.to_lowercase(),
         enums: match enums.is_empty() {
@@ -624,7 +628,7 @@ impl Fields {
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct MapEntity {
     name: String,
     fields: Fields,
@@ -636,6 +640,7 @@ pub struct MapEntity {
     tileset_id: Option<i32>,
     pivot: Vec2,
     tags: Vec<String>,
+    grid_size: i32,
 }
 impl MapEntity {
     /// Get a reference to the map entity's name.
@@ -663,6 +668,10 @@ impl MapEntity {
         self.size
     }
 
+    pub fn grid_size(&self) -> i32 {
+        self.grid_size
+    }
+
     /// Get the map entity's def id.
     pub fn def_id(&self) -> i32 {
         self.def_id
@@ -688,6 +697,10 @@ impl MapEntity {
 
     pub fn tagged(&self, name: &str) -> bool {
         self.tags.iter().any(|t|t==name)
+    }
+
+    pub fn pivot(&self) -> Vec2 {
+        self.pivot
     }
 
     pub fn get_str(&self, name: &str) -> &str {
@@ -828,7 +841,8 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
             tile_id,
             tileset_id,
             pivot,
-            tags
+            tags,
+            grid_size: layer.grid_size as i32,
         });
     }
 
