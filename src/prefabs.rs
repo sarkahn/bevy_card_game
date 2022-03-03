@@ -134,7 +134,11 @@ fn build(
                     MapLayer::Entities(entities) => {
                         for spell in entities.get_tagged("spell") {
                             let tex = spell.get_str("texture");
-                            let tileset = ldtk.tileset_from_name(tex).unwrap();
+                            let tileset = ldtk.tileset_from_name(tex).unwrap_or_else(||
+                                panic!("Error loading prefab {}, couldn't find tileset {}. Is it included in the ldtk file?",
+                                
+                                spell.name(), tex)
+                            );
                             let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
                             let sprite = sprite_from_entity(spell, atlas.clone(), 1);
                             
