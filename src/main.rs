@@ -94,6 +94,7 @@ fn start(
     configs: Res<Assets<ConfigAsset>>,
 ) {
     if let Some(config) = configs.get(SETTINGS_PATH) {
+        println!("Loading state {:?}", config.settings.begin_state);
         state.set(config.settings.begin_state).unwrap();
     }
 }
