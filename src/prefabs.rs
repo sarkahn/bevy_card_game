@@ -181,6 +181,8 @@ fn sprite_from_entity(
     //println!("{} posm, {} size: {}, grid_size: {}", def.name(), def.xy(), def.size(), def.grid_size());
 
     let pos = entity.xy().as_vec2().extend(layer as f32) / entity.pixels_per_unit() as f32;
+
+    println!("Spawning entity at {}", pos);
     //let pos = Vec3::ZERO;
 
     SpriteSheetBundle {

@@ -474,7 +474,7 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a395439752231000000000000000000000000" }
+			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a395439752231355500000000000075550000" }
 		},
 		{
 			"__cWid": 3,
@@ -733,13 +733,13 @@
 					"entityInstances": [
 						{
 							"__identifier": "Unit",
-							"__grid": [2,257],
+							"__grid": [157,255],
 							"__pivot": [0,1],
 							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
 							"width": 256,
 							"height": 256,
 							"defUid": 1,
-							"px": [2,258],
+							"px": [157,256],
 							"fieldInstances": [
 								{ "__identifier": "name", "__value": "Wizard", "__type": "String", "defUid": 3, "realEditorValues": [] },
 								{ "__identifier": "hp", "__value": 0, "__type": "Int", "defUid": 5, "realEditorValues": [] },

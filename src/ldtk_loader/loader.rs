@@ -946,7 +946,7 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
         let layer_grid_size = IVec2::new(layer_width as i32, layer_height as i32);
         let grid_xy = grid_xy - layer_grid_size / 2;
 
-        let xy = xy - layer_px_size / 2;
+        //let xy = xy - layer_px_size / 2;
 
         let tags = def.tags.clone();
         //println!("Adjusted values grid {}, px {}, size {}", grid_xy, xy, size);
