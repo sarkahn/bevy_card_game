@@ -472,21 +472,21 @@
 			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4a784a784a784a78" }
 		},
 		{
-			"__cWid": 0,
-			"__cHei": 0,
-			"identifier": "Tileset",
+			"__cWid": 1,
+			"__cHei": 1,
+			"identifier": "UnitWizard_idle",
 			"uid": 47,
-			"relPath": null,
-			"pxWid": 0,
-			"pxHei": 0,
-			"tileGridSize": 16,
+			"relPath": "textures/unitWizard_idle.png",
+			"pxWid": 64,
+			"pxHei": 64,
+			"tileGridSize": 64,
 			"spacing": 0,
 			"padding": 0,
 			"tagsSourceEnumUid": null,
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": null
+			"cachedPixelData": { "opaqueTiles": "0", "averageColors": "4b68" }
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
