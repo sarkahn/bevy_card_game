@@ -77,7 +77,8 @@ fn build_prefab(
                 q_cam.single_mut().set_tile_count(tile_count.as_uvec2().into());
             }
             if let Some(pixels_per_tile) = ldtk.pixels_per_tile() {
-                q_cam.single_mut().pixels_per_tile = pixels_per_tile.y as u32;
+                println!("Setting pixels per unit to {}", pixels_per_tile);
+                q_cam.single_mut().pixels_per_tile = pixels_per_tile as u32;
             }
 
             commands.entity(entity).remove::<LoadPrefab>();
@@ -113,7 +114,7 @@ fn get_root<'a>(
             continue;
         }
         let unit = unit.unwrap();
-        println!("Pivot for {}: {}", unit.name(), unit.pivot());
+        // println!("Pivot for {}: {}", unit.name(), unit.pivot());
    
         let unit_name = unit.field("name").unwrap().as_str().unwrap();
         let tileset_id = unit.tileset_id().unwrap_or_else(||
@@ -140,14 +141,14 @@ fn get_animations(
     let mut all = Vec::new();
     for anim in anims {
         let anim = anim_from_entity(anim, ldtk);
-        println!("Building {} animation for {}", anim.name, unit.name());
+        //println!("Building {} animation for {}", anim.name, unit.name());
         all.push(anim);
     }
     if !all.is_empty() {
         if let Some(mut controller) = make_animation_controller(unit, &all) {
             if let Some(initial) = unit.field("initial_animation") {
                 let initial = initial.as_str().unwrap();
-                println!("Adding initial anim {} for {}", initial, unit.name());
+                //println!("Adding initial anim {} for {}", initial, unit.name());
                 controller.play(initial);
             }
             return Some(controller);
@@ -157,20 +158,20 @@ fn get_animations(
 }
 
 fn sprite_from_entity(
-    def: &MapEntity,
+    entity: &MapEntity,
     atlas: Handle<TextureAtlas>,
     layer: i32,
 ) -> SpriteSheetBundle {
-    let size = def.size().as_vec2() / 64.0;
+    let size = entity.size() / IVec2::splat(entity.pixels_per_unit());
     let sprite = TextureAtlasSprite {
-        index: def.tile_id().unwrap() as usize,
-        custom_size: Some(size),
+        index: entity.tile_id().unwrap() as usize,
+        custom_size: Some(size.as_vec2()),
         ..Default::default()
     };
 
-    println!("{} posm, {} size: {}, grid_size: {}", def.name(), def.xy(), def.size(), def.grid_size());
+    //println!("{} posm, {} size: {}, grid_size: {}", def.name(), def.xy(), def.size(), def.grid_size());
 
-    let pos = def.xy().as_vec2().extend(layer as f32) / 64.0;
+    let pos = entity.xy().as_vec2().extend(layer as f32) / entity.pixels_per_unit() as f32;
     //let pos = Vec3::ZERO;
 
     SpriteSheetBundle {
@@ -234,7 +235,7 @@ fn make_spells(
     for layer in ldtk.layers() {
         let entities = layer.as_entities();
         for spell in entities.get_tagged("spell") {
-            println!("Found spell");
+            //println!("Found spell");
             let tex = spell.get_str("texture");
             let tileset = ldtk.tileset_from_path(tex).unwrap_or_else(||
                 panic!("Error loading prefab {}, couldn't find tileset {}. Is it included in the ldtk file?",
@@ -243,7 +244,7 @@ fn make_spells(
             let atlas = get_atlas(atlases, atlas_handles, &tileset);
             let sprite = sprite_from_entity(spell, atlas.clone(), 1);
             
-            println!("Spawning spell");
+            //println!("Spawning spell");
 
             let anim = anim_from_entity(spell, ldtk);
             let mut spell_entity = commands.spawn();

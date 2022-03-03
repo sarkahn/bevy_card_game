@@ -9,13 +9,13 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 58,
+	"nextUid": 57,
 	"worldLayout": "Free",
-	"worldGridWidth": 128,
-	"worldGridHeight": 128,
+	"worldGridWidth": 256,
+	"worldGridHeight": 256,
 	"defaultPivotX": 0,
 	"defaultPivotY": 0,
-	"defaultGridSize": 64,
+	"defaultGridSize": 16,
 	"defaultLevelWidth": 256,
 	"defaultLevelHeight": 256,
 	"bgColor": "#40465B",
@@ -109,8 +109,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0.5,
-			"pivotY": 0.5,
+			"pivotX": 0,
+			"pivotY": 1,
 			"fieldDefs": [
 				{
 					"identifier": "name",
@@ -580,9 +580,9 @@
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [
 		{
-			"identifier": "pixels_per_unit",
+			"identifier": "tile_count",
 			"__type": "String",
-			"uid": 56,
+			"uid": 54,
 			"type": "F_String",
 			"isArray": false,
 			"canBeNull": true,
@@ -600,12 +600,12 @@
 			"textLanguageMode": null
 		},
 		{
-			"identifier": "tile_count",
-			"__type": "String",
-			"uid": 57,
-			"type": "F_String",
+			"identifier": "pixels_per_tile",
+			"__type": "Int",
+			"uid": 56,
+			"type": "F_Int",
 			"isArray": false,
-			"canBeNull": true,
+			"canBeNull": false,
 			"arrayMinLength": null,
 			"arrayMaxLength": null,
 			"editorDisplayMode": "Hidden",
@@ -624,10 +624,10 @@
 		{
 			"identifier": "Level_0",
 			"uid": 0,
-			"worldX": 0,
-			"worldY": 0,
-			"pxWid": 739,
-			"pxHei": 465,
+			"worldX": 80,
+			"worldY": 16,
+			"pxWid": 263,
+			"pxHei": 263,
 			"__bgColor": "#696A79",
 			"bgColor": null,
 			"useAutoIdentifier": true,
@@ -639,32 +639,29 @@
 			"externalRelPath": null,
 			"fieldInstances": [
 				{
-					"__identifier": "pixels_per_unit",
-					"__value": "[16,16]",
+					"__identifier": "tile_count",
+					"__value": "[1,1]",
 					"__type": "String",
-					"defUid": 56,
+					"defUid": 54,
 					"realEditorValues": [{
 						"id": "V_String",
-						"params": ["[16,16]"]
+						"params": ["[1,1]"]
 					}]
 				},
 				{
-					"__identifier": "tile_count",
-					"__value": "[20,20]",
-					"__type": "String",
-					"defUid": 57,
-					"realEditorValues": [{
-						"id": "V_String",
-						"params": ["[20,20]"]
-					}]
+					"__identifier": "pixels_per_tile",
+					"__value": 64,
+					"__type": "Int",
+					"defUid": 56,
+					"realEditorValues": [{ "id": "V_Int", "params": [64] }]
 				}
 			],
 			"layerInstances": [
 				{
 					"__identifier": "Animation",
 					"__type": "Entities",
-					"__cWid": 739,
-					"__cHei": 465,
+					"__cWid": 263,
+					"__cHei": 263,
 					"__gridSize": 1,
 					"__opacity": 1,
 					"__pxTotalOffsetX": 0,
@@ -683,166 +680,13 @@
 					"seed": 528138,
 					"overrideTilesetUid": null,
 					"gridTiles": [],
-					"entityInstances": [
-						{
-							"__identifier": "Spell",
-							"__grid": [68,165],
-							"__pivot": [0.5,0.5],
-							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
-							"width": 256,
-							"height": 256,
-							"defUid": 15,
-							"px": [68,165],
-							"fieldInstances": [
-								{
-									"__identifier": "Name",
-									"__value": "LIGHTNING",
-									"__type": "String",
-									"defUid": 16,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["LIGHTNING"]
-									}]
-								},
-								{
-									"__identifier": "speed",
-									"__value": 0.02,
-									"__type": "Float",
-									"defUid": 34,
-									"realEditorValues": [{ "id": "V_Float", "params": [0.02] }]
-								},
-								{
-									"__identifier": "Element",
-									"__value": "Lightning",
-									"__type": "String",
-									"defUid": 42,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Lightning"]
-									}]
-								},
-								{
-									"__identifier": "Frames",
-									"__value": "[0,1,2,3,4,5,6,7,8,9,10,11,12,5,4,3,2,1,0]",
-									"__type": "String",
-									"defUid": 44,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["[0,1,2,3,4,5,6,7,8,9,10,11,12,5,4,3,2,1,0]"]
-									}]
-								},
-								{
-									"__identifier": "Texture",
-									"__value": "textures/wizardSpellsLightning_animation.png",
-									"__type": "FilePath",
-									"defUid": 45,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["textures/wizardSpellsLightning_animation.png"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Animation",
-							"__grid": [496,176],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
-							"width": 16,
-							"height": 16,
-							"defUid": 36,
-							"px": [496,176],
-							"fieldInstances": [
-								{
-									"__identifier": "name",
-									"__value": "idle",
-									"__type": "String",
-									"defUid": 37,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["idle"]
-									}]
-								},
-								{ "__identifier": "speed", "__value": 0.2, "__type": "Float", "defUid": 38, "realEditorValues": [] },
-								{
-									"__identifier": "frames",
-									"__value": "[0,1,2,1]",
-									"__type": "String",
-									"defUid": 41,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["[0,1,2,1]"]
-									}]
-								},
-								{
-									"__identifier": "Texture",
-									"__value": "textures/unitWizard_animation_Lightning.png",
-									"__type": "FilePath",
-									"defUid": 46,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["textures/unitWizard_animation_Lightning.png"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Spell",
-							"__grid": [256,42],
-							"__pivot": [0.5,0.5],
-							"__tile": { "tilesetUid": 13, "srcRect": [64,0,64,64] },
-							"width": 256,
-							"height": 256,
-							"defUid": 15,
-							"px": [256,42],
-							"fieldInstances": [
-								{ "__identifier": "Name", "__value": "Holy", "__type": "String", "defUid": 16, "realEditorValues": [] },
-								{
-									"__identifier": "speed",
-									"__value": 0.08,
-									"__type": "Float",
-									"defUid": 34,
-									"realEditorValues": [{ "id": "V_Float", "params": [0.08] }]
-								},
-								{
-									"__identifier": "Element",
-									"__value": "Holy",
-									"__type": "String",
-									"defUid": 42,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Holy"]
-									}]
-								},
-								{
-									"__identifier": "Frames",
-									"__value": "[0,1,2,3,4,5,6,5,4,5,6,7,6,5,4,3,2,1,0]",
-									"__type": "String",
-									"defUid": 44,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["[0,1,2,3,4,5,6,5,4,5,6,7,6,5,4,3,2,1,0]"]
-									}]
-								},
-								{
-									"__identifier": "Texture",
-									"__value": "textures/wizardSpellsHoly_animation.png",
-									"__type": "FilePath",
-									"defUid": 45,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["textures/wizardSpellsHoly_animation.png"]
-									}]
-								}
-							]
-						}
-					]
+					"entityInstances": []
 				},
 				{
 					"__identifier": "Spells",
 					"__type": "Entities",
-					"__cWid": 739,
-					"__cHei": 465,
+					"__cWid": 263,
+					"__cHei": 263,
 					"__gridSize": 1,
 					"__opacity": 1,
 					"__pxTotalOffsetX": 0,
@@ -866,8 +710,8 @@
 				{
 					"__identifier": "Unit",
 					"__type": "Entities",
-					"__cWid": 739,
-					"__cHei": 465,
+					"__cWid": 263,
+					"__cHei": 263,
 					"__gridSize": 1,
 					"__opacity": 1,
 					"__pxTotalOffsetX": 0,
@@ -889,77 +733,19 @@
 					"entityInstances": [
 						{
 							"__identifier": "Unit",
-							"__grid": [318,219],
-							"__pivot": [0.5,0.5],
+							"__grid": [2,257],
+							"__pivot": [0,1],
 							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
 							"width": 256,
 							"height": 256,
 							"defUid": 1,
-							"px": [318,219],
+							"px": [2,258],
 							"fieldInstances": [
 								{ "__identifier": "name", "__value": "Wizard", "__type": "String", "defUid": 3, "realEditorValues": [] },
 								{ "__identifier": "hp", "__value": 0, "__type": "Int", "defUid": 5, "realEditorValues": [] },
 								{ "__identifier": "strength", "__value": 5, "__type": "Int", "defUid": 6, "realEditorValues": [] },
 								{ "__identifier": "defense", "__value": 0, "__type": "Int", "defUid": 7, "realEditorValues": [] },
-								{
-									"__identifier": "Initial_Animation",
-									"__value": "idle",
-									"__type": "String",
-									"defUid": 51,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["idle"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Animation",
-							"__grid": [495,234],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
-							"width": 16,
-							"height": 16,
-							"defUid": 36,
-							"px": [495,234],
-							"fieldInstances": [
-								{
-									"__identifier": "name",
-									"__value": "lightning",
-									"__type": "String",
-									"defUid": 37,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["lightning"]
-									}]
-								},
-								{
-									"__identifier": "speed",
-									"__value": 0.1,
-									"__type": "Float",
-									"defUid": 38,
-									"realEditorValues": [{ "id": "V_Float", "params": [0.1] }]
-								},
-								{
-									"__identifier": "frames",
-									"__value": "[0,1,2,1,0]",
-									"__type": "String",
-									"defUid": 41,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["[0,1,2,1,0]"]
-									}]
-								},
-								{
-									"__identifier": "Texture",
-									"__value": "textures/unitWizard_animation_Lightning.png",
-									"__type": "FilePath",
-									"defUid": 46,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["textures/unitWizard_animation_Lightning.png"]
-									}]
-								}
+								{ "__identifier": "Initial_Animation", "__value": null, "__type": "String", "defUid": 51, "realEditorValues": [] }
 							]
 						}
 					]

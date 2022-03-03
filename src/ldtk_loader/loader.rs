@@ -28,7 +28,7 @@ pub struct LdtkMap {
     name: String,
     size_px: IVec2,
     tile_count: Option<IVec2>,
-    pixels_per_tile: Option<IVec2>,
+    pixels_per_tile: Option<i32>,
     layers: BTreeMap<String,MapLayer>,
     // Maps tileset id to it's image handle
     images: HashMap<i32, Handle<Image>>,
@@ -99,7 +99,7 @@ impl LdtkMap {
         self.tile_count
     }
 
-    pub fn pixels_per_tile(&self) -> Option<IVec2> {
+    pub fn pixels_per_tile(&self) -> Option<i32> {
         self.pixels_per_tile
     }
 
@@ -230,29 +230,9 @@ impl AssetLoader for LdtkAssetLoader {
             let max_height = layers.iter().map(|l| l.c_hei as i32).max().unwrap();
             let max_tile_size = layers.iter().map(|l| l.grid_size as i32).max().unwrap();
 
-
-            // if let Some(val) = fields.field("tile_count") {
-            //     if let Some(str) = val.as_str() {
-            //         let val: Vec<i32> = ron::de::from_str(str).unwrap_or_else(|_|
-            //             panic!("Error loading level tile_count {}, should be in format [x,y]", str)
-            //         );
-            //         tile_count = IVec2::new(val[0], val[1]);
-            //         //println!("Found tile count of {}", tile_count);
-            //     }
-            // }
             let tile_count = fields.try_get_ivec2("tile_count");
 
-            let pixels_per_tile = fields.try_get_ivec2("pixels_per_tile");
-
-            // if let Some(val) = fields.field("tile_count") {
-            //     if let Some(str) = val.as_str() {
-            //         let val: Vec<i32> = ron::de::from_str(str).unwrap_or_else(|_|
-            //             panic!("Error loading level tile_count {}, should be in format [x,y]", str)
-            //         );
-            //         tile_count = IVec2::new(val[0], val[1]);
-            //         //println!("Found tile count of {}", tile_count);
-            //     }
-            // }
+            let pixels_per_tile = fields.try_get_i32("pixels_per_tile");
 
             let map = LdtkMap {
                 name: load_context.path().to_string_lossy().to_string(),
@@ -615,6 +595,15 @@ impl Fields {
         }
         panic!("Filed to find i32 field {}", field_name);
     }
+    
+    pub fn try_get_i32(&self, field_name: &str) -> Option<i32> {
+        if let Some(val) = self.fields.get(field_name) {
+            if let Some(val) = val.as_i64() {
+                return Some(val as i32);
+            }
+        }
+        None
+    }
 
     pub fn get_str(&self, field_name: &str) -> &str {
         if let Some(val) = self.fields.get(field_name) {
@@ -627,6 +616,27 @@ impl Fields {
     
     
     pub fn get_f32(&self, field_name: &str) -> f32 {
+        if let Some(val) = self.fields.get(field_name) {
+            //println!("VAL TYPE {:?}", val);
+            if let Some(val) = val.as_object() {
+                //println!("Obj");
+                if let Some(val) = val.get("params") {
+                    if let Some(val) = val.as_array() {
+                        //println!("ARRAY {:?}", val);
+                        match &val[0] {
+                            Value::Number(n) => {
+                                return n.as_f64().unwrap() as f32;
+                            },
+                            _ => {}
+                        }
+                    }
+                }
+            }
+        }
+        panic!("Filed to find f32 field {}", field_name);
+    }
+
+    pub fn try_get_f32(&self, field_name: &str) -> f32 {
         if let Some(val) = self.fields.get(field_name) {
             //println!("VAL TYPE {:?}", val);
             if let Some(val) = val.as_object() {
@@ -681,6 +691,7 @@ impl Fields {
         }
         None
     }
+
     
     pub fn try_get_array<'a, T: Serialize + Deserialize<'a> + Clone>(&'a self, field_name: &str) -> Option<Vec<T>> {
         if let Some(val) = self.fields.get(field_name) {
@@ -733,7 +744,7 @@ pub struct MapEntity {
     tileset_id: Option<i32>,
     pivot: Vec2,
     tags: Vec<String>,
-    grid_size: i32,
+    pixels_per_unit: i32,
 }
 impl MapEntity {
     /// Get a reference to the map entity's name.
@@ -762,7 +773,7 @@ impl MapEntity {
     }
 
     pub fn grid_size(&self) -> i32 {
-        self.grid_size
+        self.pixels_per_unit
     }
 
     /// Get the map entity's def id.
@@ -807,6 +818,11 @@ impl MapEntity {
     }
     pub fn get_f32(&self, name: &str) -> f32 {
         self.fields.field(name).unwrap().as_f32().unwrap()
+    }
+
+    /// Get the map entity's pixels per unit.
+    pub fn pixels_per_unit(&self) -> i32 {
+        self.pixels_per_unit
     }
 }
 
@@ -880,7 +896,7 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
     let mut entities = Vec::new();
     for entity in layer.entity_instances.iter() {
         let def = defs.get(&entity.def_uid).unwrap();
-
+        
         entity_def_ids.insert(entity.def_uid);
         let mut tileset_id = None;
         let mut tile_id = None;
@@ -902,16 +918,19 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
         let grid_y = layer_height - 1 - grid_y;
 
         let y_flip = (layer_height - 1) * layer.grid_size;
-        let y = y_flip - y;
-        
-        let xy = Vec2::new(x as f32,y as f32);
         let grid_xy = IVec2::new(grid_x as i32,grid_y as i32);
         let size = Vec2::new(width as f32, height as f32);
 
-        let pivot = Vec2::new(entity.pivot[0] as f32, entity.pivot[1] as f32);
-        //pivot.y = 1.0 - pivot.y;
+        let xy = IVec2::new(x as i32, y as i32);
 
-        let xy = xy + size * pivot;
+        let mut pivot = Vec2::new(entity.pivot[0] as f32, entity.pivot[1] as f32);
+
+        println!("LDTK entity pos {}, gridxy {}, size {}, pivot {}", xy, grid_xy, size, pivot);
+        let y = y_flip - y;
+        let xy = Vec2::new(x as f32,y as f32);
+        pivot.y = 1.0 - pivot.y;
+
+        let xy = xy - size * pivot;
         let xy = xy.round().as_ivec2();
 
         let size = size.as_ivec2();
@@ -924,7 +943,7 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
         let tags = def.tags.clone();
         //println!("Adjusted values grid {}, px {}, size {}", grid_xy, xy, size);
 
-        entities.push(MapEntity {
+        let entity = MapEntity {
             name: entity.identifier.to_lowercase(),
             fields,
             xy,
@@ -935,8 +954,14 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
             tileset_id,
             pivot,
             tags,
-            grid_size: layer.grid_size as i32,
-        });
+            pixels_per_unit: size.y,
+        };
+        println!("game entity pos {}, gridxy {}, size {}, pivot {}", 
+            entity.xy(), 
+            entity.grid_xy(), 
+            entity.size(), 
+            entity.pivot());
+        entities.push(entity);
     }
 
     let mut animations = HashMap::default();
