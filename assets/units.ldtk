@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 51,
+	"nextUid": 53,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -543,6 +543,40 @@
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4b674b674b674b67" }
+		},
+		{
+			"__cWid": 2,
+			"__cHei": 2,
+			"identifier": "UnitWizard_animation_Lightning",
+			"uid": 51,
+			"relPath": "textures/unitWizard_animation_Lightning.png",
+			"pxWid": 128,
+			"pxHei": 128,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4b774b774b774b77" }
+		},
+		{
+			"__cWid": 4,
+			"__cHei": 4,
+			"identifier": "WizardSpellsLightning_animation",
+			"uid": 52,
+			"relPath": "textures/wizardSpellsLightning_animation.png",
+			"pxWid": 256,
+			"pxHei": 256,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "00000bb50bb40bb40bb41bb41bb41cb41bb41cb42cb42cb42cb42cb400000000" }
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -764,13 +798,13 @@
 					"entityInstances": [
 						{
 							"__identifier": "Unit",
-							"__grid": [9,0],
+							"__grid": [25,6],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 1,
-							"px": [9,0],
+							"px": [25,6],
 							"fieldInstances": [
 								{ "__identifier": "name", "__value": "Wizard", "__type": "String", "defUid": 3, "realEditorValues": [] },
 								{ "__identifier": "hp", "__value": 0, "__type": "Int", "defUid": 5, "realEditorValues": [] },
