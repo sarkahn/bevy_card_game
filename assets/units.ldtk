@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 29,
+	"nextUid": 34,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -253,9 +253,9 @@
 			]
 		},
 		{
-			"identifier": "Animation",
+			"identifier": "Holy2",
 			"uid": 23,
-			"tags": ["animation"],
+			"tags": [ "animation", "moveable" ],
 			"width": 16,
 			"height": 16,
 			"resizableX": false,
@@ -339,7 +339,122 @@
 					"max": null,
 					"regex": null,
 					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Float", "params": [0.5] },
+					"defaultOverride": { "id": "V_Float", "params": [0.8] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Motion",
+					"__type": "String",
+					"uid": 33,
+					"type": "F_Text",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["{     direction: Left,     speed: 0.5, }"]
+					},
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "Holy",
+			"uid": 29,
+			"tags": [ "animation", "Unit" ],
+			"width": 16,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "name",
+					"__type": "String",
+					"uid": 30,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["Idle"]
+					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "frames",
+					"__type": "String",
+					"uid": 31,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["[0,1,2,1]"]
+					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "speed",
+					"__type": "Float",
+					"uid": 32,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Float", "params": [0.8] },
 					"textLanguageMode": null
 				}
 			]
@@ -442,13 +557,13 @@
 					"entityInstances": [
 						{
 							"__identifier": "Spell",
-							"__grid": [32,34],
+							"__grid": [33,30],
 							"__pivot": [0.5,0.5],
 							"__tile": { "tilesetUid": 13, "srcRect": [0,0,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 15,
-							"px": [32,34],
+							"px": [33,30],
 							"fieldInstances": [
 								{ "__identifier": "Name", "__value": "Holy", "__type": "String", "defUid": 16, "realEditorValues": [] },
 								{
