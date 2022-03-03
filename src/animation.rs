@@ -44,11 +44,13 @@ impl AnimationController {
     }
 
     pub fn add(&mut self, name: &str, anim: AnimationData) {
+        println!("Inserting animation {:?}!", anim);
         let name = name.to_lowercase();
-        if self.current.is_none() {
-            self.current = Some(name.clone());
+        let anim_count = self.animations.len();
+        self.animations.insert(name.clone(), anim);
+        if anim_count == 0 {
+            self.play(&name);
         }
-        self.animations.insert(name, anim);
     }
 
     pub fn current_anim(&self) -> Option<&AnimationData> {
