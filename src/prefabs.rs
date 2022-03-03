@@ -73,9 +73,7 @@ fn build(
 
             let entities = layer.as_entities();
        
-            let unit = entities.get_from_name("unit").unwrap_or_else(||
-                panic!("Error building prefab, no 'unit' entity found")
-            );
+            let unit = entities.get_tagged("root").next().unwrap();
 
             let unit_name = unit.field("name").unwrap().as_str().unwrap();
             let tileset_id = unit.tileset_id().unwrap_or_else(||
@@ -84,6 +82,7 @@ fn build(
 
             let tileset = ldtk.tileset_from_id(tileset_id).unwrap();
             let atlas = get_atlas(&mut atlases, &mut atlas_handles, tileset);
+
             
             // let defs = ldtk.entity_defs();
             // //println!("DEFS {:?}", defs);
@@ -94,13 +93,21 @@ fn build(
             let mut entity = commands.entity(entity);
 
             let sprite = sprite_from_entity(unit, atlas, Vec2::ZERO, 0);
+
             entity.insert_bundle(sprite);
             
-            let defs = ldtk.entity_defs();
+            // let defs = ldtk.entity_defs();
 
-            let anims = defs.get_tagged("animation");
-
-            let anims: Vec<_> = anims.map(|a|anim_from_def(a)).collect();
+            // let anims = defs.get_tagged("animation");
+            
+            let layer = ldtk.layer_from_name("animation").unwrap_or_else(||
+                panic!("Error building prefab, no 'animation' layer found")
+            );
+            
+            let anims = layer.as_entities().get_tagged("animation");
+            
+            let anims: Vec<AnimationData> = anims.map(|a|anim_from_entity(a, &ldtk)).collect();
+            
 
             if !anims.is_empty() {
                 let mut controller = AnimationController::default();
@@ -109,7 +116,9 @@ fn build(
                     controller.add(&anim.name, anim.clone());
                 }
                 entity.insert(controller);
+
             }
+
 
             // println!("REMOVING loadprefab??");
             entity.remove::<LoadPrefab>();
@@ -138,11 +147,32 @@ fn sprite_from_entity(
     }
 }
 
-fn anim_from_def(def: &MapEntityDef) -> AnimationData {
+// fn anim_from_def(
+//     def: &MapEntityDef,
+// ) -> AnimationData {
+
+
+//     let name = def.get_str("name");
+//     let frames = def.get_str("frames");
+//     let speed = def.get_f32("speed");
+
+//     let frames: Vec<usize> = ron::de::from_str(frames)
+//         .expect("Error parsing animation frames: {} should be array of indices");
+//     AnimationData {
+//         name: name.to_lowercase(),
+//         frames,
+//         speed,
+//     }
+// }
+fn anim_from_entity(
+    def: &MapEntity,
+    ldtk: &LdtkMap,
+) -> AnimationData {
     
     let name = def.get_str("name");
     let frames = def.get_str("frames");
     let speed = def.get_f32("speed");
+    let path = def.get_str("texture");
 
     let frames: Vec<usize> = ron::de::from_str(frames)
         .expect("Error parsing animation frames: {} should be array of indices");
@@ -150,6 +180,8 @@ fn anim_from_def(def: &MapEntityDef) -> AnimationData {
         name: name.to_lowercase(),
         frames,
         speed,
+        tileset_path: path.to_string(),
+        ldtk_path: ldtk.name().to_string(),
     }
 }
 

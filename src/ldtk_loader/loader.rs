@@ -35,6 +35,8 @@ pub struct LdtkMap {
     background: Option<MapBackground>,
     // Maps tileset name to it's id
     id_map: HashMap<String, i32>,
+    // Map tileset path to it's id
+    path_map: HashMap<String,i32>,
     //pub atlases: HashMap<i32, Handle<TextureAtlas>>,
     max_tile_size: IVec2,
     entity_defs: MapEntityDefinitions,
@@ -51,6 +53,12 @@ impl LdtkMap {
 
     pub fn tileset_from_name(&self, name: &str) -> Option<&MapTileset> {
         if let Some(id) = self.id_map.get(&name.to_lowercase()) {
+            return self.tilesets.get(&id);
+        }
+        None
+    }
+    pub fn tileset_from_path(&self, name: &str) -> Option<&MapTileset> {
+        if let Some(id) = self.path_map.get(&name.to_lowercase()) {
             return self.tilesets.get(&id);
         }
         None
@@ -106,10 +114,11 @@ impl AssetLoader for LdtkAssetLoader {
             let mut images = HashMap::default();
             let mut atlases = HashMap::default();
             let mut id_map = HashMap::default();
+            let mut path_map = HashMap::default();
 
             let path = load_context.path().parent().unwrap();
             let mut dep_paths = Vec::new();
-
+            
             for def in project.defs.tilesets.iter() {
                 let path: AssetPath = path.join(&def.rel_path).into();
                 println!("loading {}", path.path().to_string_lossy());
@@ -130,6 +139,7 @@ impl AssetLoader for LdtkAssetLoader {
                 tilesets.insert(id, ts);
                 images.insert(id, image.clone());
                 atlases.insert(id, atlas);
+                path_map.insert(def.rel_path.to_lowercase(), id);
             }
 
             let mut bg = None;
@@ -198,6 +208,7 @@ impl AssetLoader for LdtkAssetLoader {
                 images,
                 tilesets,
                 id_map,
+                path_map,
                 background: bg,
                 max_tile_size: IVec2::splat(max_tile_size),
                 entity_defs: MapEntityDefinitions::from_defs(&entity_defs),
