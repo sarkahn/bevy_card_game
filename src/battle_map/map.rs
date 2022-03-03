@@ -115,8 +115,10 @@ fn build_map(
 ) {
     if let Some(configs) = configs.get(SETTINGS_PATH) {
         if let Some(ldtk) = ldtk.get(&configs.settings.map_file) {
-            map.0 = PathMap2d::new(ldtk.size().as_uvec2().into());
-            q_cam.single_mut().set_tile_count(ldtk.size().as_uvec2().into());
+            map.0 = PathMap2d::new(ldtk.size_px().as_uvec2().into());
+            if let Some(tile_count) = ldtk.tile_count() {
+                q_cam.single_mut().set_tile_count(tile_count.as_uvec2().into());
+            }
             units.0 = Grid::default(map.size().into());
             for (i,layer) in ldtk.layers().enumerate() {
                 match layer {
@@ -158,7 +160,7 @@ fn build_tile_layer(
     let tileset = ldtk.tileset_from_id(tiles.tileset_id).unwrap();
     let atlas = get_atlas(atlases, atlas_handles, tileset);
     for tile in &tiles.tiles {
-        let offset = axis_offset(ldtk.size());
+        let offset = axis_offset(ldtk.size_px());
         let xy = tile.grid_xy.as_vec2() + offset;
         make_sprite_atlas(commands, xy, depth, atlas.clone(), tile.id as usize);
     }
@@ -176,7 +178,7 @@ fn build_entity_layer(
         if let Some(tsid) = entity.tileset_id() {
             if let Some(tileset) = ldtk.tileset_from_id(tsid) {
                 let atlas = get_atlas(atlases, atlas_handles, tileset);
-                let offset = axis_offset(ldtk.size());
+                let offset = axis_offset(ldtk.size_px());
                 let xy = entity.grid_xy().as_vec2() + offset;
                 let mut sprite = make_sprite_atlas(
                     commands, 

@@ -38,7 +38,7 @@ impl From<AnimationData> for AnimationController {
         let speed = d.speed;
         let mut animations = HashMap::default();
         let name = d.name.to_string();
-        animations.insert(d.name.to_string(), d);
+        animations.insert(d.name.to_lowercase(), d);
         let mut c = Self {
             animations,
             timer: Timer::from_seconds(speed, false),
@@ -51,8 +51,9 @@ impl From<AnimationData> for AnimationController {
 
 impl AnimationController {
     pub fn play(&mut self, name: &str) {
-        if let Some(anim) = self.animations.get(name) {
-            //println!("Playing animation {}. Speed {}. Path {}", name, anim.speed, &anim.tileset_path);
+        let name = name.to_lowercase();
+        if let Some(anim) = self.animations.get(&name) {
+            println!("Playing animation {}. Speed {}. Path {}", name, anim.speed, &anim.tileset_path);
             self.change = Some(anim.tileset_path.to_string());
             self.current = Some(name.to_string());
             self.timer.set_duration(Duration::from_secs_f32(anim.speed));
@@ -61,7 +62,7 @@ impl AnimationController {
             self.frame_index = 0;
             self.paused = false;
         } else {
-            //println!("Animation {} not found", name);
+            println!("Animation {} not found", name);
         }
     }
 
@@ -85,7 +86,7 @@ impl AnimationController {
 
     pub fn current_anim(&self) -> Option<&AnimationData> {
         if let Some(name) = &self.current {
-            return self.animations.get(name);
+            return self.animations.get(&name.to_lowercase());
         }
         None
     }

@@ -19,7 +19,7 @@ impl Plugin for PrefabsPlugin {
         )
         .add_system_set(
             SystemSet::on_update(GameState::AssetTest)
-            .with_system(build.after("prefab_load"))
+            .with_system(build_prefab.after("prefab_load"))
         )
         ;
     }
@@ -61,7 +61,7 @@ fn load(
     }
 }
 
-fn build(
+fn build_prefab(
     mut commands: Commands, 
     q_prefabs: Query<(Entity, &LoadPrefab), With<LoadPrefab>>,
     ldtk: Res<Assets<LdtkMap>>,
@@ -71,8 +71,15 @@ fn build(
 ) {
     for (entity, load) in q_prefabs.iter() {
         if let Some(ldtk) = ldtk.get(&load.0) {
-            println!("Level size {}", ldtk.size());
-            q_cam.single_mut().set_tile_count(ldtk.size().as_uvec2().into());
+
+            if let Some(tile_count) = ldtk.tile_count() {
+                println!("Setting tile count to {}", tile_count);
+                q_cam.single_mut().set_tile_count(tile_count.as_uvec2().into());
+            }
+            if let Some(pixels_per_tile) = ldtk.pixels_per_tile() {
+                q_cam.single_mut().pixels_per_tile = pixels_per_tile.y as u32;
+            }
+
             commands.entity(entity).remove::<LoadPrefab>();
             let entity = commands.entity(entity).id();
 
@@ -127,21 +134,23 @@ fn get_animations(
     ldtk: &LdtkMap,
     unit: &MapEntity,
 ) -> Option<AnimationController> {
-    for layer in ldtk.layers() {
-        let anims = layer.as_entities().get_tagged("animation");
-
-        let mut all = Vec::new();
-        for anim in anims {
-            let anim = anim_from_entity(anim, ldtk);
-            all.push(anim);
-        }
-        if !all.is_empty() {
-            if let Some(mut controller) = make_animation_controller(unit, &all) {
-                if let Some(initial) = unit.field("initial_animation") {
-                    controller.play(initial.as_str().unwrap());
-                }
-                return Some(controller);
+    let anims = ldtk.layers().flat_map(
+        |l|l.as_entities().get_tagged("animation")
+    );
+    let mut all = Vec::new();
+    for anim in anims {
+        let anim = anim_from_entity(anim, ldtk);
+        println!("Building {} animation for {}", anim.name, unit.name());
+        all.push(anim);
+    }
+    if !all.is_empty() {
+        if let Some(mut controller) = make_animation_controller(unit, &all) {
+            if let Some(initial) = unit.field("initial_animation") {
+                let initial = initial.as_str().unwrap();
+                println!("Adding initial anim {} for {}", initial, unit.name());
+                controller.play(initial);
             }
+            return Some(controller);
         }
     }
     None
@@ -159,7 +168,7 @@ fn sprite_from_entity(
         ..Default::default()
     };
 
-    println!("{} pos: {}, pivot: {}, size: {}, grid_size: {}", def.name(), def.xy(), def.pivot(), def.size(), def.grid_size());
+    println!("{} posm, {} size: {}, grid_size: {}", def.name(), def.xy(), def.size(), def.grid_size());
 
     let pos = def.xy().as_vec2().extend(layer as f32) / 64.0;
     //let pos = Vec3::ZERO;
@@ -180,11 +189,12 @@ fn make_animation_controller(
         let mut controller = AnimationController::default();
         // Initial_animation
         for anim in animations.iter() {
-            println!("Adding anim {}", anim.name);
+            println!("Adding intial anim {} for {}", anim.name, entity.name());
             controller.add(&anim.name, anim.clone());
         }
         if let Some(initial) = entity.field("initial_animation") {
             let initial = initial.as_str().unwrap();
+            println!("Running initial animation {}", initial);
             controller.play(initial);
         } else {
             controller.play_any();

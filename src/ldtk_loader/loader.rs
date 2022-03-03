@@ -8,6 +8,7 @@ use bevy::{
     utils::{HashMap, HashSet},
 };
 use ldtk_rust::{EntityDefinition, FieldInstance, LayerInstance, Project, TilesetDefinition, FieldDefinition, EntityInstance};
+use serde::{Serialize, Deserialize};
 use serde_json::Value;
 
 use crate::AnimationData;
@@ -25,7 +26,9 @@ impl Plugin for LdtkAssetPlugin {
 #[uuid = "ac23ab52-5393-4bbe-178f-16c414aaa0eb"]
 pub struct LdtkMap {
     name: String,
-    size: IVec2,
+    size_px: IVec2,
+    tile_count: Option<IVec2>,
+    pixels_per_tile: Option<IVec2>,
     layers: BTreeMap<String,MapLayer>,
     // Maps tileset id to it's image handle
     images: HashMap<i32, Handle<Image>>,
@@ -40,6 +43,7 @@ pub struct LdtkMap {
     //pub atlases: HashMap<i32, Handle<TextureAtlas>>,
     max_tile_size: IVec2,
     entity_defs: MapEntityDefinitions,
+    custom_fields: Fields,
 }
 
 impl LdtkMap {
@@ -88,8 +92,15 @@ impl LdtkMap {
     }
 
     /// Get the ldtk map's size.
-    pub fn size(&self) -> IVec2 {
-        self.size
+    pub fn size_px(&self) -> IVec2 {
+        self.size_px
+    }
+    pub fn tile_count(&self) -> Option<IVec2> {
+        self.tile_count
+    }
+
+    pub fn pixels_per_tile(&self) -> Option<IVec2> {
+        self.pixels_per_tile
     }
 
     /// Get a reference to the ldtk map's background.
@@ -179,9 +190,11 @@ impl AssetLoader for LdtkAssetLoader {
             for def in project.defs.entities.iter() {
                 entity_defs.insert(def.uid, def);
             }
-
             let mut map_layers = BTreeMap::new();
+            let mut fields = Fields::default();
             for level in project.levels.iter() {
+                fields = Fields::from_ldtk(&level.field_instances);
+
                 if let Some(layers) = &level.layer_instances {
                     for layer in layers {
                         let name = layer.identifier.clone();
@@ -217,9 +230,35 @@ impl AssetLoader for LdtkAssetLoader {
             let max_height = layers.iter().map(|l| l.c_hei as i32).max().unwrap();
             let max_tile_size = layers.iter().map(|l| l.grid_size as i32).max().unwrap();
 
+
+            // if let Some(val) = fields.field("tile_count") {
+            //     if let Some(str) = val.as_str() {
+            //         let val: Vec<i32> = ron::de::from_str(str).unwrap_or_else(|_|
+            //             panic!("Error loading level tile_count {}, should be in format [x,y]", str)
+            //         );
+            //         tile_count = IVec2::new(val[0], val[1]);
+            //         //println!("Found tile count of {}", tile_count);
+            //     }
+            // }
+            let tile_count = fields.try_get_ivec2("tile_count");
+
+            let pixels_per_tile = fields.try_get_ivec2("pixels_per_tile");
+
+            // if let Some(val) = fields.field("tile_count") {
+            //     if let Some(str) = val.as_str() {
+            //         let val: Vec<i32> = ron::de::from_str(str).unwrap_or_else(|_|
+            //             panic!("Error loading level tile_count {}, should be in format [x,y]", str)
+            //         );
+            //         tile_count = IVec2::new(val[0], val[1]);
+            //         //println!("Found tile count of {}", tile_count);
+            //     }
+            // }
+
             let map = LdtkMap {
                 name: load_context.path().to_string_lossy().to_string(),
-                size: IVec2::new(max_width, max_height),
+                size_px: IVec2::new(max_width, max_height),
+                tile_count,
+                pixels_per_tile,
                 layers: map_layers,
                 images,
                 tilesets,
@@ -228,6 +267,7 @@ impl AssetLoader for LdtkAssetLoader {
                 background: bg,
                 max_tile_size: IVec2::splat(max_tile_size),
                 entity_defs: MapEntityDefinitions::from_defs(&entity_defs),
+                custom_fields: fields,
             };
 
             let asset = LoadedAsset::new(map);
@@ -575,6 +615,15 @@ impl Fields {
         }
         panic!("Filed to find i32 field {}", field_name);
     }
+
+    pub fn get_str(&self, field_name: &str) -> &str {
+        if let Some(val) = self.fields.get(field_name) {
+            if let Some(val) = val.as_str() {
+                return val
+            }
+        }
+        panic!("Filed to find i32 field {}", field_name);
+    }
     
     
     pub fn get_f32(&self, field_name: &str) -> f32 {
@@ -605,6 +654,50 @@ impl Fields {
                     if let Some(y) = val[1].as_f32() {
                         return Vec2::new(x,y);
                     }
+                }
+            }
+        }
+        panic!("Filed to find vec2 field {}", field_name);
+    }
+    
+    pub fn get_ivec2(&self, field_name: &str) -> IVec2 {
+        if let Some(val) = self.fields.get(field_name) {
+            if let Some(val) = val.as_array() {
+                if let Some(x) = val[0].as_i32() {
+                    if let Some(y) = val[1].as_i32() {
+                        return IVec2::new(x,y);
+                    }
+                }
+            }
+        }
+        panic!("Filed to find ivec2 field {}", field_name);
+    }
+    
+    pub fn try_get_ivec2(&self, field_name: &str) -> Option<IVec2> {
+        if let Some(val) = self.try_get_array::<i32>(field_name) {
+            if val.len() == 2 {
+                return Some(IVec2::new(val[0], val[1]));
+            }
+        }
+        None
+    }
+    
+    pub fn try_get_array<'a, T: Serialize + Deserialize<'a> + Clone>(&'a self, field_name: &str) -> Option<Vec<T>> {
+        if let Some(val) = self.fields.get(field_name) {
+            if let Some(val) = val.as_str() {
+                if let Ok(v) =  ron::de::from_str::<Vec<T>>(val) {
+                    return Some(v.clone());
+                }
+            }
+        }
+        None
+    }
+
+    pub fn get_array<'a, T: Serialize + Deserialize<'a> + Clone>(&'a self, field_name: &str) -> Vec<T> {
+        if let Some(val) = self.fields.get(field_name) {
+            if let Some(val) = val.as_str() {
+                if let Ok(v) =  ron::de::from_str::<Vec<T>>(val) {
+                    return v.clone();
                 }
             }
         }
