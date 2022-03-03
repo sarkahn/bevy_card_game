@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{ldtk_loader::{LdtkMap, MapEntityDef, MapTileset, MapEntity}, make_sprite_atlas_sized, AnimationData, AtlasHandles, make_sprite_atlas, AnimationController};
+use crate::{ldtk_loader::{LdtkMap, MapEntityDef, MapTileset, MapEntity, MapLayer}, make_sprite_atlas_sized, AnimationData, AtlasHandles, make_sprite_atlas, AnimationController};
 
 pub const PREFAB_ASSET_PATH: &str = "units.ldtk";
 
@@ -89,12 +89,35 @@ fn build(
             // let unit = defs.def_from_name("Unit")
             //     .unwrap_or_else(||panic!("Error building prefab - couldn't find 'Unit' definition in {}", ldtk.name()));
 
+                
+            // let anims = layer.as_entities().get_tagged("animation");
+            
+            // let anims: Vec<AnimationData> = anims.map(|a|anim_from_entity(a, &ldtk)).collect();
+            
+        
+            // if !anims.is_empty() {
+            //     let mut controller = AnimationController::default();
+            //     // Initial_animation
+            //     for anim in anims.iter() {
+            //         println!("Adding anim {}", anim.name);
+            //         controller.add(&anim.name, anim.clone());
+            //     }
+            //     if let Some(initial) = unit.field("initial_animation") {
+            //         let initial = initial.as_str().unwrap();
+            //         controller.play(initial);
+            //     }
+                
+            //     entity.insert(controller);
+            // }
 
             let mut entity = commands.entity(entity);
 
-            let sprite = sprite_from_entity(unit, atlas, Vec2::ZERO, 0);
+            
 
-            entity.insert_bundle(sprite);
+
+            let sprite = sprite_from_entity(unit, atlas, 0);
+
+            let entity = entity.insert_bundle(sprite).id();
             
             // let defs = ldtk.entity_defs();
 
@@ -103,25 +126,32 @@ fn build(
             let layer = ldtk.layer_from_name("animation").unwrap_or_else(||
                 panic!("Error building prefab, no 'animation' layer found")
             );
-            
-            let anims = layer.as_entities().get_tagged("animation");
-            
-            let anims: Vec<AnimationData> = anims.map(|a|anim_from_entity(a, &ldtk)).collect();
-            
 
-            if !anims.is_empty() {
-                let mut controller = AnimationController::default();
-                for anim in anims.iter() {
-                    println!("Adding anim {}", anim.name);
-                    controller.add(&anim.name, anim.clone());
+            // Spells
+            for layer in ldtk.layers() {
+                match layer {
+                    MapLayer::Tiles(_) => {},
+                    MapLayer::Entities(entities) => {
+                        for spell in entities.get_tagged("spell") {
+                            let tex = spell.get_str("texture");
+                            let tileset = ldtk.tileset_from_name(tex).unwrap();
+                            let atlas = get_atlas(&mut atlases, &mut atlas_handles, &tileset);
+                            let sprite = sprite_from_entity(spell, atlas.clone(), 1);
+                            
+                            let anim = anim_from_entity(spell, ldtk);
+                            let mut spell_entity = commands.spawn();
+                            spell_entity.insert_bundle(sprite);
+                            if let Some(anims) = make_animations(spell, &[anim]) {
+                                spell_entity.insert(anims);
+                            }
+                        }
+                    },
                 }
-                entity.insert(controller);
-
             }
 
 
             // println!("REMOVING loadprefab??");
-            entity.remove::<LoadPrefab>();
+            commands.entity(entity).remove::<LoadPrefab>();
         }
     }
 }
@@ -129,7 +159,6 @@ fn build(
 fn sprite_from_entity(
     def: &MapEntity,
     atlas: Handle<TextureAtlas>,
-    pos: Vec2,
     layer: i32,
 ) -> SpriteSheetBundle {
     let size = def.size().as_vec2() / 64.0;
@@ -139,12 +168,34 @@ fn sprite_from_entity(
         ..Default::default()
     };
 
+    let pos = def.xy().as_vec2().extend(layer as f32);
+
     SpriteSheetBundle {
         sprite,
         texture_atlas: atlas.clone(),
-        transform: Transform::from_translation(pos.extend(layer as f32)),
+        transform: Transform::from_translation(pos),
         ..Default::default()
     }
+}
+
+fn make_animations(
+    entity: &MapEntity,
+    animations: &[AnimationData],
+) -> Option<AnimationController> {
+    if !animations.is_empty() {
+        let mut controller = AnimationController::default();
+        // Initial_animation
+        for anim in animations.iter() {
+            println!("Adding anim {}", anim.name);
+            controller.add(&anim.name, anim.clone());
+        }
+        if let Some(initial) = entity.field("initial_animation") {
+            let initial = initial.as_str().unwrap();
+            controller.play(initial);
+        }
+        return Some(controller);
+    }
+    None
 }
 
 // fn anim_from_def(

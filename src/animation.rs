@@ -52,11 +52,11 @@ impl AnimationController {
 
     pub fn add(&mut self, name: &str, anim: AnimationData) {
         let name = name.to_lowercase();
-        let anim_count = self.animations.len();
-        self.animations.insert(name.clone(), anim);
-        if anim_count == 0 {
-            self.play(&name);
-        }
+        //let anim_count = self.animations.len();
+        self.animations.insert(name, anim);
+        // if anim_count == 0 {
+        //     self.play(&name);
+        // }
     }
 
     pub fn current_anim(&self) -> Option<&AnimationData> {

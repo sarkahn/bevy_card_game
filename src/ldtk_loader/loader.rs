@@ -118,7 +118,7 @@ impl AssetLoader for LdtkAssetLoader {
 
             let path = load_context.path().parent().unwrap();
             let mut dep_paths = Vec::new();
-            
+
             for def in project.defs.tilesets.iter() {
                 let path: AssetPath = path.join(&def.rel_path).into();
                 println!("loading {}", path.path().to_string_lossy());
@@ -680,7 +680,7 @@ impl MapEntity {
         &self.fields
     }
 
-    /// Get the map entity's xy.
+    // Pixel position of the entity
     pub fn xy(&self) -> IVec2 {
         self.xy
     }
