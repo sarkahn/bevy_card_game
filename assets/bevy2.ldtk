@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 44,
+	"nextUid": 46,
 	"worldLayout": "Free",
 	"worldGridWidth": 1920,
 	"worldGridHeight": 1080,
@@ -30,6 +30,25 @@
 	"levelNamePattern": "Level_%idx",
 	"flags": [],
 	"defs": { "layers": [
+		{
+			"__type": "Entities",
+			"identifier": "PlayerBase",
+			"type": "Entities",
+			"uid": 45,
+			"gridSize": 16,
+			"displayOpacity": 1,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"requiredTags": [],
+			"excludedTags": [],
+			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"autoTilesetDefUid": null,
+			"autoRuleGroups": [],
+			"autoSourceLayerDefUid": null,
+			"tilesetDefUid": null,
+			"tilePivotX": 0,
+			"tilePivotY": 0
+		},
 		{
 			"__type": "Tiles",
 			"identifier": "Units_Large",
@@ -394,6 +413,31 @@
 			"pivotX": 0,
 			"pivotY": 0,
 			"fieldDefs": []
+		},
+		{
+			"identifier": "Castle",
+			"uid": 44,
+			"tags": ["player_base"],
+			"width": 64,
+			"height": 64,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 21,
+			"tileId": 0,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
 		}
 	], "tilesets": [
 		{
@@ -530,6 +574,31 @@
 			"fieldInstances": [],
 			"layerInstances": [
 				{
+					"__identifier": "PlayerBase",
+					"__type": "Entities",
+					"__cWid": 116,
+					"__cHei": 64,
+					"__gridSize": 16,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"levelId": 0,
+					"layerDefUid": 45,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGrid": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 9164665,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": []
+				},
+				{
 					"__identifier": "Units_Large",
 					"__type": "Tiles",
 					"__cWid": 29,
@@ -552,8 +621,8 @@
 					"seed": 4666800,
 					"overrideTilesetUid": null,
 					"gridTiles": [
-						{ "px": [1088,192], "src": [0,0], "f": 0, "t": 0, "d": [104] },
-						{ "px": [1152,192], "src": [64,0], "f": 0, "t": 1, "d": [105] }
+						{ "px": [1152,192], "src": [0,0], "f": 0, "t": 0, "d": [105] },
+						{ "px": [1216,192], "src": [64,0], "f": 0, "t": 1, "d": [106] }
 					],
 					"entityInstances": []
 				},
