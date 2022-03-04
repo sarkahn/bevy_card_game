@@ -7,7 +7,7 @@ use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
 use config::{ConfigAsset, ConfigPlugin};
 use ldtk_loader::LdtkPlugin;
-use prefabs::PrefabsPlugin;
+use prefab::PrefabPlugin;
 use serde::{Deserialize, Serialize};
 
 use self::battle_map::BattleMapPlugin;
@@ -23,7 +23,7 @@ mod ldtk_loader;
 mod util;
 mod party;
 mod unit;
-mod prefabs;
+mod prefab;
 
 pub use grid::*;
 
@@ -31,6 +31,7 @@ pub const SETTINGS_PATH: &str = "game_settings.config";
 
 pub use animation::{AnimationController, AnimationData};
 pub use util::*;
+pub use prefab::LoadPrefab;
 
 #[derive(Component)]
 pub struct ResizeCamera(pub IVec2);
@@ -71,7 +72,7 @@ pub fn main() {
         .add_plugin(AssetsPlugin)
         .add_plugin(EguiPlugin)
         .add_plugin(AnimationPlugin)
-        .add_plugin(PrefabsPlugin)
+        .add_plugin(PrefabPlugin)
         .add_state(GameState::Starting)
         .add_startup_system(load_configs)
         .add_system_set(

@@ -1,29 +1,10 @@
 use bevy::prelude::*;
-use bevy_tiled_camera::TiledProjection;
 
-use crate::{ldtk_loader::{LdtkMap, MapEntityDef, MapTileset, MapEntity, MapLayer}, make_sprite_atlas_sized, AnimationData, AtlasHandles, make_sprite_atlas, AnimationController, GameState, config::ConfigAsset, SETTINGS_PATH};
+use crate::{GameState, ldtk_loader::{LdtkMap, MapEntity, MapTileset}, AtlasHandles, AnimationController, AnimationData, LoadPrefab};
 
-pub const PREFAB_ASSET_PATH: &str = "units.ldtk";
+#[derive(Default, Component)]
+pub struct Prefab(Handle<LdtkMap>);
 
-pub struct PrefabsPlugin;
-impl Plugin for PrefabsPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_state(PrefabState::Loading)
-        .add_system_set(
-            SystemSet::on_enter(GameState::AssetTest)
-            .with_system(setup)
-        )
-        .add_system_set(
-            SystemSet::on_update(GameState::AssetTest)
-            .with_system(load.label("prefab_load"))
-        )
-        .add_system_set(
-            SystemSet::on_update(GameState::AssetTest)
-            .with_system(build_prefab.after("prefab_load"))
-        )
-        ;
-    }
-}
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash)]
 enum PrefabState {
@@ -31,21 +12,24 @@ enum PrefabState {
     Loaded,
 }
 
-fn setup(
-    mut commands: Commands,
-    config: Res<Assets<ConfigAsset>>,
-) {
-    let config = config.get(SETTINGS_PATH).unwrap();
-    //println!("SPAWNING SPAWN SPAWN");
-    commands.spawn().insert(LoadPrefab(config.settings.asset_test_file.clone()));
-}
+#[derive(Default, Component)]
+pub struct PrefabRefs(Vec<Entity>);
 
 
-#[derive(Component, Default, Clone, Debug)]
-pub struct LoadPrefab(String);
 
+// Ref to root
 #[derive(Component)]
-pub struct Prefab(Handle<LdtkMap>);
+pub struct PrefabRef(Entity);
+
+pub struct PrefabPlugin;
+impl Plugin for PrefabPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_state(PrefabState::Loading)
+        .add_system(load)
+        .add_system(build_prefab)
+        ;
+    }
+}
 
 fn load(
     mut commands: Commands,
@@ -53,8 +37,8 @@ fn load(
     q_load: Query<(Entity,&LoadPrefab), Without<Prefab>>,
 ) {
     for (entity, load) in q_load.iter() {
-        println!("Loading {}", load.0);
-        let handle: Handle<LdtkMap> = asset_server.load(&load.0);
+        println!("Loading {}", load.path);
+        let handle: Handle<LdtkMap> = asset_server.load(&load.path);
         commands.spawn().insert(Prefab(handle))
         .insert(load.clone());
         commands.entity(entity).despawn();
@@ -67,10 +51,10 @@ fn build_prefab(
     ldtk: Res<Assets<LdtkMap>>,
     mut atlas_handles: ResMut<AtlasHandles>,
     mut atlases: ResMut<Assets<TextureAtlas>>,
-    mut q_cam: Query<&mut TiledProjection>,
+    asset_server: Res<AssetServer>,
 ) {
     for (entity, load) in q_prefabs.iter() {
-        if let Some(ldtk) = ldtk.get(&load.0) {
+        if let Some(ldtk) = ldtk.get(&load.path) {
 
             if let Some(tile_count) = ldtk.tile_count() {
                 println!("Setting tile count to {}", tile_count);
@@ -85,18 +69,30 @@ fn build_prefab(
                 //q_cam.single_mut().pixels_per_tile = 128;
             }
 
-            commands.entity(entity).remove::<LoadPrefab>();
+            let handle = asset_server.load(ldtk.name());
+            commands.entity(entity).remove::<LoadPrefab>().insert(Prefab(handle.clone()));
+            
             let entity = commands.entity(entity).id();
 
-            let root = get_root(ldtk, &mut commands, entity, &mut atlases, &mut atlas_handles);
+            let root = get_root(ldtk, &mut commands, entity, &mut atlases, &mut atlas_handles,
+            load.xy, load.depth
+            );
             
+            let mut refs = PrefabRefs::default();
             if let Some(root) = root {
                 if let Some(anims) = get_animations(ldtk, root) {    
                     commands.entity(entity).insert(anims);
                 }
+                
+                if let Some(spells) = make_spells(ldtk, &mut atlases, &mut atlas_handles, &mut commands) {
+                    refs.0.extend(spells);
+                }
             }
 
-            make_spells(ldtk, &mut atlases, &mut atlas_handles, &mut commands);
+            if !refs.0.is_empty() {
+                commands.entity(entity).insert(refs);
+            }
+
         }
     }
     
@@ -108,6 +104,8 @@ fn get_root<'a>(
     entity: Entity,
     atlases: &mut Assets<TextureAtlas>,
     atlas_handles: &mut AtlasHandles,
+    xy: IVec2,
+    depth: i32,
 ) -> Option<&'a MapEntity> {
     for layer in ldtk.layers() {
         let mut entity = commands.entity(entity);
@@ -127,7 +125,7 @@ fn get_root<'a>(
     
             let tileset = ldtk.tileset_from_id(tileset_id).unwrap();
             let atlas = get_atlas(atlases, atlas_handles, tileset);
-            let sprite = sprite_from_entity(unit, atlas, 0);
+            let sprite = sprite_from_entity(unit, atlas, xy, depth);
     
             entity.insert_bundle(sprite);
             return Some(unit)
@@ -169,26 +167,21 @@ fn get_animations(
 fn sprite_from_entity(
     entity: &MapEntity,
     atlas: Handle<TextureAtlas>,
-    layer: i32,
+    xy: IVec2,
+    depth: i32,
 ) -> SpriteSheetBundle {
     let size = entity.size();
     let sprite = TextureAtlasSprite {
         index: entity.tile_id().unwrap() as usize,
-        //custom_size: Some(size.as_vec2()),
+        custom_size: Some(size.as_vec2()),
         ..Default::default()
     };
 
-    //println!("{} posm, {} size: {}, grid_size: {}", def.name(), def.xy(), def.size(), def.grid_size());
-
-    //let pos = entity.xy().as_vec2().extend(layer as f32) / entity.pixels_per_unit() as f32;
-
-    //println!("Spawning entity at {}", pos);
-    //let pos = Vec3::ZERO;
-
+    println!("Spawning prefab {} at {}", entity.name(), xy);
     SpriteSheetBundle {
         sprite,
         texture_atlas: atlas.clone(),
-        transform: Transform::from_translation(entity.xy().as_vec2().extend(0.0)),
+        transform: Transform::from_translation(xy.as_vec2().extend(depth as f32)),
         ..Default::default()
     }
 }
@@ -242,7 +235,8 @@ fn make_spells(
     atlases: &mut Assets<TextureAtlas>,
     atlas_handles: &mut AtlasHandles,
     commands: &mut Commands,
-) {
+) -> Option<Vec<Entity>> {
+    let mut ids = Vec::new();
     for layer in ldtk.layers().filter(|l|l.is_entities()) {
         let entities = layer.as_entities().unwrap();
         for spell in entities.get_tagged("spell") {
@@ -253,7 +247,8 @@ fn make_spells(
                 spell.name(), tex)
             );
             let atlas = get_atlas(atlases, atlas_handles, &tileset);
-            let sprite = sprite_from_entity(spell, atlas.clone(), 1);
+            let mut sprite = sprite_from_entity(spell, atlas.clone(), IVec2::ZERO, 0);
+            sprite.visibility.is_visible = false;
             
             //println!("Spawning spell");
 
@@ -261,9 +256,14 @@ fn make_spells(
             let mut spell_entity = commands.spawn();
             spell_entity.insert_bundle(sprite);
             if let Some(anims) = make_animation_controller(spell, &[anim]) {
-                spell_entity.insert(anims);
+                ids.push(spell_entity.insert(anims).id());
             }
         }
+    }
+    
+    match ids.is_empty() {
+        true => Some(ids),
+        false => None,
     }
 }
 
