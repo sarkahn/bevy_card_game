@@ -923,40 +923,30 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
         let [x,y] = [entity.px[0],entity.px[1]];
         let [width,height] = [entity.width, entity.height];
 
-        let grid_y = layer_height - 1 - grid_y;
-
-        let y_flip = (layer_height - 1) * layer.grid_size;
-        let grid_xy = IVec2::new(grid_x as i32,grid_y as i32);
+        let mut xy = Vec2::new(x as f32, y as f32);
         let size = Vec2::new(width as f32, height as f32);
-
-        let xy = IVec2::new(x as i32, y as i32);
-
         let mut pivot = Vec2::new(entity.pivot[0] as f32, entity.pivot[1] as f32);
 
-        println!("LDTK entity pos {}, gridxy {}, size {}, pivot {}", xy, grid_xy, size, pivot);
-        let y = y_flip - y;
-        let xy = Vec2::new(x as f32,y as f32);
+        let y_flip = (layer_size.y - y as i32) as f32;
+
+        xy.y += y_flip;
+
         pivot.y = 1.0 - pivot.y;
 
         let xy = xy - size * pivot;
+        
         let xy = xy.round().as_ivec2();
-
-        let size = size.as_ivec2();
-
-        let layer_grid_size = IVec2::new(layer_width as i32, layer_height as i32);
-        let grid_xy = grid_xy - layer_grid_size / 2;
-
-        //let xy = xy - layer_px_size / 2;
+        
 
         let tags = def.tags.clone();
-        //println!("Adjusted values grid {}, px {}, size {}", grid_xy, xy, size);
+        let size = size.as_ivec2();
 
         let entity = MapEntity {
             name: entity.identifier.to_lowercase(),
             fields,
             xy,
-            grid_xy,
-            size,
+            grid_xy: IVec2::ZERO,
+            size: size,
             def_id: entity.def_uid as i32,
             tile_id,
             tileset_id,
