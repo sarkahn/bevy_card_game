@@ -11,7 +11,7 @@ use sark_pathfinding::PathMap2d;
 use crate::{
     config::{ConfigAsset, GameSettings},
     ldtk_loader::{LdtkMap, MapEntity, MapLayer, MapTile, MapTileset, TilesLayer, EntitiesLayer},
-    AnimationController, AtlasHandles, GameState, AnimationData, SETTINGS_PATH, make_sprite_atlas, GridHelper, TILE_SIZE,
+    AnimationController, AtlasHandles, GameState, AnimationData, SETTINGS_PATH, make_sprite_atlas, GridHelper, TILE_SIZE, battle_map::units::PlayerBase,
 };
 
 use super::{ units::{MapUnit, PlayerUnit, EnemyUnit, MapUnitBundle, UnitCommand}, enemies::Spawner};
@@ -54,8 +54,6 @@ impl Default for TerrainTile {
     }
 }
 
-#[derive(Component)]
-pub struct PlayerBase;
 
 
 #[derive(Default)]
@@ -283,14 +281,17 @@ fn build_entity_layer(
                 }
                 if entity.tagged("spawner") {
                     println!("SPAWNER");
+                    let delay = entity.get_f32("spawn_delay");
                     sprite.insert(Spawner{
-                        timer: Timer::from_seconds(1.5, true),
+                        timer: Timer::from_seconds(delay, true),
                     }).insert(EnemyUnit);
                 }
 
                 if entity.tagged("player_base") {
+                    println!("FOUND CASTLE on {:?}", entity.name());
                     sprite.insert(PlayerBase);
                 }
+
             }
         }
     }

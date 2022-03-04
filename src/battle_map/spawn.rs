@@ -12,7 +12,7 @@ use crate::{
 
 use super::{
     map::BattleMapLdtkHandle,
-    units::{EnemyBase, PlayerBase, UnitCommand, UnitCommands},
+    units::{EnemyBase, UnitCommand, UnitCommands, PlayerBase},
 };
 
 pub const SPAWN_SYSTEM: &str = "BATTLEMAP_SPAWN_SYSTEM";
