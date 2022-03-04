@@ -9,7 +9,7 @@ use rand::{
 };
 use sark_pathfinding::AStar;
 
-use crate::GameState;
+use crate::{GameState, TILE_SIZE};
 
 use super::{
     map::CollisionMap,
@@ -31,9 +31,6 @@ impl Plugin for UnitsPlugin {
 pub struct PlayerUnit;
 
 #[derive(Component)]
-pub struct PlayerBase;
-
-#[derive(Component)]
 pub struct EnemyUnit;
 
 #[derive(Component)]
@@ -41,6 +38,9 @@ pub struct EnemyBase;
 
 #[derive(Component, Default)]
 pub struct MapUnit;
+
+#[derive(Component, Default)]
+pub struct PlayerBase;
 
 #[derive(Component)]
 pub struct MapUnitSpeed(f32);
@@ -138,6 +138,7 @@ fn process_commands(
     mut q_set: QuerySet<(
         QueryState<(Entity, &mut UnitCommands, &mut Transform, &MapUnitSpeed)>,
         QueryState<&Transform, With<PlayerUnit>>,
+        QueryState<&Transform, With<PlayerBase>>,
     )>,
     //map: Res<Map>,
     map: Res<CollisionMap>,
@@ -150,6 +151,12 @@ fn process_commands(
             .iter()
             .map(|t| t.translation.xy().as_ivec2() - map.half_offset()),
     );
+    //println!("{}", q_set.q2().iter().count());
+    let base_pos = q_set.q2().get_single();
+    let base_pos = base_pos.map(|p|p.translation.xy());
+    if base_pos.is_err() {
+        //println!("Couldn't find base!");
+    }
     for (entity, mut unit_commands, mut transform, speed) in q_set.q0().iter_mut() {
         //println!("{:?} Command count {}", entity, unit_commands.queue.len());
         if unit_commands.current.is_none() {
@@ -162,6 +169,8 @@ fn process_commands(
                 UnitCommand::MoveToTile(a, b) => {
                     unit_commands.move_timer.tick(time.delta());
                     let t = unit_commands.move_timer.percent();
+                    let a = a * TILE_SIZE;
+                    let b = b * TILE_SIZE;
                     let (a, b) = (a.as_vec2(), b.as_vec2());
                     if t < 1.0 {
                         let p = a.lerp(b, t);
@@ -197,18 +206,23 @@ fn process_commands(
                         continue;
                     }
 
-                    let a = transform.translation.xy().as_ivec2() - map.half_offset();
+                    let a = transform.translation.xy().as_ivec2() / TILE_SIZE;
                     //let a -= collisiotin.axis_offset();
-                    //println!("{:?} at {}, Finding nearest player", entity, a);
-                    if let Some(b) = get_nearest_player_position(a, &player_positions) {
-                    //println!("{:?} at {}, Finding nearest player {:?}", entity, a, player_positions);
+                    if let Ok(base_pos) = base_pos {
+                        //println!("Base pos {:?}", base_pos);
+                        //println!("{:?} at {}, Finding nearest player {:?}", entity, a, player_positions);
                         //let b = map.to_index_2d(b.as_vec2());
+                        let b = base_pos.as_ivec2() / TILE_SIZE;
+                        //println!("A to base {}, {}", a, b);
                         let mut astar = AStar::new(10);
                         if let Some(path) = astar.find_path(&map.0, a.into(), b.into()) {
+                            //println!("Path {:?}", path);
                             if let Some(next) = path.get(1) {
                                 let b = IVec2::from(*next);
-                                let a = a + map.half_offset();
-                                let b = b + map.half_offset();
+                                //println!("Pathin {} to {} (no divide)", a, b);
+                                
+                                // let a = a + map.half_offset();
+                                // let b = b + map.half_offset();
 
                                 //println!("Should see 'done moving' next");
                                 unit_commands.push(UnitCommand::MoveToTile(a, b));

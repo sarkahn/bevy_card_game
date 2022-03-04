@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 46,
+	"nextUid": 47,
 	"worldLayout": "Free",
 	"worldGridWidth": 1920,
 	"worldGridHeight": 1080,
@@ -210,6 +210,26 @@
 					"regex": null,
 					"acceptFileTypes": null,
 					"defaultOverride": { "id": "V_Float", "params": [0.1] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "spawn_delay",
+					"__type": "Float",
+					"uid": 46,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Float", "params": [5] },
 					"textLanguageMode": null
 				}
 			]
@@ -436,7 +456,7 @@
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
-			"pivotY": 0,
+			"pivotY": 1,
 			"fieldDefs": []
 		}
 	], "tilesets": [
@@ -596,7 +616,19 @@
 					"seed": 9164665,
 					"overrideTilesetUid": null,
 					"gridTiles": [],
-					"entityInstances": []
+					"entityInstances": [
+						{
+							"__identifier": "Castle",
+							"__grid": [72,11],
+							"__pivot": [0,1],
+							"__tile": { "tilesetUid": 21, "srcRect": [0,0,64,64] },
+							"width": 64,
+							"height": 64,
+							"defUid": 44,
+							"px": [1152,192],
+							"fieldInstances": []
+						}
+					]
 				},
 				{
 					"__identifier": "Units_Large",
@@ -620,10 +652,7 @@
 					"autoLayerTiles": [],
 					"seed": 4666800,
 					"overrideTilesetUid": null,
-					"gridTiles": [
-						{ "px": [1152,192], "src": [0,0], "f": 0, "t": 0, "d": [105] },
-						{ "px": [1216,192], "src": [64,0], "f": 0, "t": 1, "d": [106] }
-					],
+					"gridTiles": [{ "px": [1216,192], "src": [64,0], "f": 0, "t": 1, "d": [106] }],
 					"entityInstances": []
 				},
 				{
@@ -661,7 +690,8 @@
 							"px": [192,448],
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
-								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] }
+								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
+								{ "__identifier": "spawn_delay", "__value": 5, "__type": "Float", "defUid": 46, "realEditorValues": [] }
 							]
 						},
 						{
@@ -675,7 +705,8 @@
 							"px": [320,832],
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
-								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] }
+								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
+								{ "__identifier": "spawn_delay", "__value": 5, "__type": "Float", "defUid": 46, "realEditorValues": [] }
 							]
 						},
 						{
@@ -689,7 +720,8 @@
 							"px": [640,896],
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
-								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] }
+								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
+								{ "__identifier": "spawn_delay", "__value": 5, "__type": "Float", "defUid": 46, "realEditorValues": [] }
 							]
 						},
 						{
@@ -703,7 +735,8 @@
 							"px": [1152,832],
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
-								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] }
+								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
+								{ "__identifier": "spawn_delay", "__value": 5, "__type": "Float", "defUid": 46, "realEditorValues": [] }
 							]
 						}
 					]

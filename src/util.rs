@@ -2,6 +2,8 @@ use bevy::{ecs::system::EntityCommands, prelude::*};
 use bevy_egui::egui::Pos2;
 use serde_json::Value;
 
+use crate::TILE_SIZE;
+
 
 pub trait GetValue {
     fn as_f32(&self) -> Option<f32>;
@@ -31,11 +33,12 @@ pub fn make_sprite<'w, 's, 'a>(
     depth: i32,
     color: Color,
 ) -> EntityCommands<'w, 's, 'a> {
+    // let xy = xy * 64.0;
     let transform = Transform::from_translation(Vec3::new(xy.x, xy.y, depth as f32));
     commands.spawn_bundle(SpriteBundle {
         sprite: Sprite {
             color: color,
-            custom_size: Some(Vec2::ONE),
+            custom_size: Some(Vec2::splat(TILE_SIZE as f32)),
             ..Default::default()
         },
         transform,
@@ -49,11 +52,12 @@ pub fn make_sprite_sized<'w, 's, 'a>(
     color: Color,
     size: Vec2,
 ) -> EntityCommands<'w, 's, 'a> {
+    // let xy = xy * 64.0;
     let transform = Transform::from_translation(Vec3::new(xy.x, xy.y, depth as f32));
     commands.spawn_bundle(SpriteBundle {
         sprite: Sprite {
             color: color,
-            custom_size: Some(size),
+            //custom_size: Some(size),
             ..Default::default()
         },
         transform,
@@ -69,10 +73,11 @@ pub fn make_sprite_image<'w, 's, 'a>(
     depth: i32,
     texture: Handle<Image>,
 ) -> EntityCommands<'w, 's, 'a> {
+    //let xy = xy * 64.0;
     let transform = Transform::from_translation(Vec3::new(xy.x, xy.y, depth as f32));
     commands.spawn_bundle(SpriteBundle {
         sprite: Sprite {
-            custom_size: Some(Vec2::ONE),
+            //custom_size: Some(Vec2::ONE),
             ..Default::default()
         },
         texture,
@@ -88,10 +93,11 @@ pub fn make_sprite_image_sized<'w, 's, 'a>(
     texture: Handle<Image>,
     size: IVec2,
 ) -> EntityCommands<'w, 's, 'a> {
+    // let xy = xy * 64.0;
     let transform = Transform::from_translation(Vec3::new(xy.x, xy.y, depth as f32));
     commands.spawn_bundle(SpriteBundle {
         sprite: Sprite {
-            custom_size: Some(size.as_vec2()),
+            //custom_size: Some(size.as_vec2()),
             ..Default::default()
         },
         texture,
@@ -107,12 +113,13 @@ pub fn make_sprite_atlas<'w, 's, 'a>(
     atlas: Handle<TextureAtlas>,
     index: usize,
 ) -> EntityCommands<'w, 's, 'a> {
-    let transform = Transform::from_translation(Vec3::new(xy.x, xy.y, depth as f32));
+    //let xy = xy * TILE_SIZE as f32;
     let sprite = TextureAtlasSprite {
-        custom_size: Some(Vec2::ONE),
+        //custom_size: Some(Vec2::ONE),
         index,
         ..Default::default()
     };
+    let transform = Transform::from_translation(Vec3::new(xy.x, xy.y, depth as f32));
     let sprite = SpriteSheetBundle {
         sprite,
         texture_atlas: atlas,
@@ -131,9 +138,10 @@ pub fn make_sprite_atlas_sized<'w, 's, 'a>(
     atlas: Handle<TextureAtlas>,
     index: usize,
 ) -> EntityCommands<'w, 's, 'a> {
+    // let xy = xy * 64.0;
     let transform = Transform::from_translation(Vec3::new(xy.x, xy.y, depth as f32));
     let sprite = TextureAtlasSprite {
-        custom_size: Some(size),
+        //custom_size: Some(size),
         index,
         ..Default::default()
     };

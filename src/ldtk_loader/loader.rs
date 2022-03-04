@@ -278,13 +278,15 @@ fn build_tiles(layer: &LayerInstance, tileset: Option<&MapTileset>) -> TilesLaye
     for tile in layer.grid_tiles.iter() {
         let [x, y] = [tile.px[0], tile.px[1]];
         let y = y_flip - y;
-        let gx = x / tile_size;
-        let gy = y / tile_size;
 
         let id = tile.t as i32;
-        let xy = IVec2::new(gx as i32, gy as i32) - center_offset;
+        let xy = IVec2::new(x as i32, y as i32) - center_offset;
+        let height = (layer.c_hei * layer.grid_size) as i32;
+        let mut pixel_xy = IVec2::new(tile.px[0] as i32, tile.px[1] as i32);
+        
+        pixel_xy.y = height - pixel_xy.y - tile_size as i32;
 
-        map_tiles.push(MapTile { id, grid_xy: xy });
+        map_tiles.push(MapTile { id, grid_xy: xy, pixel_xy });
     }
 
     let enums = match tileset {
@@ -338,8 +340,26 @@ fn build_tileset(def: &TilesetDefinition, image: Handle<Image>) -> MapTileset {
 
 #[derive(Debug, Default)]
 pub struct MapTile {
-    pub id: i32,
-    pub grid_xy: IVec2,
+    id: i32,
+    grid_xy: IVec2,
+    pixel_xy: IVec2,
+}
+
+impl MapTile {
+    /// Get the map tile's id.
+    pub fn id(&self) -> i32 {
+        self.id
+    }
+
+    /// Get the map tile's grid xy.
+    pub fn grid_xy(&self) -> IVec2 {
+        self.grid_xy
+    }
+
+    /// Get the map tile's pixel xy.
+    pub fn pixel_xy(&self) -> IVec2 {
+        self.pixel_xy
+    }
 }
 
 #[derive(Default, Debug)]
@@ -744,7 +764,7 @@ impl Fields {
 pub struct MapEntity {
     name: String,
     fields: Fields,
-    xy: IVec2,
+    pixel_xy: IVec2,
     grid_xy: IVec2,
     size: IVec2,
     def_id: i32,
@@ -767,7 +787,7 @@ impl MapEntity {
 
     // Pixel position of the entity
     pub fn xy(&self) -> IVec2 {
-        self.xy
+        self.pixel_xy
     }
 
     /// Get the map entity's grid xy.
@@ -832,6 +852,11 @@ impl MapEntity {
     pub fn pixels_per_unit(&self) -> i32 {
         self.pixels_per_unit
     }
+
+    /// Get the map entity's pixel xy.
+    pub fn pixel_xy(&self) -> IVec2 {
+        self.pixel_xy
+    }
 }
 
 
@@ -891,13 +916,15 @@ impl EntitiesLayer {
 
 
 fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefinition>) -> EntitiesLayer {
-    let layer_height = layer.c_hei;
-    let layer_width = layer.c_wid;
+    let layer_height = layer.c_hei as i32;
+    let layer_width = layer.c_wid as i32;
     let layer_size = IVec2::new(layer_width as i32, layer_height as i32);
 
-    let layer_px_width = layer_height * layer.grid_size;
-    let layer_px_height = layer_width * layer.grid_size;
-    let layer_px_size = IVec2::new(layer_width as i32, layer_height as i32);
+    let tile_size = layer.grid_size as i32;
+
+    let layer_px_width = layer_width * tile_size;
+    let layer_px_height = layer_height * tile_size;
+    let layer_px_size = IVec2::new(layer_px_width as i32, layer_px_height as i32);
 
     let mut entity_def_ids = HashSet::default();
 
@@ -919,33 +946,34 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
 
         let fields = Fields::from_ldtk(&entity.field_instances);
 
-        let [grid_x, grid_y] = [entity.grid[0], entity.grid[1]];
-        let [x,y] = [entity.px[0],entity.px[1]];
-        let [width,height] = [entity.width, entity.height];
+        
+        let mut grid_xy = IVec2::new(entity.grid[0] as i32, entity.grid[1] as i32);
+        //grid_xy.y = layer_height - grid_xy.y;
 
-        let mut xy = Vec2::new(x as f32, y as f32);
-        let size = Vec2::new(width as f32, height as f32);
+        let size = Vec2::new(entity.width as f32, entity.height as f32);
+
         let mut pivot = Vec2::new(entity.pivot[0] as f32, entity.pivot[1] as f32);
 
-        let y_flip = (layer_size.y - y as i32) as f32;
-
-        xy.y += y_flip;
-
-        pivot.y = 1.0 - pivot.y;
-
-        let xy = xy - size * pivot;
+        let [x,y] = [entity.px[0] as i32,entity.px[1] as i32];
         
-        let xy = xy.round().as_ivec2();
+        let mut xy = IVec2::new(x,y);
+        xy.y = layer_px_height - xy.y;
+
+        //println!("Layer size: {:?}", layer_size);
+        println!("LDTK: Xy {}, Size {}, pivot {}, layer_size: {}", xy, size, pivot, layer_size);
+
+
         
 
         let tags = def.tags.clone();
         let size = size.as_ivec2();
 
+
         let entity = MapEntity {
             name: entity.identifier.to_lowercase(),
             fields,
-            xy,
-            grid_xy: IVec2::ZERO,
+            pixel_xy: xy,
+            grid_xy,
             size: size,
             def_id: entity.def_uid as i32,
             tile_id,
