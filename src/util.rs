@@ -97,7 +97,7 @@ pub fn make_sprite_image_sized<'w, 's, 'a>(
     let transform = Transform::from_translation(Vec3::new(xy.x, xy.y, depth as f32));
     commands.spawn_bundle(SpriteBundle {
         sprite: Sprite {
-            //custom_size: Some(size.as_vec2()),
+            custom_size: Some(size.as_vec2()),
             ..Default::default()
         },
         texture,

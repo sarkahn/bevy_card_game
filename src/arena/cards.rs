@@ -127,3 +127,120 @@ root (sprite, area)
     abilities(vec of label,area)
 
 */
+
+
+
+
+#[derive(Default)]
+pub struct CardsAtlas(Handle<TextureAtlas>);
+
+
+// /// Build a card entity with it's labels as child entities
+// fn spawn_card(
+//     commands: &mut Commands,
+//     layer: &EntitiesLayer,
+//     atlas: Handle<TextureAtlas>,
+//     element: Element,
+//     font: Handle<Font>,
+// ) -> Entity {
+//     let root = layer.get_from_name("card")
+//         .expect("Couldn't find prefab 'card' in layer");
+//     let title = layer.get_from_name("card_title")
+//         .expect("Couldn't find 'card_title' in layer");
+//     let rarity = layer.get_from_name("card_rarity")
+//         .expect("Couldn't find 'card_rarity' in layer");
+//     let abilities = layer.get_all_from_name("card_abilities");
+
+//     let mut xy = root.pixel_xy().as_vec2();
+//     let size = root.size().as_vec2();
+
+//     println!("XY: {}", xy);
+//     //let root_offset = -(Vec2::new(0.0, size.y) / 2.0);
+//     //xy += root_offset;
+//     //let root_offset = Vec2::ZERO;//-root_offset * 4.0;
+//     println!("Spawning card at {}, size {}", xy, size);
+//     let depth = 11;
+//     let root = make_sprite_atlas_sized(
+//         commands,
+//         xy,
+//         size,
+//         depth,
+//         atlas,
+//         element.get_sprite_id(),
+//     ).id();
+
+
+//     let title = get_label_entity(commands, title);
+//     let rarity = get_label_entity(commands, rarity);
+
+//     let mut children = Vec::new();
+
+//     children.push(title);
+
+//     for (i,ability) in abilities.enumerate() {
+//         let ability = get_label_entity(commands, ability);
+//     }
+
+//     commands.entity(root).push_children(
+//         &children
+//     );
+//     root
+// }
+
+
+// fn find_entity<'a>(
+//     entities: &'a Vec<MapEntity>,
+//     name: &str 
+// ) -> &'a MapEntity {
+//     entities.iter().find(|e|e.name() == name).unwrap_or_else(||
+//         panic!("Arena build error: Couldn't find entity '{}'", name)
+//     )
+// }
+
+// fn find_all_entities<'a>(
+//     entities: &'a Vec<MapEntity>,
+//     name: &'a str
+// ) -> impl Iterator<Item=&'a MapEntity> {
+//     entities.iter().filter(move |e|e.name()==name)
+// }
+
+// fn get_label_entity(commands: &mut Commands, label: &MapEntity) -> Entity {
+//     let xyz = get_label_pos(label);
+//     let title = get_label(label, &label.name());
+//     commands.spawn().insert(title)
+//     .insert(CardLabelType::Title)
+//     .insert(Transform::from_translation(xyz))
+//     .insert(GlobalTransform::default())
+//     .id()
+// }
+
+// fn get_label(entity: &MapEntity, name: &str) -> CardLabel {
+//     let area = get_area(entity);
+//     CardLabel::new(name, area)
+// }
+
+// fn get_label_pos(label: &MapEntity) -> Vec3 {
+//     // let xy = label.fields.get("offset").unwrap_or_else(||
+//     //     panic!("Couldn't find offset fields for entity {}", label.name)
+//     // );
+
+//     // let xy = xy.as_array().unwrap_or_else(||
+//     //     panic!("Offset field was an unexpected type! Should be an Array"));
+//     // let xy = xy.iter().map(|v|v.as_f64().unwrap() as f32);
+//     // let xy: Vec<f32> = xy.collect();
+//     // Vec2::new(xy[0], xy[1]).extend(0.0)
+//     Vec3::ZERO
+// }
+
+// fn get_area(entity: &MapEntity) -> Rect<f32> {
+//     let xy = entity.pixel_xy().as_vec2();
+//     let size = entity.size().as_vec2();
+//     //todo!()
+//     // let offset = Vec2::new(0.0,0.0);
+//     Rect {
+//         left: xy.x ,
+//         right: xy.x + size.x ,
+//         top: xy.y + size.y,
+//         bottom: xy.y,
+//     }
+// }
