@@ -32,7 +32,7 @@ pub enum Element {
     Fire,
     Lightning,
     Death,
-    Holy
+    Holy,
 }
 impl Element {
     pub fn get_sprite_id(&self) -> usize {

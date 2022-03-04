@@ -1,30 +1,25 @@
-use bevy::prelude::*;
-use rand::prelude::ThreadRng;
-
+use bevy::{prelude::*, utils::label::DynEq};
+use rand::{prelude::SliceRandom, thread_rng, Rng};
 
 use crate::{
-    config::ConfigAsset, ldtk_loader::*,
-    AtlasHandles, GameState, SETTINGS_PATH, make_sprite_image_sized, make_sprite_atlas_sized, unit::Element, make_sprite, TILE_SIZE, LoadPrefab,
+    config::ConfigAsset, ldtk_loader::*, make_sprite, make_sprite_atlas_sized,
+    make_sprite_image_sized, prefab::ChangeSprite, unit::Element, AtlasHandles, GameState,
+    LoadCardPrefab, LoadUnitPrefab, LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, AnimationController,
 };
 
-use super::cards::{CardLabel, CardLabelType, SpawnCard, CardsAtlas};
-
+use super::{cards::{CardLabel, CardLabelType, CardsAtlas, SpawnCard}, TakingATurn};
 
 pub struct ArenaLoadPlugin;
 
 impl Plugin for ArenaLoadPlugin {
     fn build(&self, app: &mut App) {
-        app
-        .init_resource::<CardsAtlas>()
-        .add_system_set(
-            SystemSet::on_enter(GameState::LoadArena).with_system(load_data)
-        )
-        .add_system_set(
-            SystemSet::on_update(GameState::LoadArena).with_system(setup)
-        )
-        ;
+        app.init_resource::<CardsAtlas>()
+            .add_system_set(SystemSet::on_enter(GameState::LoadArena).with_system(load_data))
+            .add_system_set(SystemSet::on_update(GameState::LoadArena).with_system(setup.before("prefab_unit_load")));
     }
 }
+
+pub struct LdtkHandles(Vec<Handle<LdtkMap>>);
 
 fn load_data(
     mut commands: Commands,
@@ -33,8 +28,9 @@ fn load_data(
 ) {
     let config = config.get(SETTINGS_PATH).unwrap();
     let handle: Handle<LdtkMap> = asset_server.load(&config.settings.arena_file);
-    commands.insert_resource(handle);
-    
+    let cards: Handle<LdtkMap> = asset_server.load(LDTK_CARDS_PATH);
+    let handles = vec![handle, cards];
+    commands.insert_resource(LdtkHandles(handles));
 }
 
 fn setup(
@@ -47,82 +43,118 @@ fn setup(
     config: Res<Assets<ConfigAsset>>,
 ) {
     let config = config.get(SETTINGS_PATH).unwrap();
-    if let Some(ldtk) = ldtk.get(&config.settings.arena_file) {
-
+    if let (Some(ldtk), Some(cards_pfb)) = (
+        ldtk.get(&config.settings.arena_file),
+        ldtk.get(LDTK_CARDS_PATH),
+    ) {
         if let Some(bg) = &ldtk.background() {
             let size = bg.size;
             let pos = size / 2;
-            println!("Spawned background, Size {}",  size);
+            //println!("Spawned background, Size {}",  size);
             make_sprite_image_sized(
-                &mut commands, 
+                &mut commands,
                 pos.as_vec2(),
                 0,
                 bg.image.clone(),
                 size,
             );
-        }
-
-        for ts in ldtk.tilesets() {
-            println!("{}", ts.name);
-        }
-        let card_tileset = ldtk.tileset_from_name("Battle_Cards").unwrap_or_else(||
-            panic!("Couldn't find 'Battle_Cards' tileset in {} file {}", "Battle_Cards", ldtk.name())
-        );
-
-        let atlas = get_atlas(&mut atlases, &mut atlas_handles, &card_tileset);
+        }   
 
         let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
 
-        let player_spawns = spawns.iter().filter(|e|e.tagged("player"));
+        let player_spawns = spawns.iter().filter(|e|e.tagged("player") && !e.tagged("card"));
 
-        for spawn in player_spawns {
+        let actions = player_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
+
+        let actions = actions.take_while(|a|a.is_some()).next().unwrap().unwrap();
+        println!("Found {} unit actions: {:?}", actions.len(), actions);
+
+        for (i,spawn) in player_spawns.enumerate() {
+
+            let mut animator = Animator::default();
+            if let Some(actions) = try_get_actions(spawn.fields(), "attackactions") {
+                //println!("Found attack acionts for {}", spawn.name());
+                //animator.add_commands(actions);
+            }
+            animator.push_cmds_back(actions.clone());
+            animator.push_cmds_front([
+                AnimationCommand::Play("idle".to_string()),
+                AnimationCommand::Wait(1.5 * i as f32)]
+            );
+ 
+
             let xy = spawn.xy();
-            commands.spawn().insert(LoadPrefab {
+            commands.spawn().insert(LoadUnitPrefab {
                 path: "units_wizard.ldtk".to_string(),
                 xy: xy,
-                depth: 10,
+                depth: 10 + i as i32,
                 ..Default::default()
-            });
+            })
+            //.insert(TakingATurn)
+            .insert(animator)
+            ;
         }
-        
+
         let slimes = spawns.iter().filter(|e|e.tagged("enemy"));
 
-        for spawn in slimes {
+
+        for (i,spawn) in slimes.rev().enumerate() {
             let xy = spawn.xy();
-            commands.spawn().insert(LoadPrefab {
+            commands.spawn().insert(LoadUnitPrefab {
                 path: "units_slime.ldtk".to_string(),
                 xy: xy,
-                depth: 10,
+                depth: 10 + i as i32,
                 ..Default::default()
             });
         }
-        
 
-        let pools = ["common", "uncommon"];
+        let cards: Vec<_> = cards_pfb
+            .get_tagged("card")
+            .filter(|card| {
+                if let Some(rarity) = card.fields().try_get_str("rarity") {
+                    return rarity == "common" || rarity == "uncommon";
+                }
+                false
+            })
+            .collect();
 
-        let cards = spawns.iter().filter(|e|e.tagged("battle_card"));
+        let spawns = spawns.iter().filter(|e| e.tagged("card"));
 
-        // let cards = cards.filter(|p| {
-        //     pools.iter().any(|s|p.tagged(s))
-        // });
+        let mut rng = thread_rng();
 
-        println!("Found {} cards", cards.clone().count());
+        for (i,spawn) in spawns.enumerate() {
+            let card = cards.choose(&mut rng).unwrap();
 
-        for card in cards {
-            let texture = card.fields().try_get_str("texture").unwrap_or_else(||
-            panic!("Error loading card {}, couldn't parse texture field ", card.name())
-            );
+            let texture = card.fields().try_get_str("texture").unwrap_or_else(|| {
+                panic!(
+                    "Error loading card {}, couldn't parse texture field ",
+                    spawn.name()
+                )
+            });
 
-            let tileset = ldtk.tileset_from_name(texture).unwrap_or_else(||
-            panic!("Error loading tileset, {} wasn't found in the ldtk file", texture)
-            );
+            let tileset = cards_pfb.tileset_from_path(texture).unwrap_or_else(|| {
+                panic!(
+                    "Error loading tileset, {} wasn't found in the ldtk file",
+                    texture
+                )
+            });
 
-            let xy = card.xy();
-            commands.spawn().insert(LoadPrefab {
+            let tile_id = card
+                .fields()
+                .try_get_i32("sprite_index")
+                .unwrap_or_else(|| panic!("Error loading 'tile_id' from {}", spawn.name()));
+
+            let atlas = get_atlas(&mut atlases, &mut atlas_handles, tileset);
+
+            let xy = spawn.xy();
+            //println!("Spawning card {}", card.name());
+            commands.spawn().insert(LoadCardPrefab {
                 path: "units_BattleCardPremade.ldtk".to_string(),
-                xy: xy,
-                depth: 10,
-                texture: None
+                xy,
+                depth: 5 + i as i32,
+                atlas,
+                tile_id,
+                size: card.size(),
             });
         }
 
@@ -130,7 +162,36 @@ fn setup(
     }
 }
 
+fn get_actions<'a>(
+    fields: &'a Fields,
+    name: &'a str
+) -> impl Iterator<Item=AnimationCommand> + 'a {
+    let vals = fields.field("AttackActions").unwrap().as_array().unwrap();
+    let vals = vals.iter().map(|v|v.as_str().unwrap().to_lowercase());
+    vals.map(|v|ron::de::from_str(&v).unwrap())
+}
 
+fn try_get_actions<'a>(
+    fields: &'a Fields,
+    name: &'a str,
+) -> Option<Vec<AnimationCommand>> {
+    if let Some(field) = fields.field(name) {
+        //println!("Found field {:?}", field);
+        if let Some(arr) = field.as_array() {
+            //println!("Found arr {:?}", arr);
+            let strings = arr.iter().map(|v|v.as_str().unwrap());
+            let commands = strings.map(|s|ron::de::from_str::<AnimationCommand>(s));
+            return Some(commands.take_while(|c|c.is_ok()).map(|c|c.unwrap()).collect());
+        } 
+    }
+    None
+} 
+
+fn play_turn(
+
+) {
+    
+}
 
 fn get_atlas(
     atlases: &mut Assets<TextureAtlas>,
@@ -153,4 +214,3 @@ fn get_atlas(
         }
     }
 }
-

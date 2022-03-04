@@ -1,26 +1,27 @@
 use bevy::{math::Vec3Swizzles, prelude::*};
 
 use crate::{
-    arena::{ArenaState, ArenaCombat}, config::ConfigAsset, ldtk_loader::LdtkMap, make_sprite, GameState,
-    SETTINGS_PATH, GridHelper, TILE_SIZE,
+    arena::{ArenaCombat, ArenaState},
+    config::ConfigAsset,
+    ldtk_loader::LdtkMap,
+    make_sprite, GameState, GridHelper, SETTINGS_PATH, TILE_SIZE,
 };
 
 use super::{
+    map::CollisionMap,
     spawn::{DespawnTimer, SpawnEntity},
     units::EnemyUnit,
-     MapUnits, map::CollisionMap,
+    MapUnits,
 };
 
 pub struct MapCombatPlugin;
 
 impl Plugin for MapCombatPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_system_set(SystemSet::on_update(GameState::BattleMap).with_system(on_collision))
+        app.add_system_set(SystemSet::on_update(GameState::BattleMap).with_system(on_collision))
             .add_system_set(
                 SystemSet::on_update(GameState::BeginningCombat).with_system(begin_combat),
-            )
-            ;
+            );
     }
 }
 
@@ -50,7 +51,7 @@ fn on_collision(
                     })
                     .insert(BeginCombat { player, enemy })
                     .insert(DespawnTimer(Timer::from_seconds(3.0, false)));
-                    state.set(GameState::BeginningCombat).unwrap();
+                state.set(GameState::BeginningCombat).unwrap();
             }
         }
     }

@@ -1,7 +1,7 @@
 use animation::AnimationPlugin;
 use arena::ArenaPlugin;
 use assets::AssetsPlugin;
-use bevy::{asset::LoadState, prelude::*, utils::HashMap, math::Vec3Swizzles};
+use bevy::{asset::LoadState, math::Vec3Swizzles, prelude::*, utils::HashMap};
 use bevy_easings::EasingsPlugin;
 use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
@@ -20,18 +20,20 @@ mod camera;
 mod config;
 mod grid;
 mod ldtk_loader;
-mod util;
 mod party;
-mod unit;
 mod prefab;
+mod unit;
+mod util;
 
 pub use grid::*;
 
 pub const SETTINGS_PATH: &str = "game_settings.config";
+pub const LDTK_CARDS_PATH: &str = "units_BattleCardPreMade.ldtk";
 
 pub use animation::{AnimationController, AnimationData};
+pub use prefab::LoadCardPrefab;
+pub use prefab::LoadUnitPrefab;
 pub use util::*;
-pub use prefab::LoadPrefab;
 
 #[derive(Component)]
 pub struct ResizeCamera(pub IVec2);
@@ -75,32 +77,21 @@ pub fn main() {
         .add_plugin(PrefabPlugin)
         .add_state(GameState::Starting)
         .add_startup_system(load_configs)
-        .add_system_set(
-            SystemSet::on_update(GameState::Starting)
-            .with_system(start)
-        )
+        .add_system_set(SystemSet::on_update(GameState::Starting).with_system(start))
         .run();
 }
 
-fn load_configs(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-) {
+fn load_configs(mut commands: Commands, asset_server: Res<AssetServer>) {
     let handle: Handle<ConfigAsset> = asset_server.load(SETTINGS_PATH);
     commands.insert_resource(handle);
 }
 
-fn start(
-    mut state: ResMut<State<GameState>>,
-    configs: Res<Assets<ConfigAsset>>,
-) {
+fn start(mut state: ResMut<State<GameState>>, configs: Res<Assets<ConfigAsset>>) {
     if let Some(config) = configs.get(SETTINGS_PATH) {
-        println!("Loading state {:?}", config.settings.begin_state);
+        //println!("Loading state {:?}", config.settings.begin_state);
         state.set(config.settings.begin_state).unwrap();
     }
 }
-
-
 
 #[derive(Default)]
 pub struct AtlasHandles(HashMap<String, Handle<TextureAtlas>>);
@@ -116,7 +107,6 @@ pub trait GridHelper {
         xy.as_ivec2() / TILE_SIZE
     }
 }
-
 
 pub const TILE_SIZE: i32 = 64;
 impl GridHelper for Transform {

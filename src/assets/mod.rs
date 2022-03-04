@@ -1,10 +1,8 @@
 use bevy::prelude::Plugin;
 
 mod abilities;
-mod animations;
 mod assets;
 mod spawn;
-mod unit;
 
 pub struct AssetsPlugin;
 
@@ -13,6 +11,6 @@ impl Plugin for AssetsPlugin {
         app
             //.add_plugin(spawn::PrefabSpawnPlugin)
             .add_plugin(assets::GameAssetsPlugin)
-            .add_plugin(unit::UnitAssetPlugin);
+            ;
     }
 }

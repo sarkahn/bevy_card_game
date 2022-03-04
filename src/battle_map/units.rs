@@ -1,29 +1,22 @@
 use std::{cmp::Ordering, collections::VecDeque, time::Duration};
 
-use bevy::{ math::Vec3Swizzles, prelude::*};
+use bevy::{math::Vec3Swizzles, prelude::*};
 
-use rand::{
-    distributions::WeightedIndex,
-    prelude::Distribution,
-    thread_rng, Rng, 
-};
+use rand::{distributions::WeightedIndex, prelude::Distribution, thread_rng, Rng};
 use sark_pathfinding::AStar;
 
 use crate::{GameState, TILE_SIZE};
 
-use super::{
-    map::CollisionMap,
-};
+use super::map::CollisionMap;
 
 pub struct UnitsPlugin;
 
 impl Plugin for UnitsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(
-            SystemSet::on_update(GameState::BattleMap)
-        )
-        .add_system_set(SystemSet::on_update(GameState::BattleMap)
-            .with_system(process_commands));
+        app.add_system_set(SystemSet::on_update(GameState::BattleMap))
+            .add_system_set(
+                SystemSet::on_update(GameState::BattleMap).with_system(process_commands),
+            );
     }
 }
 
@@ -153,7 +146,7 @@ fn process_commands(
     );
     //println!("{}", q_set.q2().iter().count());
     let base_pos = q_set.q2().get_single();
-    let base_pos = base_pos.map(|p|p.translation.xy());
+    let base_pos = base_pos.map(|p| p.translation.xy());
     if base_pos.is_err() {
         //println!("Couldn't find base!");
     }
@@ -220,7 +213,7 @@ fn process_commands(
                             if let Some(next) = path.get(1) {
                                 let b = IVec2::from(*next);
                                 //println!("Pathin {} to {} (no divide)", a, b);
-                                
+
                                 // let a = a + map.half_offset();
                                 // let b = b + map.half_offset();
 

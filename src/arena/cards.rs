@@ -1,21 +1,17 @@
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
-use bevy_egui::{EguiContext, egui};
+use bevy_egui::{egui, EguiContext};
 use bevy_tiled_camera::TiledProjection;
 
-use crate::GameState;
 use crate::unit::Element;
 use crate::util::*;
+use crate::GameState;
 
 pub struct CardsPlugin;
 
 impl Plugin for CardsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(
-            SystemSet::on_update(GameState::Arena)
-            .with_system(card_ui)
-        )
-        ;
+        app.add_system_set(SystemSet::on_update(GameState::Arena).with_system(card_ui));
     }
 }
 #[derive(Component)]
@@ -23,22 +19,22 @@ pub struct Card;
 
 fn card_ui(
     mut egui: ResMut<EguiContext>,
-    q_cam: Query<(&Camera,&TiledProjection,&GlobalTransform)>,
+    q_cam: Query<(&Camera, &TiledProjection, &GlobalTransform)>,
     windows: Res<Windows>,
     q_cards: Query<(Entity, &Transform), With<Card>>,
     q_labels: Query<(Entity, &CardLabel, &CardLabelType, &GlobalTransform)>,
 ) {
-    if let Ok((cam,proj,cam_transform)) = q_cam.get_single() {
+    if let Ok((cam, proj, cam_transform)) = q_cam.get_single() {
         for (entity, label, ltype, ltransform) in q_labels.iter() {
             let mut p = ltransform.translation.xy();
             p.y = -p.y;
             //println!("P {}", p);
             if let Some(p) = proj.world_to_screen(cam, &windows, cam_transform, p.extend(0.0)) {
-                
-                egui::containers::Area::new(&label.label_name).fixed_pos(p.to_array())
-                .show(egui.ctx_mut(), |ui| {
-                    ui.label(&label.label_name);
-                });
+                egui::containers::Area::new(&label.label_name)
+                    .fixed_pos(p.to_array())
+                    .show(egui.ctx_mut(), |ui| {
+                        ui.label(&label.label_name);
+                    });
             }
         }
         // for (entity, label, ltype) in q_labels.iter() {
@@ -72,15 +68,9 @@ fn card_ui(
     }
 }
 
-
 pub enum CardEffect {
-    ElementalDamage {
-        element: Element,
-        damage: i32,
-    },
-    ElementalShield {
-        element: Element,
-    }
+    ElementalDamage { element: Element, damage: i32 },
+    ElementalShield { element: Element },
 }
 
 #[derive(Component)]
@@ -113,7 +103,6 @@ pub enum CardLabelType {
     Ability(i32), // int refers to which ability it is since cards can have multiple
 }
 
-
 #[derive(Component)]
 pub struct SpawnCard {
     pub element: Element,
@@ -128,12 +117,8 @@ root (sprite, area)
 
 */
 
-
-
-
 #[derive(Default)]
 pub struct CardsAtlas(Handle<TextureAtlas>);
-
 
 // /// Build a card entity with it's labels as child entities
 // fn spawn_card(
@@ -169,7 +154,6 @@ pub struct CardsAtlas(Handle<TextureAtlas>);
 //         element.get_sprite_id(),
 //     ).id();
 
-
 //     let title = get_label_entity(commands, title);
 //     let rarity = get_label_entity(commands, rarity);
 
@@ -187,10 +171,9 @@ pub struct CardsAtlas(Handle<TextureAtlas>);
 //     root
 // }
 
-
 // fn find_entity<'a>(
 //     entities: &'a Vec<MapEntity>,
-//     name: &str 
+//     name: &str
 // ) -> &'a MapEntity {
 //     entities.iter().find(|e|e.name() == name).unwrap_or_else(||
 //         panic!("Arena build error: Couldn't find entity '{}'", name)

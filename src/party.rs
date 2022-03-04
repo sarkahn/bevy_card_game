@@ -2,14 +2,10 @@ use bevy::prelude::*;
 
 use crate::ldtk_loader::LdtkMap;
 
-
-
 pub struct PartyPlugin;
 
 impl Plugin for PartyPlugin {
-    fn build(&self, app: &mut App) {
-        
-    }
+    fn build(&self, app: &mut App) {}
 }
 
 #[derive(Component)]

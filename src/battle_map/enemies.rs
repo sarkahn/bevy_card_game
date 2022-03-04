@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{ldtk_loader::LdtkMap, GameState, SETTINGS_PATH, config::ConfigAsset, TILE_SIZE};
+use crate::{config::ConfigAsset, ldtk_loader::LdtkMap, GameState, SETTINGS_PATH, TILE_SIZE};
 
 use super::{
     map::BattleMapLdtkHandle,

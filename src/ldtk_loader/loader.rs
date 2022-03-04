@@ -7,12 +7,14 @@ use bevy::{
     reflect::TypeUuid,
     utils::{HashMap, HashSet},
 };
-use ldtk_rust::{EntityDefinition, FieldInstance, LayerInstance, Project, TilesetDefinition, FieldDefinition, EntityInstance};
-use serde::{Serialize, Deserialize};
+use ldtk_rust::{
+    EntityDefinition, EntityInstance, FieldDefinition, FieldInstance, LayerInstance, Project,
+    TilesetDefinition,
+};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::AnimationData;
-
 
 pub struct LdtkAssetPlugin;
 
@@ -29,7 +31,7 @@ pub struct LdtkMap {
     size_px: IVec2,
     tile_count: Option<IVec2>,
     pixels_per_tile: Option<i32>,
-    layers: BTreeMap<String,MapLayer>,
+    layers: BTreeMap<String, MapLayer>,
     // Maps tileset id to it's image handle
     images: HashMap<i32, Handle<Image>>,
     // Maps tileset id to data
@@ -39,7 +41,7 @@ pub struct LdtkMap {
     // Maps tileset name to it's id
     name_map: HashMap<String, i32>,
     // Map tileset path to it's id
-    path_map: HashMap<String,i32>,
+    path_map: HashMap<String, i32>,
     //pub atlases: HashMap<i32, Handle<TextureAtlas>>,
     max_tile_size: IVec2,
     entity_defs: MapEntityDefinitions,
@@ -75,14 +77,14 @@ impl LdtkMap {
         None
     }
 
-    pub fn get_tagged<'a>(&'a self, name: &'a str) -> impl Iterator<Item=&MapEntity> {
-        self.layers().filter(|l|l.is_entities()).flat_map(|l|{
-            l.as_entities().unwrap().get_tagged(name)
-        })
+    pub fn get_tagged<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &MapEntity> {
+        self.layers()
+            .filter(|l| l.is_entities())
+            .flat_map(|l| l.as_entities().unwrap().get_tagged(name))
     }
 
-    pub fn layers(&self) -> impl DoubleEndedIterator<Item=&MapLayer> {
-        self.layers.iter().map(|(_,b)|b)
+    pub fn layers(&self) -> impl DoubleEndedIterator<Item = &MapLayer> {
+        self.layers.iter().map(|(_, b)| b)
     }
 
     pub fn layer_from_name(&self, name: &str) -> Option<&MapLayer> {
@@ -114,8 +116,8 @@ impl LdtkMap {
         self.background.as_ref()
     }
 
-    pub fn tilesets(&self) -> impl Iterator<Item=&MapTileset> {
-        self.tilesets.iter().map(|(_,t)|t)
+    pub fn tilesets(&self) -> impl Iterator<Item = &MapTileset> {
+        self.tilesets.iter().map(|(_, t)| t)
     }
     // pub fn has_enum(&self, name: &str, tileset_id: i32, tile_id: i32) -> bool {
     //     if let Some(tileset) = self.tileset_from_id(tileset_id) {
@@ -124,7 +126,7 @@ impl LdtkMap {
     //         }
     //     }
     //     false
-    // } 
+    // }
 }
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -177,17 +179,14 @@ impl AssetLoader for LdtkAssetLoader {
             for level in project.levels.iter() {
                 if let Some(bg_path) = &level.bg_rel_path {
                     let path: AssetPath = path.join(&bg_path).into();
-                    println!("Loading {}", path.path().to_string_lossy());
+                    //println!("Loading {}", path.path().to_string_lossy());
                     dep_paths.push(path.clone());
                     let image: Handle<Image> = load_context.get_handle(bg_path);
                     // TODO : Should derive size of tile
                     let w = level.px_wid;
                     let h = level.px_hei;
                     let size = IVec2::new(w as i32, h as i32);
-                    bg = Some(MapBackground {
-                        image,
-                        size
-                    });
+                    bg = Some(MapBackground { image, size });
                     println!("Background = yes: {}", path.path().to_string_lossy());
                 }
             }
@@ -213,17 +212,26 @@ impl AssetLoader for LdtkAssetLoader {
                             "IntGrid" => {}
                             "Entities" => {
                                 let entities = entities_from_defs(layer, &entity_defs);
-                                map_layers.insert(layer.identifier.to_lowercase(), MapLayer::Entities(entities));
+                                map_layers.insert(
+                                    layer.identifier.to_lowercase(),
+                                    MapLayer::Entities(entities),
+                                );
                                 //map_layers.push(MapLayer::Entities(entities));
                             }
                             "Tiles" => {
                                 let tiles = build_tiles(layer, tileset);
-                                map_layers.insert(layer.identifier.to_lowercase(), MapLayer::Tiles(tiles));
+                                map_layers.insert(
+                                    layer.identifier.to_lowercase(),
+                                    MapLayer::Tiles(tiles),
+                                );
                                 //map_layers.push(MapLayer::Tiles(tiles));
                             }
                             "AutoLayer" => {
                                 let tiles = build_tiles(layer, tileset);
-                                map_layers.insert(layer.identifier.to_lowercase(), MapLayer::Tiles(tiles));
+                                map_layers.insert(
+                                    layer.identifier.to_lowercase(),
+                                    MapLayer::Tiles(tiles),
+                                );
                                 //map_layers.push(MapLayer::Tiles(tiles));
                             }
                             _ => {}
@@ -267,7 +275,6 @@ impl AssetLoader for LdtkAssetLoader {
     }
 }
 
-
 fn build_tiles(layer: &LayerInstance, tileset: Option<&MapTileset>) -> TilesLayer {
     let ts_id = layer
         .tileset_def_uid
@@ -289,10 +296,14 @@ fn build_tiles(layer: &LayerInstance, tileset: Option<&MapTileset>) -> TilesLaye
         let xy = IVec2::new(x as i32, y as i32) - center_offset;
         let height = (layer.c_hei * layer.grid_size) as i32;
         let mut pixel_xy = IVec2::new(tile.px[0] as i32, tile.px[1] as i32);
-        
+
         pixel_xy.y = height - pixel_xy.y - tile_size as i32;
 
-        map_tiles.push(MapTile { id, grid_xy: xy, pixel_xy });
+        map_tiles.push(MapTile {
+            id,
+            grid_xy: xy,
+            pixel_xy,
+        });
     }
 
     let enums = match tileset {
@@ -323,7 +334,7 @@ fn build_tileset(def: &TilesetDefinition, image: Handle<Image>) -> MapTileset {
         let enum_name = enum_name.as_str().unwrap();
         let ids = map.get("tileIds").unwrap().as_ref().unwrap();
         let ids = ids.as_array().unwrap();
-        let ids: Vec<_> = ids.iter().map(|id|id.as_i32().unwrap()).collect();
+        let ids: Vec<_> = ids.iter().map(|id| id.as_i32().unwrap()).collect();
         enums.insert(enum_name.to_lowercase(), ids);
     }
     //println!("Player ids for tileset {}: {:?}", def.identifier, enums);
@@ -341,8 +352,6 @@ fn build_tileset(def: &TilesetDefinition, image: Handle<Image>) -> MapTileset {
         },
     }
 }
-
-
 
 #[derive(Debug, Default)]
 pub struct MapTile {
@@ -391,18 +400,15 @@ impl MapEntityFields {
 
         Self { map }
     }
-    
+
     pub fn from_ldtk_defs(fields: &Vec<FieldDefinition>) -> Self {
         let mut map = HashMap::default();
         for field in fields.iter() {
             if let Some(value) = &field.default_override {
-                map.insert(
-                    field.identifier.to_lowercase(),
-                    value.clone()
-                );
+                map.insert(field.identifier.to_lowercase(), value.clone());
             }
         }
-        Self {map}
+        Self { map }
     }
 }
 
@@ -436,19 +442,25 @@ impl MapEntityDefinitions {
     }
     fn from_instances(entities: &Vec<EntityInstance>) {
         for e in entities.iter() {
-            println!("{} fields:", e.identifier);
+            //println!("{} fields:", e.identifier);
             for field in e.field_instances.iter() {
-                    println!("Field {}: {:?}", field.identifier, field.value);
+                //println!("Field {}: {:?}", field.identifier, field.value);
             }
         }
     }
-    pub fn all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item=&'a MapEntityDef> {
-        self.defs.iter().map(|(_,d)| d).filter(move |d|d.name==name)
+    pub fn all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &'a MapEntityDef> {
+        self.defs
+            .iter()
+            .map(|(_, d)| d)
+            .filter(move |d| d.name == name)
     }
 
-    pub fn get_tagged<'a>(&'a self, tag: &'a str) -> impl Iterator<Item=&'a MapEntityDef> {
+    pub fn get_tagged<'a>(&'a self, tag: &'a str) -> impl Iterator<Item = &'a MapEntityDef> {
         let tag = tag.to_lowercase();
-        self.defs.iter().map(|(_,d)| d).filter(move |d|d.tags.contains(&tag))
+        self.defs
+            .iter()
+            .map(|(_, d)| d)
+            .filter(move |d| d.tags.contains(&tag))
     }
 }
 
@@ -467,8 +479,11 @@ impl MapEntityInstances {
         }
         None
     }
-    pub fn all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item=&'a MapEntity> {
-        self.defs.iter().map(|(_,d)| d).filter(move |d|d.name==name)
+    pub fn all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &'a MapEntity> {
+        self.defs
+            .iter()
+            .map(|(_, d)| d)
+            .filter(move |d| d.name == name)
     }
 }
 
@@ -486,11 +501,11 @@ impl MapEntityDef {
     pub fn from_ldtk_def(def: &EntityDefinition) -> Self {
         let name = def.identifier.to_lowercase();
         let fields = fields_from_defs(&def.field_defs);
-        let [width,height] = [def.width as i32, def.height as i32];
+        let [width, height] = [def.width as i32, def.height as i32];
         let size = IVec2::new(width, height);
         let def_id = def.uid as i32;
-        let tileset_id = def.tileset_id.map(|v|v as i32);
-        let tile_id = def.tile_id.map(|v|v as i32);
+        let tileset_id = def.tileset_id.map(|v| v as i32);
+        let tile_id = def.tile_id.map(|v| v as i32);
         let tags = def.tags.clone();
 
         Self {
@@ -500,7 +515,7 @@ impl MapEntityDef {
             def_id,
             tile_id,
             tileset_id,
-            tags
+            tags,
         }
     }
 
@@ -532,17 +547,13 @@ impl MapEntityDef {
     pub fn tileset_id(&self) -> Option<i32> {
         self.tileset_id
     }
-
 }
 
-fn fields_from_defs(fields: &Vec<FieldDefinition>) -> HashMap<String,Value> {
+fn fields_from_defs(fields: &Vec<FieldDefinition>) -> HashMap<String, Value> {
     let mut map = HashMap::default();
     for field in fields.iter() {
         if let Some(value) = &field.default_override {
-            map.insert(
-                field.identifier.to_lowercase(),
-                value.clone()
-            );
+            map.insert(field.identifier.to_lowercase(), value.clone());
         }
     }
     map
@@ -557,7 +568,7 @@ pub struct MapTileset {
     pub name: String,
     pub image: Handle<Image>,
     pub path: String,
-    enums: Option<HashMap<String,Vec<i32>>>,
+    enums: Option<HashMap<String, Vec<i32>>>,
 }
 impl MapTileset {
     pub fn tile_id_has_enum(&self, tile_id: i32, name: &str) -> bool {
@@ -592,7 +603,7 @@ impl MapLayer {
     pub fn is_entities(&self) -> bool {
         self.as_entities().is_some()
     }
-    
+
     pub fn is_tiles(&self) -> bool {
         self.as_tiles().is_some()
     }
@@ -603,7 +614,7 @@ pub struct TilesLayer {
     pub tiles: Vec<MapTile>,
     pub tileset_id: i32,
     pub name: String,
-    enums: Option<HashMap<String,Vec<i32>>>,
+    enums: Option<HashMap<String, Vec<i32>>>,
 }
 impl TilesLayer {
     pub fn has_enum(&self, tile_id: i32, enum_name: &str) -> bool {
@@ -618,7 +629,7 @@ impl TilesLayer {
 
 #[derive(Debug, Default)]
 pub struct Fields {
-    fields: HashMap<String,Value>,
+    fields: HashMap<String, Value>,
 }
 impl Fields {
     pub fn get_i32(&self, field_name: &str) -> i32 {
@@ -629,7 +640,7 @@ impl Fields {
         }
         panic!("Filed to find i32 field {}", field_name);
     }
-    
+
     pub fn try_get_i32(&self, field_name: &str) -> Option<i32> {
         if let Some(val) = self.fields.get(field_name) {
             if let Some(val) = val.as_i64() {
@@ -650,13 +661,12 @@ impl Fields {
     pub fn get_str(&self, field_name: &str) -> &str {
         if let Some(val) = self.fields.get(field_name) {
             if let Some(val) = val.as_str() {
-                return val
+                return val;
             }
         }
         panic!("Filed to find i32 field {}", field_name);
     }
-    
-    
+
     pub fn get_f32(&self, field_name: &str) -> f32 {
         if let Some(val) = self.fields.get(field_name) {
             //println!("VAL TYPE {:?}", val);
@@ -668,7 +678,7 @@ impl Fields {
                         match &val[0] {
                             Value::Number(n) => {
                                 return n.as_f64().unwrap() as f32;
-                            },
+                            }
                             _ => {}
                         }
                     }
@@ -689,7 +699,7 @@ impl Fields {
                         match &val[0] {
                             Value::Number(n) => {
                                 return n.as_f64().unwrap() as f32;
-                            },
+                            }
                             _ => {}
                         }
                     }
@@ -698,35 +708,35 @@ impl Fields {
         }
         panic!("Filed to find f32 field {}", field_name);
     }
-    
+
     pub fn get_vec2(&self, field_name: &str) -> Vec2 {
         if let Some(val) = self.fields.get(field_name) {
             if let Some(val) = val.as_array() {
                 if let Some(x) = val[0].as_f32() {
                     if let Some(y) = val[1].as_f32() {
-                        return Vec2::new(x,y);
+                        return Vec2::new(x, y);
                     }
                 }
             }
         }
         panic!("Filed to find vec2 field {}", field_name);
     }
-    
+
     pub fn get_ivec2(&self, field_name: &str) -> IVec2 {
         if let Some(val) = self.fields.get(field_name) {
             if let Some(val) = val.as_array() {
                 if let Some(x) = val[0].as_i32() {
                     if let Some(y) = val[1].as_i32() {
-                        return IVec2::new(x,y);
+                        return IVec2::new(x, y);
                     }
                 }
             }
         }
         panic!("Filed to find ivec2 field {}", field_name);
     }
-    
+
     pub fn try_get_ivec2(&self, field_name: &str) -> Option<IVec2> {
-        if let Some(val) = self.try_get_array::<i32>(field_name) {
+        if let Some(val) = self.try_get_array::<i32>(field_name,|v|v.as_i32().unwrap()) {
             if val.len() == 2 {
                 return Some(IVec2::new(val[0], val[1]));
             }
@@ -734,31 +744,40 @@ impl Fields {
         None
     }
 
-    
-    pub fn try_get_array<'a, T: Serialize + Deserialize<'a> + Clone>(&'a self, field_name: &str) -> Option<Vec<T>> {
+    pub fn try_get_array<'a, T: Serialize + Deserialize<'a> + Clone>(
+        &'a self,
+        field_name: &str,
+        map: fn(&Value) -> T,
+    ) -> Option<Vec<T>> {
         if let Some(val) = self.fields.get(field_name) {
-            if let Some(val) = val.as_str() {
-                if let Ok(v) =  ron::de::from_str::<Vec<T>>(val) {
-                    return Some(v.clone());
-                }
+            if let Some(val) = val.as_array() {
+                let val = val.iter().map(|v| map(v));
+                return Some(val.collect());
             }
         }
         None
     }
 
-    pub fn get_array<'a, T: Serialize + Deserialize<'a> + Clone>(&'a self, field_name: &str) -> Vec<T> {
+    pub fn get_array<'a, T: Serialize + Deserialize<'a> + Clone>(
+        &'a self,
+        field_name: &'a str,
+        map: fn(&Value) -> T,
+    ) -> Vec<T> {
         if let Some(val) = self.fields.get(field_name) {
-            if let Some(val) = val.as_str() {
-                if let Ok(v) =  ron::de::from_str::<Vec<T>>(val) {
-                    return v.clone();
-                }
+            if let Some(val) = val.as_array() {
+                let val = val.iter().map(|v| map(v));
+                return val.collect();
             }
         }
-        panic!("Filed to find vec2 field {}", field_name);
+        panic!("Filed to find array field {}", field_name);
     }
 
     pub fn field(&self, name: &str) -> Option<&Value> {
         self.fields.get(name)
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&String, &Value)> {
+        self.fields.iter()
     }
 
     pub fn from_ldtk(ldtl_fields: &Vec<FieldInstance>) -> Fields {
@@ -768,9 +787,7 @@ impl Fields {
                 fields.insert(field.identifier.to_lowercase(), value.clone());
             }
         }
-        Self {
-            fields,
-        }
+        Self { fields }
     }
 }
 
@@ -842,7 +859,7 @@ impl MapEntity {
     }
 
     pub fn tagged(&self, name: &str) -> bool {
-        self.tags.iter().any(|t|t==name)
+        self.tags.iter().any(|t| t == name)
     }
 
     pub fn pivot(&self) -> Vec2 {
@@ -850,12 +867,16 @@ impl MapEntity {
     }
 
     pub fn get_str(&self, name: &str) -> &str {
-        let field = self.fields.field(name).unwrap_or_else(||
-            panic!("Error loading field {}, content: {:?}", name, self)
-        );
-        let str = field.as_str().unwrap_or_else(||
-            panic!("Error loading field {}, not a string! Content {:?}", name, self)
-        ); 
+        let field = self
+            .fields
+            .field(name)
+            .unwrap_or_else(|| panic!("Error loading field {}, content: {:?}", name, self));
+        let str = field.as_str().unwrap_or_else(|| {
+            panic!(
+                "Error loading field {}, not a string! Content {:?}",
+                name, self
+            )
+        });
         str
     }
     pub fn get_f32(&self, name: &str) -> f32 {
@@ -873,7 +894,6 @@ impl MapEntity {
     }
 }
 
-
 pub trait Values {
     fn as_f32(&self) -> Option<f32>;
     fn as_i32(&self) -> Option<i32>;
@@ -882,16 +902,15 @@ pub trait Values {
 
 impl Values for Value {
     fn as_f32(&self) -> Option<f32> {
-        self.as_f64().map(|v|v as f32)
+        self.as_f64().map(|v| v as f32)
     }
     fn as_i32(&self) -> Option<i32> {
-        self.as_i64().map(|v|v as i32)
+        self.as_i64().map(|v| v as i32)
     }
     fn as_vec<T>(&self) -> Option<Vec<T>> {
         todo!()
     }
 }
-
 
 // impl MapEntity {
 //     pub fn get_field(&self, field_name: &str) -> &Value
@@ -910,26 +929,27 @@ pub struct EntitiesLayer {
 }
 impl EntitiesLayer {
     pub fn get_from_name(&self, name: &str) -> Option<&MapEntity> {
-        self.entities.iter().find(|&e|e.name==name)
+        self.entities.iter().find(|&e| e.name == name)
     }
 
-    pub fn get_all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item=&MapEntity> {
-        self.entities.iter().filter(move |&e|e.name==name)
+    pub fn get_all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &MapEntity> {
+        self.entities.iter().filter(move |&e| e.name == name)
     }
 
-    pub fn get_tagged(&self, tag: &str) -> impl Iterator<Item=&MapEntity> {
+    pub fn get_tagged(&self, tag: &str) -> impl Iterator<Item = &MapEntity> {
         let tag = tag.to_string();
-        self.entities.iter().filter(move |e|e.tags.contains(&tag))
+        self.entities.iter().filter(move |e| e.tags.contains(&tag))
     }
 
-    pub fn entities(&self) -> impl Iterator<Item=&MapEntity> {
+    pub fn entities(&self) -> impl Iterator<Item = &MapEntity> {
         self.entities.iter()
-    } 
+    }
 }
 
-
-
-fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefinition>) -> EntitiesLayer {
+fn entities_from_defs(
+    layer: &LayerInstance,
+    defs: &HashMap<i64, &EntityDefinition>,
+) -> EntitiesLayer {
     let layer_height = layer.c_hei as i32;
     let layer_width = layer.c_wid as i32;
     let layer_size = IVec2::new(layer_width as i32, layer_height as i32);
@@ -945,7 +965,7 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
     let mut entities = Vec::new();
     for entity in layer.entity_instances.iter() {
         let def = defs.get(&entity.def_uid).unwrap();
-        
+
         entity_def_ids.insert(entity.def_uid);
         let mut tileset_id = None;
         let mut tile_id = None;
@@ -960,7 +980,6 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
 
         let fields = Fields::from_ldtk(&entity.field_instances);
 
-        
         let mut grid_xy = IVec2::new(entity.grid[0] as i32, entity.grid[1] as i32);
         //grid_xy.y = layer_height - grid_xy.y;
 
@@ -968,20 +987,16 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
 
         let mut pivot = Vec2::new(entity.pivot[0] as f32, entity.pivot[1] as f32);
 
-        let [x,y] = [entity.px[0] as i32,entity.px[1] as i32];
-        
-        let mut xy = IVec2::new(x,y);
+        let [x, y] = [entity.px[0] as i32, entity.px[1] as i32];
+
+        let mut xy = IVec2::new(x, y);
         xy.y = layer_px_height - xy.y;
 
         //println!("Layer size: {:?}", layer_size);
         //println!("LDTK: Xy {}, Size {}, pivot {}, layer_size: {}", xy, size, pivot, layer_size);
 
-
-        
-
-        let tags: Vec<_> = def.tags.iter().map(|s|s.to_lowercase()).collect();
+        let tags: Vec<_> = def.tags.iter().map(|s| s.to_lowercase()).collect();
         let size = size.as_ivec2();
-
 
         let entity = MapEntity {
             name: entity.identifier.to_lowercase(),
@@ -996,10 +1011,10 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
             tags,
             pixels_per_unit: size.y,
         };
-        // println!("game entity pos {}, gridxy {}, size {}, pivot {}", 
-        //     entity.xy(), 
-        //     entity.grid_xy(), 
-        //     entity.size(), 
+        // println!("game entity pos {}, gridxy {}, size {}, pivot {}",
+        //     entity.xy(),
+        //     entity.grid_xy(),
+        //     entity.size(),
         //     entity.pivot());
         entities.push(entity);
     }

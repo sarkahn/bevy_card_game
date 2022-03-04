@@ -766,12 +766,12 @@
 							"fieldInstances": [
 								{
 									"__identifier": "Name",
-									"__value": "holy",
+									"__value": "spelll_holy",
 									"__type": "String",
 									"defUid": 16,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["holy"]
+										"params": ["spelll_holy"]
 									}]
 								},
 								{
@@ -923,12 +923,12 @@
 							"fieldInstances": [
 								{
 									"__identifier": "Name",
-									"__value": "lightning",
+									"__value": "spell_lightning",
 									"__type": "String",
 									"defUid": 16,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["lightning"]
+										"params": ["spell_lightning"]
 									}]
 								},
 								{
@@ -982,12 +982,12 @@
 							"fieldInstances": [
 								{
 									"__identifier": "Name",
-									"__value": "death",
+									"__value": "spell_death",
 									"__type": "String",
 									"defUid": 16,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["death"]
+										"params": ["spell_death"]
 									}]
 								},
 								{
@@ -1136,12 +1136,12 @@
 							"fieldInstances": [
 								{
 									"__identifier": "Name",
-									"__value": "fire",
+									"__value": "spell_fire",
 									"__type": "String",
 									"defUid": 16,
 									"realEditorValues": [{
 										"id": "V_String",
-										"params": ["fire"]
+										"params": ["spell_fire"]
 									}]
 								},
 								{

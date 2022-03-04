@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 64,
+	"nextUid": 71,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -567,6 +567,26 @@
 					"acceptFileTypes": null,
 					"defaultOverride": null,
 					"textLanguageMode": null
+				},
+				{
+					"identifier": "AttackActions",
+					"__type": "Array<String>",
+					"uid": 68,
+					"type": "F_String",
+					"isArray": true,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
 				}
 			]
 		},
@@ -621,6 +641,26 @@
 					"type": "F_Int",
 					"isArray": false,
 					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "attack_actions",
+					"__type": "Array<String>",
+					"uid": 70,
+					"type": "F_String",
+					"isArray": true,
+					"canBeNull": true,
 					"arrayMinLength": null,
 					"arrayMaxLength": null,
 					"editorDisplayMode": "Hidden",
@@ -1032,6 +1072,92 @@
 					"identifier": "SpawnID",
 					"__type": "Int",
 					"uid": 46,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "Actions",
+			"uid": 64,
+			"tags": [ "animation_commands", "player" ],
+			"width": 16,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "actions",
+					"__type": "Array<String>",
+					"uid": 65,
+					"type": "F_String",
+					"isArray": true,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "name",
+					"__type": "String",
+					"uid": 66,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "index",
+					"__type": "Int",
+					"uid": 67,
 					"type": "F_Int",
 					"isArray": false,
 					"canBeNull": false,
@@ -1843,6 +1969,90 @@
 								"defUid": 24,
 								"realEditorValues": [{ "id": "V_Int", "params": [6] }]
 							}]
+						},
+						{
+							"__identifier": "Actions",
+							"__grid": [58,7],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 16,
+							"height": 16,
+							"defUid": 64,
+							"px": [928,112],
+							"fieldInstances": [
+								{
+									"__identifier": "actions",
+									"__value": [ "MoveBy((-3,-3),1.5)", "Wait(2)", "MoveBy((3,3),0.5)" ],
+									"__type": "Array<String>",
+									"defUid": 65,
+									"realEditorValues": [ {
+										"id": "V_String",
+										"params": ["MoveBy((-3,-3),1.5)"]
+									}, {
+										"id": "V_String",
+										"params": ["Wait(2)"]
+									}, {
+										"id": "V_String",
+										"params": ["MoveBy((3,3),0.5)"]
+									} ]
+								},
+								{
+									"__identifier": "name",
+									"__value": "Move1",
+									"__type": "String",
+									"defUid": 66,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Move1"]
+									}]
+								},
+								{ "__identifier": "index", "__value": 0, "__type": "Int", "defUid": 67, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "Actions",
+							"__grid": [57,11],
+							"__pivot": [0,0],
+							"__tile": null,
+							"width": 16,
+							"height": 16,
+							"defUid": 64,
+							"px": [912,176],
+							"fieldInstances": [
+								{
+									"__identifier": "actions",
+									"__value": [ "MoveBy((3,3),1)", "Wait(1)", "MoveBy((-3,-3),1)" ],
+									"__type": "Array<String>",
+									"defUid": 65,
+									"realEditorValues": [ {
+										"id": "V_String",
+										"params": ["MoveBy((3,3),1)"]
+									}, {
+										"id": "V_String",
+										"params": ["Wait(1)"]
+									}, {
+										"id": "V_String",
+										"params": ["MoveBy((-3,-3),1)"]
+									} ]
+								},
+								{
+									"__identifier": "name",
+									"__value": "Move2",
+									"__type": "String",
+									"defUid": 66,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["Move2"]
+									}]
+								},
+								{
+									"__identifier": "index",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								}
+							]
 						}
 					]
 				},
@@ -1887,7 +2097,8 @@
 									"__type": "Int",
 									"defUid": 62,
 									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
-								}
+								},
+								{ "__identifier": "attack_actions", "__value": [], "__type": "Array<String>", "defUid": 70, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1913,7 +2124,8 @@
 									"__type": "Int",
 									"defUid": 62,
 									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
-								}
+								},
+								{ "__identifier": "attack_actions", "__value": [], "__type": "Array<String>", "defUid": 70, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1939,7 +2151,8 @@
 									"__type": "Int",
 									"defUid": 62,
 									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
-								}
+								},
+								{ "__identifier": "attack_actions", "__value": [], "__type": "Array<String>", "defUid": 70, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1965,7 +2178,8 @@
 									"__type": "Int",
 									"defUid": 62,
 									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
-								}
+								},
+								{ "__identifier": "attack_actions", "__value": [], "__type": "Array<String>", "defUid": 70, "realEditorValues": [] }
 							]
 						}
 					]
@@ -2017,6 +2231,90 @@
 									"__type": "Int",
 									"defUid": 63,
 									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{
+									"__identifier": "AttackActions",
+									"__value": [
+										"Wait(3.0)",
+										"Play(\"fire\")",
+										"MoveBy( (-3.5,0),0.25 )",
+										"Wait(0.1)",
+										"Play(\"holy\")",
+										"MoveBy( (0,0.2) ,0.25 )",
+										"Wait(0.1)",
+										"MoveBy((0,-0.2),0.25)",
+										"Wait(0.1)",
+										"MoveBy((0,0.2),0.25)",
+										"Wait(0.1)",
+										"MoveBy((0,-0.2),0.25)",
+										"Wait(0.2)",
+										"MoveBy( (3.5,0),0.25 )",
+										"Pause()"
+									],
+									"__type": "Array<String>",
+									"defUid": 68,
+									"realEditorValues": [
+										{
+											"id": "V_String",
+											"params": ["Wait(3.0)"]
+										},
+										{
+											"id": "V_String",
+											"params": ["Play(\"fire\")"]
+										},
+										{
+											"id": "V_String",
+											"params": ["MoveBy( (-3.5,0),0.25 )"]
+										},
+										{
+											"id": "V_String",
+											"params": ["Wait(0.1)"]
+										},
+										{
+											"id": "V_String",
+											"params": ["Play(\"holy\")"]
+										},
+										{
+											"id": "V_String",
+											"params": ["MoveBy( (0,0.2) ,0.25 )"]
+										},
+										{
+											"id": "V_String",
+											"params": ["Wait(0.1)"]
+										},
+										{
+											"id": "V_String",
+											"params": ["MoveBy((0,-0.2),0.25)"]
+										},
+										{
+											"id": "V_String",
+											"params": ["Wait(0.1)"]
+										},
+										{
+											"id": "V_String",
+											"params": ["MoveBy((0,0.2),0.25)"]
+										},
+										{
+											"id": "V_String",
+											"params": ["Wait(0.1)"]
+										},
+										{
+											"id": "V_String",
+											"params": ["MoveBy((0,-0.2),0.25)"]
+										},
+										{
+											"id": "V_String",
+											"params": ["Wait(0.2)"]
+										},
+										{
+											"id": "V_String",
+											"params": ["MoveBy( (3.5,0),0.25 )"]
+										},
+										{
+											"id": "V_String",
+											"params": ["Pause()"]
+										}
+									]
 								}
 							]
 						},
@@ -2043,7 +2341,8 @@
 									"__type": "Int",
 									"defUid": 63,
 									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
-								}
+								},
+								{ "__identifier": "AttackActions", "__value": [], "__type": "Array<String>", "defUid": 68, "realEditorValues": [] }
 							]
 						},
 						{
@@ -2069,7 +2368,8 @@
 									"__type": "Int",
 									"defUid": 63,
 									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
-								}
+								},
+								{ "__identifier": "AttackActions", "__value": [], "__type": "Array<String>", "defUid": 68, "realEditorValues": [] }
 							]
 						},
 						{
@@ -2095,7 +2395,8 @@
 									"__type": "Int",
 									"defUid": 63,
 									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
-								}
+								},
+								{ "__identifier": "AttackActions", "__value": [], "__type": "Array<String>", "defUid": 68, "realEditorValues": [] }
 							]
 						}
 					]

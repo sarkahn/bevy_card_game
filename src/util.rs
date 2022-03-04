@@ -4,7 +4,6 @@ use serde_json::Value;
 
 use crate::TILE_SIZE;
 
-
 pub trait GetValue {
     fn as_f32(&self) -> Option<f32>;
     fn as_i32(&self) -> Option<i32>;
@@ -12,17 +11,15 @@ pub trait GetValue {
 }
 impl GetValue for Value {
     fn as_f32(&self) -> Option<f32> {
-        self.as_f64().map(|v|v as f32)
+        self.as_f64().map(|v| v as f32)
     }
 
     fn as_i32(&self) -> Option<i32> {
-        self.as_i64().map(|v|v as i32)
+        self.as_i64().map(|v| v as i32)
     }
 
     fn as_vec2(&self) -> Option<Vec2> {
-        if let Some(arr) = self.as_array() {
-            
-        }
+        if let Some(arr) = self.as_array() {}
         None
     }
 }
@@ -64,8 +61,6 @@ pub fn make_sprite_sized<'w, 's, 'a>(
         ..Default::default()
     })
 }
-
-
 
 pub fn make_sprite_image<'w, 's, 'a>(
     commands: &'a mut Commands<'w, 's>,
@@ -129,7 +124,6 @@ pub fn make_sprite_atlas<'w, 's, 'a>(
     commands.spawn_bundle(sprite)
 }
 
-
 pub fn make_sprite_atlas_sized<'w, 's, 'a>(
     commands: &'a mut Commands<'w, 's>,
     xy: Vec2,
@@ -153,8 +147,6 @@ pub fn make_sprite_atlas_sized<'w, 's, 'a>(
     };
     commands.spawn_bundle(sprite)
 }
-
-
 
 pub trait ToEguiPos {
     fn egui(&self) -> Pos2;

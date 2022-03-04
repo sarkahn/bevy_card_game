@@ -7,12 +7,12 @@ use crate::{
     },
     config::ConfigAsset,
     ldtk_loader::{LdtkMap, MapTileset},
-    AnimationController, AtlasHandles, GameState, AnimationData, SETTINGS_PATH,
+    AnimationController, AnimationData, AtlasHandles, GameState, SETTINGS_PATH,
 };
 
 use super::{
     map::BattleMapLdtkHandle,
-    units::{EnemyBase, UnitCommand, UnitCommands, PlayerBase},
+    units::{EnemyBase, PlayerBase, UnitCommand, UnitCommands},
 };
 
 pub const SPAWN_SYSTEM: &str = "BATTLEMAP_SPAWN_SYSTEM";
@@ -118,8 +118,10 @@ fn spawn_from_entity(
     configs: Res<Assets<ConfigAsset>>,
 ) {
     for (entity, spawn) in q_spawns.iter() {
-        if let (Some(ldtk),Some(configs)) = 
-               (ldtk_assets.get(spawn.ldtk.clone()), configs.get(SETTINGS_PATH)) {
+        if let (Some(ldtk), Some(configs)) = (
+            ldtk_assets.get(spawn.ldtk.clone()),
+            configs.get(SETTINGS_PATH),
+        ) {
             let name = spawn.name.to_lowercase();
             let defs = ldtk.entity_defs();
 
@@ -150,15 +152,13 @@ fn spawn_from_entity(
                         //     new.insert(controller);
                         // }
                         if tileset.tile_id_has_enum(tile_id, "enemy") {
-                              //println!("Adding AI!");
-                              new.insert(EnemyUnit);
-                              let settings = &configs.settings;
-                              let mut unit_commands = UnitCommands::new(
-                                  settings.map_move_speed,
-                                  settings.map_move_speed,
-                              );
-                              unit_commands.push(UnitCommand::AiThink());
-                              new.insert(unit_commands);
+                            //println!("Adding AI!");
+                            new.insert(EnemyUnit);
+                            let settings = &configs.settings;
+                            let mut unit_commands =
+                                UnitCommands::new(settings.map_move_speed, settings.map_move_speed);
+                            unit_commands.push(UnitCommand::AiThink());
+                            new.insert(unit_commands);
                         }
                     }
                 }

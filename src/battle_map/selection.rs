@@ -1,4 +1,4 @@
-use bevy::{ math::Vec3Swizzles, prelude::*};
+use bevy::{math::Vec3Swizzles, prelude::*};
 
 use sark_pathfinding::AStar;
 
@@ -7,7 +7,8 @@ use crate::{config::ConfigAsset, make_sprite, GameState, SETTINGS_PATH, TILE_SIZ
 use super::{
     input::{Cursor, TileClickedEvent},
     map::CollisionMap,
-    units::{PlayerUnit, UnitCommand, UnitCommands}, MapUnits,
+    units::{PlayerUnit, UnitCommand, UnitCommands},
+    MapUnits,
 };
 
 pub struct BattleMapSelectionPlugin;
@@ -59,7 +60,6 @@ fn on_select(
             }
 
             if let Ok(cursor_transform) = q_cursor.get_single() {
-                
                 let a = q_pos.get(selected).unwrap().translation.xy().as_ivec2() / TILE_SIZE;
                 //let a = (a + center_offset).floor().as_ivec2();
 
@@ -73,7 +73,7 @@ fn on_select(
                 //println!("Trying to get path from {} to {}", a, b);
                 selection.path = get_path(a, b, &map);
                 if selection.path.is_some() {
-                   // println!("Found path: {:?}", selection.path);
+                    // println!("Found path: {:?}", selection.path);
                 }
             }
         }
@@ -134,8 +134,9 @@ fn path_sprites(
         for p in path.iter() {
             let xy = IVec2::from(*p).as_vec2();
             let xy = xy * TILE_SIZE as f32;
-           // println!("Trying to draw path at {}", xy);
-            make_sprite(&mut commands, xy, 5, Color::rgba_u8(200, 200, 200, 200)).insert(PathSprite);
+            // println!("Trying to draw path at {}", xy);
+            make_sprite(&mut commands, xy, 5, Color::rgba_u8(200, 200, 200, 200))
+                .insert(PathSprite);
         }
     }
 }

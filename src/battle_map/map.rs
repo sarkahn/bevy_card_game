@@ -1,40 +1,37 @@
 use std::slice::Iter;
 
-use bevy::{
- math::Vec3Swizzles, prelude::*, 
-};
-use bevy_ascii_terminal::{Point2d};
+use bevy::{math::Vec3Swizzles, prelude::*};
+use bevy_ascii_terminal::Point2d;
 use bevy_tiled_camera::TiledProjection;
 use sark_grids::Grid;
 use sark_pathfinding::PathMap2d;
 
 use crate::{
+    battle_map::units::PlayerBase,
     config::{ConfigAsset, GameSettings},
-    ldtk_loader::{LdtkMap, MapEntity, MapLayer, MapTile, MapTileset, TilesLayer, EntitiesLayer},
-    AnimationController, AtlasHandles, GameState, AnimationData, SETTINGS_PATH, make_sprite_atlas, GridHelper, TILE_SIZE, battle_map::units::PlayerBase,
+    ldtk_loader::{EntitiesLayer, LdtkMap, MapEntity, MapLayer, MapTile, MapTileset, TilesLayer},
+    make_sprite_atlas, AnimationController, AnimationData, AtlasHandles, GameState, GridHelper,
+    SETTINGS_PATH, TILE_SIZE,
 };
 
-use super::{ units::{MapUnit, PlayerUnit, EnemyUnit, MapUnitBundle, UnitCommand}, enemies::Spawner};
-
+use super::{
+    enemies::Spawner,
+    units::{EnemyUnit, MapUnit, MapUnitBundle, PlayerUnit, UnitCommand},
+};
 
 pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .init_resource::<MapUnits>()
+        app.init_resource::<MapUnits>()
             .init_resource::<CollisionMap>()
             .init_resource::<BattleMapLdtkHandle>()
-            .add_system_set(
-                SystemSet::on_update(GameState::LoadBattleMap).with_system(build_map),
-            )
+            .add_system_set(SystemSet::on_update(GameState::LoadBattleMap).with_system(build_map))
             .add_system_set(
                 SystemSet::on_update(GameState::BattleMap).with_system(update_map_units),
-            )
-            ;
+            );
     }
 }
-
 
 #[derive(Default)]
 pub struct BattleMapLdtkHandle(pub Handle<LdtkMap>);
@@ -53,8 +50,6 @@ impl Default for TerrainTile {
         TerrainTile::Dirt
     }
 }
-
-
 
 #[derive(Default)]
 pub struct MapUnits {
@@ -86,15 +81,14 @@ impl MapUnits {
         (grid * TILE_SIZE).as_vec2()
     }
 
-
     pub fn resize(&mut self, size: IVec2) {
         let len = size.x * size.y;
         self.units = vec![None; len as usize];
-        self.size = size;   
+        self.size = size;
     }
 
     pub fn len(&self) -> usize {
-        (self.size.x * self.size.y) as usize 
+        (self.size.x * self.size.y) as usize
     }
 
     pub fn grid_size(&self) -> IVec2 {
@@ -102,8 +96,8 @@ impl MapUnits {
     }
 
     pub fn clear(&mut self) {
-        self.units = vec![None;self.len()];
-    } 
+        self.units = vec![None; self.len()];
+    }
 
     pub fn get_from_xy(&self, xy: Vec2) -> Option<Entity> {
         let i = self.xy_to_index(xy);
@@ -117,7 +111,7 @@ impl MapUnits {
     pub fn get_from_index(&self, index: usize) -> Option<Entity> {
         self.units[index]
     }
-    
+
     pub fn set_from_grid_xy(&mut self, grid_xy: IVec2, entity: Entity) {
         //println!("xy in {}", grid_xy);
         let i = self.grid_to_index(grid_xy);
@@ -160,7 +154,7 @@ impl CollisionMap {
 
     pub fn half_offset(&self) -> IVec2 {
         let p = (self.size().as_vec2() / 2.0) + self.axis_offset();
-        return -p.as_ivec2()
+        return -p.as_ivec2();
     }
 }
 
@@ -184,35 +178,37 @@ fn build_map(
         if let Some(ldtk) = ldtk.get(&configs.settings.map_file) {
             map.0 = PathMap2d::new(ldtk.size_px().as_uvec2().into());
             if let Some(tile_count) = ldtk.tile_count() {
-                q_cam.single_mut().set_tile_count(tile_count.as_uvec2().into());
+                q_cam
+                    .single_mut()
+                    .set_tile_count(tile_count.as_uvec2().into());
             }
             units.resize(map.size().as_ivec2());
-            for (i,layer) in ldtk.layers().enumerate() {
+            for (i, layer) in ldtk.layers().enumerate() {
                 match layer {
-                    MapLayer::Tiles(layer) => {
-                        build_tile_layer(
-                            &mut commands, 
-                            ldtk, layer, 
-                            &mut atlases,  
-                            &mut atlas_handles, 
-                            i as i32 )
-
-                    },
+                    MapLayer::Tiles(layer) => build_tile_layer(
+                        &mut commands,
+                        ldtk,
+                        layer,
+                        &mut atlases,
+                        &mut atlas_handles,
+                        i as i32,
+                    ),
                     MapLayer::Entities(layer) => {
                         build_entity_layer(
-                            &mut commands, 
-                            ldtk, layer, 
-                            &mut atlases, 
-                            &mut atlas_handles, 
-                            i as i32
+                            &mut commands,
+                            ldtk,
+                            layer,
+                            &mut atlases,
+                            &mut atlas_handles,
+                            i as i32,
                         );
-                    },                        
+                    }
                 }
                 update_colliders(&mut map, &units, layer);
             }
 
             game_state.set(GameState::BattleMap).unwrap();
-        }  
+        }
     }
 }
 
@@ -231,7 +227,6 @@ fn build_tile_layer(
         //et xy = tile.grid_xy().as_vec2() + offset;//
         let xy = tile.pixel_xy().as_vec2();
         make_sprite_atlas(commands, xy, depth, atlas.clone(), tile.id() as usize);
-        
     }
 }
 
@@ -250,11 +245,11 @@ fn build_entity_layer(
                 let xy = entity.pixel_xy();
                 //println!("Spawning entity at {}", xy);
                 let mut sprite = make_sprite_atlas(
-                    commands, 
-                    xy.as_vec2(), 
-                    depth, 
-                    atlas.clone(), 
-                    entity.tile_id().unwrap_or(0) as usize
+                    commands,
+                    xy.as_vec2(),
+                    depth,
+                    atlas.clone(),
+                    entity.tile_id().unwrap_or(0) as usize,
                 );
                 if entity.tags().contains(&"animation".to_string()) {
                     let frames = entity.get_str("frames");
@@ -270,38 +265,35 @@ fn build_entity_layer(
                     sprite.insert(controller);
                 }
                 if entity.tagged("player") {
-                    sprite.insert(PlayerUnit).insert_bundle(MapUnitBundle::default());
+                    sprite
+                        .insert(PlayerUnit)
+                        .insert_bundle(MapUnitBundle::default());
                 }
                 if entity.tagged("monster") {
-                    sprite.insert(EnemyUnit).insert_bundle(
-                        MapUnitBundle::with_commands(
-                            &[UnitCommand::AiThink()]
-                        )
-                    );
+                    sprite
+                        .insert(EnemyUnit)
+                        .insert_bundle(MapUnitBundle::with_commands(&[UnitCommand::AiThink()]));
                 }
                 if entity.tagged("spawner") {
                     println!("SPAWNER");
                     let delay = entity.get_f32("spawn_delay");
-                    sprite.insert(Spawner{
-                        timer: Timer::from_seconds(delay, true),
-                    }).insert(EnemyUnit);
+                    sprite
+                        .insert(Spawner {
+                            timer: Timer::from_seconds(delay, true),
+                        })
+                        .insert(EnemyUnit);
                 }
 
                 if entity.tagged("player_base") {
                     println!("FOUND CASTLE on {:?}", entity.name());
                     sprite.insert(PlayerBase);
                 }
-
             }
         }
     }
 }
 
-fn update_colliders(
-    map: &mut CollisionMap,
-    units: &MapUnits,
-    layer: &MapLayer,
-) {
+fn update_colliders(map: &mut CollisionMap, units: &MapUnits, layer: &MapLayer) {
     match layer {
         MapLayer::Tiles(layer) => {
             for tile in layer.tiles.iter() {
@@ -312,28 +304,25 @@ fn update_colliders(
                     map.set_collidable(xy);
                 }
             }
-        },
+        }
         MapLayer::Entities(layer) => {
             for entity in layer.entities() {
                 if entity.tagged("collider") {
                     let xy = units.xy_to_grid(entity.pixel_xy().as_vec2());
                     map.set_collidable(xy);
-                } 
+                }
             }
-        },
+        }
     }
 }
 
-
-
 fn update_map_units(
     mut units: ResMut<MapUnits>,
-    q_units: Query<(Entity,&Transform),(With<MapUnit>, With<PlayerUnit>)>, 
+    q_units: Query<(Entity, &Transform), (With<MapUnit>, With<PlayerUnit>)>,
 ) {
     units.clear();
 
-    for (entity,transform) in q_units.iter() {
-     
+    for (entity, transform) in q_units.iter() {
         //println!("Inserting {:?} at {}", entity, xy);
         //let i = units.xy_to_index(transform.translation.xy());
         units.set_from_xy(transform.translation.xy(), entity);

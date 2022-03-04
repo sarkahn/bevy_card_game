@@ -26,18 +26,17 @@ impl Plugin for GameCameraPlugin {
 }
 
 fn spawn(mut commands: Commands) {
-    println!("Spawning camera");
+    //println!("Spawning camera");
     // commands.spawn_bundle(
     //     TiledCameraBundle::new().with_tile_count([16, 16]), //.with_pixels_per_tile(16)
     // );
     let mut cam = OrthographicCameraBundle::new_2d();
     cam.orthographic_projection.window_origin = WindowOrigin::BottomLeft;
-    let hor = Vec3::new(0.5,0.0,0.0) * TILE_SIZE as f32;
-    let ver = Vec3::new(0.0,0.5,0.0) * TILE_SIZE as f32;
+    let hor = Vec3::new(0.5, 0.0, 0.0) * TILE_SIZE as f32;
+    let ver = Vec3::new(0.0, 0.5, 0.0) * TILE_SIZE as f32;
     cam.transform.translation -= hor + ver;
     //cam.orthographic_projection.scale = 1.0 / 64.0;
     commands.spawn_bundle(cam);
-
 }
 
 fn input(
