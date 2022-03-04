@@ -639,7 +639,7 @@
 		{
 			"identifier": "CardSpawnPosition",
 			"uid": 23,
-			"tags": [ "player", "battle_card" ],
+			"tags": [ "player", "spawn_point", "card" ],
 			"width": 300,
 			"height": 512,
 			"resizableX": false,
