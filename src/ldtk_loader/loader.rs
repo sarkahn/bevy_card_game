@@ -638,6 +638,14 @@ impl Fields {
         }
         None
     }
+    pub fn try_get_str(&self, field_name: &str) -> Option<&str> {
+        if let Some(val) = self.fields.get(field_name) {
+            if let Some(val) = val.as_str() {
+                return Some(val);
+            }
+        }
+        None
+    }
 
     pub fn get_str(&self, field_name: &str) -> &str {
         if let Some(val) = self.fields.get(field_name) {
@@ -966,12 +974,12 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
         xy.y = layer_px_height - xy.y;
 
         //println!("Layer size: {:?}", layer_size);
-        println!("LDTK: Xy {}, Size {}, pivot {}, layer_size: {}", xy, size, pivot, layer_size);
+        //println!("LDTK: Xy {}, Size {}, pivot {}, layer_size: {}", xy, size, pivot, layer_size);
 
 
         
 
-        let tags = def.tags.clone();
+        let tags: Vec<_> = def.tags.iter().map(|s|s.to_lowercase()).collect();
         let size = size.as_ivec2();
 
 
@@ -988,11 +996,11 @@ fn entities_from_defs(layer: &LayerInstance, defs: &HashMap<i64, &EntityDefiniti
             tags,
             pixels_per_unit: size.y,
         };
-        println!("game entity pos {}, gridxy {}, size {}, pivot {}", 
-            entity.xy(), 
-            entity.grid_xy(), 
-            entity.size(), 
-            entity.pivot());
+        // println!("game entity pos {}, gridxy {}, size {}, pivot {}", 
+        //     entity.xy(), 
+        //     entity.grid_xy(), 
+        //     entity.size(), 
+        //     entity.pivot());
         entities.push(entity);
     }
 

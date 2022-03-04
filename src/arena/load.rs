@@ -81,18 +81,48 @@ fn setup(
                 path: "units_wizard.ldtk".to_string(),
                 xy: xy,
                 depth: 10,
+                ..Default::default()
             });
         }
         
-        let player_spawns = spawns.iter().filter(|e|e.tagged("enemy"));
+        let slimes = spawns.iter().filter(|e|e.tagged("enemy"));
 
-
-        for spawn in player_spawns {
+        for spawn in slimes {
             let xy = spawn.xy();
             commands.spawn().insert(LoadPrefab {
                 path: "units_slime.ldtk".to_string(),
                 xy: xy,
                 depth: 10,
+                ..Default::default()
+            });
+        }
+        
+
+        let pools = ["common", "uncommon"];
+
+        let cards = spawns.iter().filter(|e|e.tagged("battle_card"));
+
+        // let cards = cards.filter(|p| {
+        //     pools.iter().any(|s|p.tagged(s))
+        // });
+
+        println!("Found {} cards", cards.clone().count());
+
+        for card in cards {
+            let texture = card.fields().try_get_str("texture").unwrap_or_else(||
+            panic!("Error loading card {}, couldn't parse texture field ", card.name())
+            );
+
+            let tileset = ldtk.tileset_from_name(texture).unwrap_or_else(||
+            panic!("Error loading tileset, {} wasn't found in the ldtk file", texture)
+            );
+
+            let xy = card.xy();
+            commands.spawn().insert(LoadPrefab {
+                path: "units_BattleCardPremade.ldtk".to_string(),
+                xy: xy,
+                depth: 10,
+                texture: None
             });
         }
 

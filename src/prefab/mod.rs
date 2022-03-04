@@ -10,7 +10,10 @@ pub struct LoadPrefab {
     pub path: String,
     pub xy: IVec2,
     pub depth: i32,
+    pub texture: Option<Handle<Image>>,
 }
+
+
 impl LoadPrefab {
     pub fn from_name(name: &str) -> Self {
         Self {

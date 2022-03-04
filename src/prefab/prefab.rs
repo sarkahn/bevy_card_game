@@ -37,7 +37,7 @@ fn load(
     q_load: Query<(Entity,&LoadPrefab), Without<Prefab>>,
 ) {
     for (entity, load) in q_load.iter() {
-        println!("Loading {}", load.path);
+        //println!("Loading {}", load.path);
         let handle: Handle<LdtkMap> = asset_server.load(&load.path);
         commands.spawn().insert(Prefab(handle))
         .insert(load.clone());
@@ -177,7 +177,7 @@ fn sprite_from_entity(
         ..Default::default()
     };
 
-    println!("Spawning prefab {} at {}", entity.name(), xy);
+    //println!("Spawning prefab {} at {}", entity.name(), xy);
     SpriteSheetBundle {
         sprite,
         texture_atlas: atlas.clone(),
@@ -194,12 +194,12 @@ fn make_animation_controller(
         let mut controller = AnimationController::default();
         // Initial_animation
         for anim in animations.iter() {
-            println!("Adding intial anim {} for {}", anim.name, entity.name());
+            //println!("Adding intial anim {} for {}", anim.name, entity.name());
             controller.add(&anim.name, anim.clone());
         }
         if let Some(initial) = entity.field("initial_animation") {
             let initial = initial.as_str().unwrap();
-            println!("Running initial animation {}", initial);
+            //println!("Running initial animation {}", initial);
             controller.play(initial);
         } else {
             controller.play_any();
