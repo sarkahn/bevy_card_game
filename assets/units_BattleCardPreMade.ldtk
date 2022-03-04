@@ -1,0 +1,2108 @@
+{
+	"__header__": {
+		"fileType": "LDtk Project JSON",
+		"app": "LDtk",
+		"doc": "https://ldtk.io/json",
+		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
+		"appAuthor": "Sebastien 'deepnight' Benard",
+		"appVersion": "0.9.3",
+		"url": "https://ldtk.io"
+	},
+	"jsonVersion": "0.9.3",
+	"nextUid": 76,
+	"worldLayout": "Free",
+	"worldGridWidth": 256,
+	"worldGridHeight": 256,
+	"defaultPivotX": 0,
+	"defaultPivotY": 0,
+	"defaultGridSize": 16,
+	"defaultLevelWidth": 256,
+	"defaultLevelHeight": 256,
+	"bgColor": "#40465B",
+	"defaultLevelBgColor": "#696A79",
+	"minifyJson": false,
+	"externalLevels": false,
+	"exportTiled": false,
+	"imageExportMode": "None",
+	"pngFilePattern": null,
+	"backupOnSave": false,
+	"backupLimit": 10,
+	"levelNamePattern": "Level_%idx",
+	"flags": [],
+	"defs": { "layers": [
+		{
+			"__type": "Entities",
+			"identifier": "Cards",
+			"type": "Entities",
+			"uid": 66,
+			"gridSize": 16,
+			"displayOpacity": 1,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"requiredTags": [],
+			"excludedTags": [],
+			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"autoTilesetDefUid": null,
+			"autoRuleGroups": [],
+			"autoSourceLayerDefUid": null,
+			"tilesetDefUid": null,
+			"tilePivotX": 0,
+			"tilePivotY": 0
+		},
+		{
+			"__type": "Entities",
+			"identifier": "Animation",
+			"type": "Entities",
+			"uid": 48,
+			"gridSize": 1,
+			"displayOpacity": 1,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"requiredTags": [],
+			"excludedTags": [],
+			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"autoTilesetDefUid": null,
+			"autoRuleGroups": [],
+			"autoSourceLayerDefUid": null,
+			"tilesetDefUid": null,
+			"tilePivotX": 0,
+			"tilePivotY": 0
+		},
+		{
+			"__type": "Entities",
+			"identifier": "Spells",
+			"type": "Entities",
+			"uid": 19,
+			"gridSize": 1,
+			"displayOpacity": 1,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"requiredTags": [],
+			"excludedTags": [],
+			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"autoTilesetDefUid": null,
+			"autoRuleGroups": [],
+			"autoSourceLayerDefUid": null,
+			"tilesetDefUid": null,
+			"tilePivotX": 0,
+			"tilePivotY": 0
+		},
+		{
+			"__type": "Entities",
+			"identifier": "Unit",
+			"type": "Entities",
+			"uid": 18,
+			"gridSize": 1,
+			"displayOpacity": 1,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"requiredTags": [],
+			"excludedTags": [],
+			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"autoTilesetDefUid": null,
+			"autoRuleGroups": [],
+			"autoSourceLayerDefUid": null,
+			"tilesetDefUid": null,
+			"tilePivotX": 0,
+			"tilePivotY": 0
+		}
+	], "entities": [
+		{
+			"identifier": "Unit",
+			"uid": 1,
+			"tags": ["root"],
+			"width": 256,
+			"height": 256,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 20,
+			"tileId": 0,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "name",
+					"__type": "String",
+					"uid": 3,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["Wizard"]
+					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "hp",
+					"__type": "Int",
+					"uid": 5,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "strength",
+					"__type": "Int",
+					"uid": 6,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Int", "params": [5] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "defense",
+					"__type": "Int",
+					"uid": 7,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Int", "params": [0] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Initial_Animation",
+					"__type": "String",
+					"uid": 51,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "Spell",
+			"uid": 15,
+			"tags": ["spell"],
+			"width": 256,
+			"height": 256,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 13,
+			"tileId": 1,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0.5,
+			"pivotY": 0.5,
+			"fieldDefs": [
+				{
+					"identifier": "Name",
+					"__type": "String",
+					"uid": 16,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["Holy"]
+					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "speed",
+					"__type": "Float",
+					"uid": 34,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Element",
+					"__type": "String",
+					"uid": 42,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Frames",
+					"__type": "String",
+					"uid": 44,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Texture",
+					"__type": "FilePath",
+					"uid": 45,
+					"type": "F_Path",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "Animation",
+			"uid": 36,
+			"tags": ["animation"],
+			"width": 16,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 20,
+			"tileId": 0,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "name",
+					"__type": "String",
+					"uid": 37,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["blah"]
+					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "speed",
+					"__type": "Float",
+					"uid": 38,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Float", "params": [0.2] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "frames",
+					"__type": "String",
+					"uid": 41,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": {
+						"id": "V_String",
+						"params": ["[0,1,2,1]"]
+					},
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Texture",
+					"__type": "FilePath",
+					"uid": 46,
+					"type": "F_Path",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		},
+		{
+			"identifier": "BattleCarfd",
+			"uid": 58,
+			"tags": ["Card"],
+			"width": 512,
+			"height": 512,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 57,
+			"tileId": 0,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "Rarity",
+					"__type": "String",
+					"uid": 59,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Damage_Modifier",
+					"__type": "Int",
+					"uid": 60,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Defense_Modifier",
+					"__type": "Int",
+					"uid": 61,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Damage_Multiplier",
+					"__type": "Int",
+					"uid": 63,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "Revive_Unit",
+					"__type": "Bool",
+					"uid": 62,
+					"type": "F_Bool",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "texture",
+					"__type": "FilePath",
+					"uid": 64,
+					"type": "F_Path",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "sprite_index",
+					"__type": "Int",
+					"uid": 67,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "setAttackDamage",
+					"__type": "Int",
+					"uid": 68,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "setUnitDefense",
+					"__type": "Int",
+					"uid": 69,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "isSetAttackTrue",
+					"__type": "Bool",
+					"uid": 70,
+					"type": "F_Bool",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "isSetDefenseTrue",
+					"__type": "Bool",
+					"uid": 71,
+					"type": "F_Bool",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "health_Modifier",
+					"__type": "Int",
+					"uid": 75,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
+		}
+	], "tilesets": [
+		{
+			"__cWid": 1,
+			"__cHei": 1,
+			"identifier": "UnitWizard_idle",
+			"uid": 47,
+			"relPath": "textures/unitWizard_idle.png",
+			"pxWid": 64,
+			"pxHei": 64,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0", "averageColors": "4b68" }
+		},
+		{
+			"__cWid": 2,
+			"__cHei": 2,
+			"identifier": "UnitWizard_animation_Fire",
+			"uid": 50,
+			"relPath": "textures/unitWizard_animation_Fire.png",
+			"pxWid": 128,
+			"pxHei": 128,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4b674b674b674b67" }
+		},
+		{
+			"__cWid": 2,
+			"__cHei": 2,
+			"identifier": "UnitWizard_animation_Lightning",
+			"uid": 51,
+			"relPath": "textures/unitWizard_animation_Lightning.png",
+			"pxWid": 128,
+			"pxHei": 128,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4b774b774b774b77" }
+		},
+		{
+			"__cWid": 1,
+			"__cHei": 1,
+			"identifier": "UnitWizard_animation_Death",
+			"uid": 54,
+			"relPath": "textures/unitWizard_animation_Death.png",
+			"pxWid": 128,
+			"pxHei": 128,
+			"tileGridSize": 64,
+			"spacing": 64,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0", "averageColors": "4a67" }
+		},
+		{
+			"__cWid": 2,
+			"__cHei": 2,
+			"identifier": "UnitWizard_animation_holy",
+			"uid": 20,
+			"relPath": "textures/unitWizard_animation_Holy.png",
+			"pxWid": 128,
+			"pxHei": 128,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "4a784a784a784a78" }
+		},
+		{
+			"__cWid": 3,
+			"__cHei": 2,
+			"identifier": "WizardSpell_Fire",
+			"uid": 55,
+			"relPath": "textures/wizardSpellsFire_animation.png",
+			"pxWid": 192,
+			"pxHei": 128,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "000000", "averageColors": "000009530964196419640000" }
+		},
+		{
+			"__cWid": 4,
+			"__cHei": 4,
+			"identifier": "WizardSpell_Lightning",
+			"uid": 52,
+			"relPath": "textures/wizardSpellsLightning_animation.png",
+			"pxWid": 256,
+			"pxHei": 256,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "00000bb50bb40bb40bb41bb41bb41cb41bb41cb42cb42cb42cb42cb400000000" }
+		},
+		{
+			"__cWid": 3,
+			"__cHei": 3,
+			"identifier": "WizardSpell_Holy",
+			"uid": 13,
+			"relPath": "textures/wizardSpellsHoly_animation.png",
+			"pxWid": 192,
+			"pxHei": 192,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "000000000", "averageColors": "000008de07de17de17de17de17de28de0000" }
+		},
+		{
+			"__cWid": 2,
+			"__cHei": 2,
+			"identifier": "BattleCards_FireCards_spriteSheet",
+			"uid": 57,
+			"relPath": "textures/battleCards_FireCards_spriteSheet.png",
+			"pxWid": 512,
+			"pxHei": 512,
+			"tileGridSize": 256,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "8533853385338533" }
+		},
+		{
+			"__cWid": 2,
+			"__cHei": 2,
+			"identifier": "BattleCards_LightningCards_spriteSheet",
+			"uid": 73,
+			"relPath": "textures/battleCards_LightningCards_spriteSheet.png",
+			"pxWid": 512,
+			"pxHei": 512,
+			"tileGridSize": 256,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "8653865386538652" }
+		},
+		{
+			"__cWid": 2,
+			"__cHei": 2,
+			"identifier": "BattleCards_DeathCards_spriteSheet",
+			"uid": 72,
+			"relPath": "textures/battleCards_DeathCards_spriteSheet.png",
+			"pxWid": 512,
+			"pxHei": 512,
+			"tileGridSize": 256,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "8433843384338433" }
+		},
+		{
+			"__cWid": 2,
+			"__cHei": 2,
+			"identifier": "BattleCards_HolyCards_spriteSheet",
+			"uid": 74,
+			"relPath": "textures/battleCards_HolyCards_spriteSheet.png",
+			"pxWid": 512,
+			"pxHei": 512,
+			"tileGridSize": 256,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "8556855685568556" }
+		}
+	], "enums": [], "externalEnums": [], "levelFields": [] },
+	"levels": [
+		{
+			"identifier": "Level_0",
+			"uid": 0,
+			"worldX": -488,
+			"worldY": -256,
+			"pxWid": 2005,
+			"pxHei": 2683,
+			"__bgColor": "#696A79",
+			"bgColor": null,
+			"useAutoIdentifier": true,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__bgPos": null,
+			"externalRelPath": null,
+			"fieldInstances": [],
+			"layerInstances": [
+				{
+					"__identifier": "Cards",
+					"__type": "Entities",
+					"__cWid": 126,
+					"__cHei": 168,
+					"__gridSize": 16,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"levelId": 0,
+					"layerDefUid": 66,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGrid": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 7598928,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": [
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [0,0],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [4,6],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "common",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["common"]
+									}]
+								},
+								{
+									"__identifier": "Damage_Modifier",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 60,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{
+									"__identifier": "Revive_Unit",
+									"__value": false,
+									"__type": "Bool",
+									"defUid": 62,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ false ]
+									}]
+								},
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_FireCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_FireCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{ "__identifier": "health_Modifier", "__value": 0, "__type": "Int", "defUid": 75, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [27,2],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [441,38],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "rare",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["rare"]
+									}]
+								},
+								{ "__identifier": "Damage_Modifier", "__value": 0, "__type": "Int", "defUid": 60, "realEditorValues": [] },
+								{ "__identifier": "Defense_Modifier", "__value": 0, "__type": "Int", "defUid": 61, "realEditorValues": [] },
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{
+									"__identifier": "Damage_Multiplier",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 63,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								},
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_FireCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_FireCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{ "__identifier": "health_Modifier", "__value": 0, "__type": "Int", "defUid": 75, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [55,2],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [890,36],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "uncommon",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["uncommon"]
+									}]
+								},
+								{
+									"__identifier": "Damage_Modifier",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 60,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								},
+								{ "__identifier": "Defense_Modifier", "__value": 0, "__type": "Int", "defUid": 61, "realEditorValues": [] },
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_FireCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_FireCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{
+									"__identifier": "isSetDefenseTrue",
+									"__value": true,
+									"__type": "Bool",
+									"defUid": 71,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ true ]
+									}]
+								},
+								{ "__identifier": "health_Modifier", "__value": 0, "__type": "Int", "defUid": 75, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [85,1],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [1362,29],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "uncommon",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["uncommon"]
+									}]
+								},
+								{ "__identifier": "Damage_Modifier", "__value": 0, "__type": "Int", "defUid": 60, "realEditorValues": [] },
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": 4,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [4] }]
+								},
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_FireCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_FireCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{
+									"__identifier": "isSetAttackTrue",
+									"__value": true,
+									"__type": "Bool",
+									"defUid": 70,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ true ]
+									}]
+								},
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{ "__identifier": "health_Modifier", "__value": 0, "__type": "Int", "defUid": 75, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [1,41],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [22,660],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "common",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["common"]
+									}]
+								},
+								{ "__identifier": "Damage_Modifier", "__value": 0, "__type": "Int", "defUid": 60, "realEditorValues": [] },
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": -2,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [-2] }]
+								},
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{
+									"__identifier": "Damage_Multiplier",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 63,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_LightningCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_LightningCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{
+									"__identifier": "health_Modifier",
+									"__value": -3,
+									"__type": "Int",
+									"defUid": 75,
+									"realEditorValues": [{ "id": "V_Int", "params": [-3] }]
+								}
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [25,41],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [403,656],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "uncommon",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["uncommon"]
+									}]
+								},
+								{
+									"__identifier": "Damage_Modifier",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 60,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{ "__identifier": "Defense_Modifier", "__value": 0, "__type": "Int", "defUid": 61, "realEditorValues": [] },
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_LightningCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_LightningCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{
+									"__identifier": "health_Modifier",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 75,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								}
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [52,39],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [842,638],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "common",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["common"]
+									}]
+								},
+								{ "__identifier": "Damage_Modifier", "__value": 0, "__type": "Int", "defUid": 60, "realEditorValues": [] },
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": 6,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [6] }]
+								},
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_LightningCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_LightningCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{
+									"__identifier": "setAttackDamage",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 68,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{
+									"__identifier": "isSetAttackTrue",
+									"__value": true,
+									"__type": "Bool",
+									"defUid": 70,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ true ]
+									}]
+								},
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{ "__identifier": "health_Modifier", "__value": 0, "__type": "Int", "defUid": 75, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [81,40],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [1307,644],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "rare",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["rare"]
+									}]
+								},
+								{ "__identifier": "Damage_Modifier", "__value": 0, "__type": "Int", "defUid": 60, "realEditorValues": [] },
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_LightningCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_LightningCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								},
+								{
+									"__identifier": "setAttackDamage",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 68,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{
+									"__identifier": "isSetAttackTrue",
+									"__value": true,
+									"__type": "Bool",
+									"defUid": 70,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ true ]
+									}]
+								},
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{
+									"__identifier": "health_Modifier",
+									"__value": 5,
+									"__type": "Int",
+									"defUid": 75,
+									"realEditorValues": [{ "id": "V_Int", "params": [5] }]
+								}
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [0,77],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [7,1246],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "common",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["common"]
+									}]
+								},
+								{
+									"__identifier": "Damage_Modifier",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 60,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{ "__identifier": "Defense_Modifier", "__value": 0, "__type": "Int", "defUid": 61, "realEditorValues": [] },
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_DeathCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_DeathCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{
+									"__identifier": "health_Modifier",
+									"__value": -2,
+									"__type": "Int",
+									"defUid": 75,
+									"realEditorValues": [{ "id": "V_Int", "params": [-2] }]
+								}
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [24,78],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [395,1259],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "common",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["common"]
+									}]
+								},
+								{ "__identifier": "Damage_Modifier", "__value": 0, "__type": "Int", "defUid": 60, "realEditorValues": [] },
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": -1,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [-1] }]
+								},
+								{
+									"__identifier": "Revive_Unit",
+									"__value": true,
+									"__type": "Bool",
+									"defUid": 62,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ true ]
+									}]
+								},
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_DeathCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_DeathCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{
+									"__identifier": "health_Modifier",
+									"__value": -1,
+									"__type": "Int",
+									"defUid": 75,
+									"realEditorValues": [{ "id": "V_Int", "params": [-1] }]
+								}
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [52,77],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [833,1242],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "common",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["common"]
+									}]
+								},
+								{
+									"__identifier": "Damage_Modifier",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 60,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": -3,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [-3] }]
+								},
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_DeathCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_DeathCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{ "__identifier": "health_Modifier", "__value": 0, "__type": "Int", "defUid": 75, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [81,77],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [1304,1233],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "rare",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["rare"]
+									}]
+								},
+								{ "__identifier": "Damage_Modifier", "__value": 0, "__type": "Int", "defUid": 60, "realEditorValues": [] },
+								{ "__identifier": "Defense_Modifier", "__value": 0, "__type": "Int", "defUid": 61, "realEditorValues": [] },
+								{
+									"__identifier": "Revive_Unit",
+									"__value": true,
+									"__type": "Bool",
+									"defUid": 62,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ true ]
+									}]
+								},
+								{
+									"__identifier": "Damage_Multiplier",
+									"__value": 10,
+									"__type": "Int",
+									"defUid": 63,
+									"realEditorValues": [{ "id": "V_Int", "params": [10] }]
+								},
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_DeathCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_DeathCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{ "__identifier": "health_Modifier", "__value": 0, "__type": "Int", "defUid": 75, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [22,118],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [364,1901],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "rare",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["rare"]
+									}]
+								},
+								{
+									"__identifier": "Damage_Modifier",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 60,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								},
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_HolyCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_HolyCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{
+									"__identifier": "health_Modifier",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 75,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								}
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [53,119],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [855,1906],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "uncommon",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["uncommon"]
+									}]
+								},
+								{
+									"__identifier": "Damage_Modifier",
+									"__value": 4,
+									"__type": "Int",
+									"defUid": 60,
+									"realEditorValues": [{ "id": "V_Int", "params": [4] }]
+								},
+								{ "__identifier": "Defense_Modifier", "__value": 0, "__type": "Int", "defUid": 61, "realEditorValues": [] },
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_HolyCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_HolyCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{
+									"__identifier": "health_Modifier",
+									"__value": -4,
+									"__type": "Int",
+									"defUid": 75,
+									"realEditorValues": [{ "id": "V_Int", "params": [-4] }]
+								}
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [2,118],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [39,1889],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "common",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["common"]
+									}]
+								},
+								{
+									"__identifier": "Damage_Modifier",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 60,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": -3,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [-3] }]
+								},
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_HolyCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_HolyCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{ "__identifier": "setAttackDamage", "__value": 0, "__type": "Int", "defUid": 68, "realEditorValues": [] },
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{ "__identifier": "isSetAttackTrue", "__value": false, "__type": "Bool", "defUid": 70, "realEditorValues": [] },
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{ "__identifier": "health_Modifier", "__value": 0, "__type": "Int", "defUid": 75, "realEditorValues": [] }
+							]
+						},
+						{
+							"__identifier": "BattleCarfd",
+							"__grid": [83,119],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 57, "srcRect": [0,0,256,256] },
+							"width": 512,
+							"height": 512,
+							"defUid": 58,
+							"px": [1340,1915],
+							"fieldInstances": [
+								{
+									"__identifier": "Rarity",
+									"__value": "rare",
+									"__type": "String",
+									"defUid": 59,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["rare"]
+									}]
+								},
+								{ "__identifier": "Damage_Modifier", "__value": 0, "__type": "Int", "defUid": 60, "realEditorValues": [] },
+								{
+									"__identifier": "Defense_Modifier",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 61,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{ "__identifier": "Revive_Unit", "__value": false, "__type": "Bool", "defUid": 62, "realEditorValues": [] },
+								{ "__identifier": "Damage_Multiplier", "__value": 0, "__type": "Int", "defUid": 63, "realEditorValues": [] },
+								{
+									"__identifier": "texture",
+									"__value": "textures/battleCards_HolyCards_spriteSheet.png",
+									"__type": "FilePath",
+									"defUid": 64,
+									"realEditorValues": [{
+										"id": "V_String",
+										"params": ["textures/battleCards_HolyCards_spriteSheet.png"]
+									}]
+								},
+								{
+									"__identifier": "sprite_index",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 67,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								},
+								{
+									"__identifier": "setAttackDamage",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 68,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{ "__identifier": "setUnitDefense", "__value": 0, "__type": "Int", "defUid": 69, "realEditorValues": [] },
+								{
+									"__identifier": "isSetAttackTrue",
+									"__value": true,
+									"__type": "Bool",
+									"defUid": 70,
+									"realEditorValues": [{
+										"id": "V_Bool",
+										"params": [ true ]
+									}]
+								},
+								{ "__identifier": "isSetDefenseTrue", "__value": false, "__type": "Bool", "defUid": 71, "realEditorValues": [] },
+								{
+									"__identifier": "health_Modifier",
+									"__value": 4,
+									"__type": "Int",
+									"defUid": 75,
+									"realEditorValues": [{ "id": "V_Int", "params": [4] }]
+								}
+							]
+						}
+					]
+				},
+				{
+					"__identifier": "Animation",
+					"__type": "Entities",
+					"__cWid": 2005,
+					"__cHei": 2683,
+					"__gridSize": 1,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"levelId": 0,
+					"layerDefUid": 48,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGrid": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 528138,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": []
+				},
+				{
+					"__identifier": "Spells",
+					"__type": "Entities",
+					"__cWid": 2005,
+					"__cHei": 2683,
+					"__gridSize": 1,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"levelId": 0,
+					"layerDefUid": 19,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGrid": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 9857393,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": []
+				},
+				{
+					"__identifier": "Unit",
+					"__type": "Entities",
+					"__cWid": 2005,
+					"__cHei": 2683,
+					"__gridSize": 1,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"levelId": 0,
+					"layerDefUid": 18,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGrid": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 3289870,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": []
+				}
+			],
+			"__neighbours": []
+		}
+	]
+}
