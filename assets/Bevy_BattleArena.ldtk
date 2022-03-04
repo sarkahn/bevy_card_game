@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 62,
+	"nextUid": 64,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -547,6 +547,26 @@
 					"acceptFileTypes": null,
 					"defaultOverride": null,
 					"textLanguageMode": null
+				},
+				{
+					"identifier": "depth",
+					"__type": "Int",
+					"uid": 63,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
 				}
 			]
 		},
@@ -578,6 +598,26 @@
 					"identifier": "SpawnID",
 					"__type": "Int",
 					"uid": 20,
+					"type": "F_Int",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "depth",
+					"__type": "Int",
+					"uid": 62,
 					"type": "F_Int",
 					"isArray": false,
 					"canBeNull": false,
@@ -1839,7 +1879,16 @@
 							"height": 128,
 							"defUid": 19,
 							"px": [403,141],
-							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 20, "realEditorValues": [] }]
+							"fieldInstances": [
+								{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 20, "realEditorValues": [] },
+								{
+									"__identifier": "depth",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 62,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								}
+							]
 						},
 						{
 							"__identifier": "EnemySpawnPoints",
@@ -1850,13 +1899,22 @@
 							"height": 128,
 							"defUid": 19,
 							"px": [248,251],
-							"fieldInstances": [{
-								"__identifier": "SpawnID",
-								"__value": 1,
-								"__type": "Int",
-								"defUid": 20,
-								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
-							}]
+							"fieldInstances": [
+								{
+									"__identifier": "SpawnID",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 20,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{
+									"__identifier": "depth",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 62,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								}
+							]
 						},
 						{
 							"__identifier": "EnemySpawnPoints",
@@ -1867,13 +1925,22 @@
 							"height": 128,
 							"defUid": 19,
 							"px": [254,457],
-							"fieldInstances": [{
-								"__identifier": "SpawnID",
-								"__value": 3,
-								"__type": "Int",
-								"defUid": 20,
-								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
-							}]
+							"fieldInstances": [
+								{
+									"__identifier": "SpawnID",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 20,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								},
+								{
+									"__identifier": "depth",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 62,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								}
+							]
 						},
 						{
 							"__identifier": "EnemySpawnPoints",
@@ -1884,13 +1951,22 @@
 							"height": 128,
 							"defUid": 19,
 							"px": [396,365],
-							"fieldInstances": [{
-								"__identifier": "SpawnID",
-								"__value": 2,
-								"__type": "Int",
-								"defUid": 20,
-								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
-							}]
+							"fieldInstances": [
+								{
+									"__identifier": "SpawnID",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 20,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{
+									"__identifier": "depth",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 62,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								}
+							]
 						}
 					]
 				},
@@ -1927,13 +2003,22 @@
 							"height": 128,
 							"defUid": 15,
 							"px": [1391,137],
-							"fieldInstances": [{
-								"__identifier": "SpawnID",
-								"__value": 0,
-								"__type": "Int",
-								"defUid": 18,
-								"realEditorValues": [{ "id": "V_Int", "params": [0] }]
-							}]
+							"fieldInstances": [
+								{
+									"__identifier": "SpawnID",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 18,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								},
+								{
+									"__identifier": "depth",
+									"__value": 0,
+									"__type": "Int",
+									"defUid": 63,
+									"realEditorValues": [{ "id": "V_Int", "params": [0] }]
+								}
+							]
 						},
 						{
 							"__identifier": "PlayerSpawnPoints",
@@ -1944,13 +2029,22 @@
 							"height": 128,
 							"defUid": 15,
 							"px": [1524,232],
-							"fieldInstances": [{
-								"__identifier": "SpawnID",
-								"__value": 1,
-								"__type": "Int",
-								"defUid": 18,
-								"realEditorValues": [{ "id": "V_Int", "params": [1] }]
-							}]
+							"fieldInstances": [
+								{
+									"__identifier": "SpawnID",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 18,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								},
+								{
+									"__identifier": "depth",
+									"__value": 1,
+									"__type": "Int",
+									"defUid": 63,
+									"realEditorValues": [{ "id": "V_Int", "params": [1] }]
+								}
+							]
 						},
 						{
 							"__identifier": "PlayerSpawnPoints",
@@ -1961,13 +2055,22 @@
 							"height": 128,
 							"defUid": 15,
 							"px": [1395,320],
-							"fieldInstances": [{
-								"__identifier": "SpawnID",
-								"__value": 2,
-								"__type": "Int",
-								"defUid": 18,
-								"realEditorValues": [{ "id": "V_Int", "params": [2] }]
-							}]
+							"fieldInstances": [
+								{
+									"__identifier": "SpawnID",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 18,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								},
+								{
+									"__identifier": "depth",
+									"__value": 2,
+									"__type": "Int",
+									"defUid": 63,
+									"realEditorValues": [{ "id": "V_Int", "params": [2] }]
+								}
+							]
 						},
 						{
 							"__identifier": "PlayerSpawnPoints",
@@ -1978,13 +2081,22 @@
 							"height": 128,
 							"defUid": 15,
 							"px": [1525,424],
-							"fieldInstances": [{
-								"__identifier": "SpawnID",
-								"__value": 3,
-								"__type": "Int",
-								"defUid": 18,
-								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
-							}]
+							"fieldInstances": [
+								{
+									"__identifier": "SpawnID",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 18,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								},
+								{
+									"__identifier": "depth",
+									"__value": 3,
+									"__type": "Int",
+									"defUid": 63,
+									"realEditorValues": [{ "id": "V_Int", "params": [3] }]
+								}
+							]
 						}
 					]
 				},
