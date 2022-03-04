@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 
-use crate::{ldtk_loader::LdtkMap, GameState, SETTINGS_PATH, config::ConfigAsset};
+use crate::{ldtk_loader::LdtkMap, GameState, SETTINGS_PATH, config::ConfigAsset, TILE_SIZE};
 
 use super::{
     map::BattleMapLdtkHandle,
     //MapPosition,
-    spawn::{SpawnEntity, SpawnUnit, SPAWN_SYSTEM},
+    spawn::{SpawnEntity, SPAWN_SYSTEM},
 };
 
 pub struct EnemiesPlugin;
@@ -41,7 +41,7 @@ fn spawn(
 
         if spawner.timer.just_finished() {
             //println!("Trying to spawn slime");
-            let p = transform.translation + Vec3::new(0.0, -1.0, 0.0);
+            let p = transform.translation + (Vec3::new(0.0, -1.0, 0.0) * TILE_SIZE as f32);
             //let xyz = (pos.xy + IVec2::new(0,-1)).extend(2);
             let spawn = SpawnEntity {
                 ldtk: handle.clone(),

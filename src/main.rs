@@ -1,7 +1,7 @@
 use animation::AnimationPlugin;
 use arena::ArenaPlugin;
 use assets::AssetsPlugin;
-use bevy::{asset::LoadState, prelude::*, utils::HashMap};
+use bevy::{asset::LoadState, prelude::*, utils::HashMap, math::Vec3Swizzles};
 use bevy_easings::EasingsPlugin;
 use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
@@ -103,3 +103,23 @@ fn start(
 
 #[derive(Default)]
 pub struct AtlasHandles(HashMap<String, Handle<TextureAtlas>>);
+
+pub trait GridHelper {
+    fn to_grid(&self) -> IVec2;
+
+    fn grid_to_xy(&self, grid: IVec2) -> Vec2 {
+        grid.as_vec2() * TILE_SIZE as f32
+    }
+
+    fn xy_to_grid(&self, xy: Vec2) -> IVec2 {
+        xy.as_ivec2() / TILE_SIZE
+    }
+}
+
+
+pub const TILE_SIZE: i32 = 64;
+impl GridHelper for Transform {
+    fn to_grid(&self) -> IVec2 {
+        self.xy_to_grid(self.translation.xy()) / TILE_SIZE
+    }
+}

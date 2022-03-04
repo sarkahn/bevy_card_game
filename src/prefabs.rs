@@ -74,15 +74,15 @@ fn build_prefab(
 
             if let Some(tile_count) = ldtk.tile_count() {
                 println!("Setting tile count to {}", tile_count);
-                q_cam.single_mut().set_tile_count(tile_count.as_uvec2().into());
+                //q_cam.single_mut().set_tile_count(tile_count.as_uvec2().into());
             } else {
-                q_cam.single_mut().set_tile_count([20,20]);
+               // q_cam.single_mut().set_tile_count([20,20]);
             }
             if let Some(pixels_per_tile) = ldtk.pixels_per_tile() {
                 println!("Setting pixels per unit to {}", pixels_per_tile);
-                q_cam.single_mut().pixels_per_tile = pixels_per_tile as u32;
+               // q_cam.single_mut().pixels_per_tile = pixels_per_tile as u32;
             } else {
-                q_cam.single_mut().pixels_per_tile = 128;
+                //q_cam.single_mut().pixels_per_tile = 128;
             }
 
             commands.entity(entity).remove::<LoadPrefab>();
@@ -171,24 +171,24 @@ fn sprite_from_entity(
     atlas: Handle<TextureAtlas>,
     layer: i32,
 ) -> SpriteSheetBundle {
-    let size = entity.size() / IVec2::splat(entity.pixels_per_unit());
+    let size = entity.size();
     let sprite = TextureAtlasSprite {
         index: entity.tile_id().unwrap() as usize,
-        custom_size: Some(size.as_vec2()),
+        //custom_size: Some(size.as_vec2()),
         ..Default::default()
     };
 
     //println!("{} posm, {} size: {}, grid_size: {}", def.name(), def.xy(), def.size(), def.grid_size());
 
-    let pos = entity.xy().as_vec2().extend(layer as f32) / entity.pixels_per_unit() as f32;
+    //let pos = entity.xy().as_vec2().extend(layer as f32) / entity.pixels_per_unit() as f32;
 
-    println!("Spawning entity at {}", pos);
+    //println!("Spawning entity at {}", pos);
     //let pos = Vec3::ZERO;
 
     SpriteSheetBundle {
         sprite,
         texture_atlas: atlas.clone(),
-        transform: Transform::from_translation(pos),
+        transform: Transform::from_translation(entity.xy().as_vec2().extend(0.0)),
         ..Default::default()
     }
 }

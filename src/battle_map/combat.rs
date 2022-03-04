@@ -2,7 +2,7 @@ use bevy::{math::Vec3Swizzles, prelude::*};
 
 use crate::{
     arena::{ArenaState, ArenaCombat}, config::ConfigAsset, ldtk_loader::LdtkMap, make_sprite, GameState,
-    SETTINGS_PATH,
+    SETTINGS_PATH, GridHelper,
 };
 
 use super::{
@@ -27,33 +27,33 @@ impl Plugin for MapCombatPlugin {
 fn on_collision(
     mut commands: Commands,
     q_enemies: Query<(Entity, &Transform), (With<EnemyUnit>, Changed<Transform>)>,
-    map_units: Res<MapUnits>,
+    units: Res<MapUnits>,
     mut state: ResMut<State<GameState>>,
     config: Res<Assets<ConfigAsset>>,
     asset_server: Res<AssetServer>,
     map: Res<CollisionMap>,
 ) {
     if let Some(config) = config.get(SETTINGS_PATH) {
-        let ldtk: Handle<LdtkMap> = asset_server.load(&config.settings.map_file);
-        //if let Ok(ldtk_handle) = asset_server.load::<LdtkMap>(&config.settings.map_file) {
-        for (enemy, transform) in q_enemies.iter() {
-            //println!("pos {}", transform.translation);
-            let grid_pos = transform.translation.xy() - map.half_offset().as_vec2();
-            if let Some(player) = map_units.0[grid_pos.as_ivec2()] {
-                let mut pos = transform.translation;
-                pos += Vec3::new(0.0, 0.0, 1.0);
-                commands
-                    .spawn()
-                    .insert(SpawnEntity {
-                        ldtk: ldtk.clone(),
-                        name: "BeginCombat".to_string(),
-                        pos,
-                    })
-                    .insert(BeginCombat { player, enemy })
-                    .insert(DespawnTimer(Timer::from_seconds(3.0, false)));
-                    state.set(GameState::BeginningCombat).unwrap();
-            }
-        }
+        // let ldtk: Handle<LdtkMap> = asset_server.load(&config.settings.map_file);
+        // //if let Ok(ldtk_handle) = asset_server.load::<LdtkMap>(&config.settings.map_file) {
+        // for (enemy, transform) in q_enemies.iter() {
+        //     //println!("pos {}", transform.translation);
+        //     let grid_pos = transform.to_grid(map.size().as_ivec2());
+        //     if let Some(player) = units.get(grid_pos) {
+        //         let mut pos = transform.translation;
+        //         pos += Vec3::new(0.0, 0.0, 1.0);
+        //         commands
+        //             .spawn()
+        //             .insert(SpawnEntity {
+        //                 ldtk: ldtk.clone(),
+        //                 name: "BeginCombat".to_string(),
+        //                 pos,
+        //             })
+        //             .insert(BeginCombat { player, enemy })
+        //             .insert(DespawnTimer(Timer::from_seconds(3.0, false)));
+        //             //state.set(GameState::BeginningCombat).unwrap();
+        //     }
+        // }
     }
 }
 

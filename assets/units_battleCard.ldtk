@@ -1011,8 +1011,8 @@
 			"uid": 0,
 			"worldX": 1238,
 			"worldY": -600,
-			"pxWid": 809,
-			"pxHei": 557,
+			"pxWid": 1919,
+			"pxHei": 1079,
 			"__bgColor": "#0816E8",
 			"bgColor": null,
 			"useAutoIdentifier": true,
@@ -1025,19 +1025,19 @@
 			"fieldInstances": [
 				{
 					"__identifier": "pixels_per_tile",
-					"__value": 512,
+					"__value": 16,
 					"__type": "Int",
 					"defUid": 61,
-					"realEditorValues": [{ "id": "V_Int", "params": [512] }]
+					"realEditorValues": [{ "id": "V_Int", "params": [16] }]
 				},
 				{
 					"__identifier": "tile_count",
-					"__value": "[4,4]",
+					"__value": "[20,20]",
 					"__type": "String",
 					"defUid": 62,
 					"realEditorValues": [{
 						"id": "V_String",
-						"params": ["[4,4]"]
+						"params": ["[20,20]"]
 					}]
 				}
 			],
@@ -1045,8 +1045,8 @@
 				{
 					"__identifier": "Card_SpawnPosition",
 					"__type": "Entities",
-					"__cWid": 51,
-					"__cHei": 36,
+					"__cWid": 121,
+					"__cHei": 68,
 					"__gridSize": 16,
 					"__opacity": 1,
 					"__pxTotalOffsetX": -6,
@@ -1070,8 +1070,8 @@
 				{
 					"__identifier": "Card_Data",
 					"__type": "Entities",
-					"__cWid": 809,
-					"__cHei": 557,
+					"__cWid": 1919,
+					"__cHei": 1079,
 					"__gridSize": 1,
 					"__opacity": 1,
 					"__pxTotalOffsetX": 0,
@@ -1093,196 +1093,22 @@
 					"entityInstances": [
 						{
 							"__identifier": "Card",
-							"__grid": [275,290],
+							"__grid": [809,566],
 							"__pivot": [0.5,0.5],
 							"__tile": { "tilesetUid": 7, "srcRect": [0,0,512,512] },
 							"width": 512,
 							"height": 512,
 							"defUid": 9,
-							"px": [275,290],
+							"px": [809,566],
 							"fieldInstances": []
-						},
-						{
-							"__identifier": "Card_Rarity",
-							"__grid": [519,120],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 32,
-							"defUid": 12,
-							"px": [519,120],
-							"fieldInstances": [
-								{
-									"__identifier": "offset",
-									"__value": [0,0],
-									"__type": "Array<Float>",
-									"defUid": 50,
-									"realEditorValues": [ null, null ]
-								},
-								{
-									"__identifier": "name",
-									"__value": "Rarity",
-									"__type": "String",
-									"defUid": 53,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Rarity"]
-									}]
-								},
-								{
-									"__identifier": "id",
-									"__value": "rarity",
-									"__type": "String",
-									"defUid": 57,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["rarity"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Card_Abilities",
-							"__grid": [521,160],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 60,
-							"defUid": 14,
-							"px": [521,160],
-							"fieldInstances": [
-								{
-									"__identifier": "offset",
-									"__value": [0,0],
-									"__type": "Array<Float>",
-									"defUid": 51,
-									"realEditorValues": [ null, null ]
-								},
-								{
-									"__identifier": "name",
-									"__value": "Ability",
-									"__type": "String",
-									"defUid": 54,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Ability"]
-									}]
-								},
-								{
-									"__identifier": "id",
-									"__value": "ability0",
-									"__type": "String",
-									"defUid": 58,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["ability0"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Card_Abilities",
-							"__grid": [520,222],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 60,
-							"defUid": 14,
-							"px": [520,222],
-							"fieldInstances": [
-								{
-									"__identifier": "offset",
-									"__value": [0,0],
-									"__type": "Array<Float>",
-									"defUid": 51,
-									"realEditorValues": [ null, null ]
-								},
-								{
-									"__identifier": "name",
-									"__value": "Ability",
-									"__type": "String",
-									"defUid": 54,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Ability"]
-									}]
-								},
-								{
-									"__identifier": "id",
-									"__value": "ability1",
-									"__type": "String",
-									"defUid": 58,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["ability1"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Card_Title",
-							"__grid": [522,58],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 30,
-							"defUid": 11,
-							"px": [522,58],
-							"fieldInstances": [
-								{
-									"__identifier": "name",
-									"__value": "card name",
-									"__type": "String",
-									"defUid": 52,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["card name"]
-									}]
-								},
-								{ "__identifier": "id", "__value": null, "__type": "String", "defUid": 56, "realEditorValues": [] },
-								{ "__identifier": "offset", "__value": [], "__type": "Array<Float>", "defUid": 60, "realEditorValues": [] }
-							]
-						},
-						{
-							"__identifier": "Card_Abilities",
-							"__grid": [521,289],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 60,
-							"defUid": 14,
-							"px": [521,289],
-							"fieldInstances": [
-								{ "__identifier": "offset", "__value": [], "__type": "Array<Float>", "defUid": 51, "realEditorValues": [] },
-								{
-									"__identifier": "name",
-									"__value": "ability",
-									"__type": "String",
-									"defUid": 54,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["ability"]
-									}]
-								},
-								{
-									"__identifier": "id",
-									"__value": "ability2",
-									"__type": "String",
-									"defUid": 58,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["ability2"]
-									}]
-								}
-							]
 						}
 					]
 				},
 				{
 					"__identifier": "Battle_cards",
 					"__type": "Tiles",
-					"__cWid": 13,
-					"__cHei": 10,
+					"__cWid": 31,
+					"__cHei": 18,
 					"__gridSize": 64,
 					"__opacity": 1,
 					"__pxTotalOffsetX": -22,

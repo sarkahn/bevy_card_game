@@ -37,7 +37,7 @@ pub enum Team {
 }
 
 #[derive(Default)]
-pub struct SpawnUnit {
+struct SpawnUnit {
     pub atlas: Handle<TextureAtlas>,
     pub sprite_index: i32,
     pub position: IVec3, // X, Y, Depth
@@ -52,7 +52,7 @@ fn spawn_from_event(mut commands: Commands, mut ev_spawn: EventReader<SpawnUnit>
         let transform = Transform::from_xyz(xy.x as f32, xy.y as f32, depth as f32);
 
         let sprite = TextureAtlasSprite {
-            custom_size: Some(Vec2::ONE),
+            //custom_size: Some(Vec2::ONE),
             index: spawn.sprite_index as usize,
             ..Default::default()
         };
@@ -180,7 +180,7 @@ fn build_unit(
     let transform = Transform::from_xyz(xy.x as f32, xy.y as f32, depth as f32);
 
     let sprite = TextureAtlasSprite {
-        custom_size: Some(Vec2::ONE),
+        //custom_size: Some(Vec2::ONE),
         index: sprite_index as usize,
         ..Default::default()
     };

@@ -11,10 +11,11 @@ use sark_pathfinding::PathMap2d;
 use crate::{
     config::{ConfigAsset, GameSettings},
     ldtk_loader::{LdtkMap, MapEntity, MapLayer, MapTile, MapTileset, TilesLayer, EntitiesLayer},
-    AnimationController, AtlasHandles, GameState, AnimationData, SETTINGS_PATH, make_sprite_atlas,
+    AnimationController, AtlasHandles, GameState, AnimationData, SETTINGS_PATH, make_sprite_atlas, GridHelper, TILE_SIZE,
 };
 
-use super::{spawn::SpawnUnit, units::{MapUnit, PlayerUnit, EnemyUnit, MapUnitBundle, UnitCommand}, enemies::Spawner};
+use super::{ units::{MapUnit, PlayerUnit, EnemyUnit, MapUnitBundle, UnitCommand}, enemies::Spawner};
+
 
 pub struct MapPlugin;
 
@@ -29,7 +30,8 @@ impl Plugin for MapPlugin {
             )
             .add_system_set(
                 SystemSet::on_update(GameState::BattleMap).with_system(update_map_units),
-            );
+            )
+            ;
     }
 }
 
@@ -52,15 +54,82 @@ impl Default for TerrainTile {
     }
 }
 
+#[derive(Component)]
+pub struct PlayerBase;
+
 
 #[derive(Default)]
-pub struct MapUnits(pub Grid<Option<Entity>>);
+pub struct MapUnits {
+    units: Vec<Option<Entity>>,
+    size: IVec2,
+}
+impl MapUnits {
+    pub fn new(size: IVec2) -> Self {
+        let len = size.x * size.y;
+        Self {
+            units: vec![None; len as usize],
+            size,
+        }
+    }
 
-impl std::ops::Deref for MapUnits {
-    type Target = Grid<Option<Entity>>;
+    pub fn xy_to_index(&self, xy: Vec2) -> usize {
+        let grid = self.xy_to_grid(xy);
+        self.grid_to_index(grid)
+    }
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
+    pub fn grid_to_index(&self, grid: IVec2) -> usize {
+        (grid.y * self.size.x + grid.x) as usize
+    }
+
+    pub fn xy_to_grid(&self, xy: Vec2) -> IVec2 {
+        xy.floor().as_ivec2() / TILE_SIZE
+    }
+    pub fn grid_to_xy(&self, grid: IVec2) -> Vec2 {
+        (grid * TILE_SIZE).as_vec2()
+    }
+
+
+    pub fn resize(&mut self, size: IVec2) {
+        let len = size.x * size.y;
+        self.units = vec![None; len as usize];
+        self.size = size;   
+    }
+
+    pub fn len(&self) -> usize {
+        (self.size.x * self.size.y) as usize 
+    }
+
+    pub fn grid_size(&self) -> IVec2 {
+        self.size
+    }
+
+    pub fn clear(&mut self) {
+        self.units = vec![None;self.len()];
+    } 
+
+    pub fn get_from_xy(&self, xy: Vec2) -> Option<Entity> {
+        let i = self.xy_to_index(xy);
+        self.units[i]
+    }
+
+    pub fn get_from_grid_xy(&self, grid_xy: IVec2) -> Option<Entity> {
+        let i = self.grid_to_index(grid_xy);
+        self.units[i]
+    }
+    pub fn get_from_index(&self, index: usize) -> Option<Entity> {
+        self.units[index]
+    }
+    
+    pub fn set_from_grid_xy(&mut self, grid_xy: IVec2, entity: Entity) {
+        //println!("xy in {}", grid_xy);
+        let i = self.grid_to_index(grid_xy);
+        self.units[i] = Some(entity)
+    }
+
+    pub fn set_from_xy(&mut self, xy: Vec2, entity: Entity) {
+        let i = self.xy_to_index(xy);
+        //println!("inserting at {}", i);
+        self.units[i] = Some(entity);
     }
 }
 
@@ -119,7 +188,7 @@ fn build_map(
             if let Some(tile_count) = ldtk.tile_count() {
                 q_cam.single_mut().set_tile_count(tile_count.as_uvec2().into());
             }
-            units.0 = Grid::default(map.size().into());
+            units.resize(map.size().as_ivec2());
             for (i,layer) in ldtk.layers().enumerate() {
                 match layer {
                     MapLayer::Tiles(layer) => {
@@ -141,7 +210,7 @@ fn build_map(
                         );
                     },                        
                 }
-                update_colliders(&mut map, layer);
+                update_colliders(&mut map, &units, layer);
             }
 
             game_state.set(GameState::BattleMap).unwrap();
@@ -160,9 +229,11 @@ fn build_tile_layer(
     let tileset = ldtk.tileset_from_id(tiles.tileset_id).unwrap();
     let atlas = get_atlas(atlases, atlas_handles, tileset);
     for tile in &tiles.tiles {
-        let offset = axis_offset(ldtk.size_px());
-        let xy = tile.grid_xy.as_vec2() + offset;
-        make_sprite_atlas(commands, xy, depth, atlas.clone(), tile.id as usize);
+        //let offset = axis_offset(ldtk.size_px());
+        //et xy = tile.grid_xy().as_vec2() + offset;//
+        let xy = tile.pixel_xy().as_vec2();
+        make_sprite_atlas(commands, xy, depth, atlas.clone(), tile.id() as usize);
+        
     }
 }
 
@@ -178,11 +249,11 @@ fn build_entity_layer(
         if let Some(tsid) = entity.tileset_id() {
             if let Some(tileset) = ldtk.tileset_from_id(tsid) {
                 let atlas = get_atlas(atlases, atlas_handles, tileset);
-                let offset = axis_offset(ldtk.size_px());
-                let xy = entity.grid_xy().as_vec2() + offset;
+                let xy = entity.pixel_xy();
+                //println!("Spawning entity at {}", xy);
                 let mut sprite = make_sprite_atlas(
                     commands, 
-                    xy, 
+                    xy.as_vec2(), 
                     depth, 
                     atlas.clone(), 
                     entity.tile_id().unwrap_or(0) as usize
@@ -211,9 +282,14 @@ fn build_entity_layer(
                     );
                 }
                 if entity.tagged("spawner") {
+                    println!("SPAWNER");
                     sprite.insert(Spawner{
                         timer: Timer::from_seconds(1.5, true),
                     }).insert(EnemyUnit);
+                }
+
+                if entity.tagged("player_base") {
+                    sprite.insert(PlayerBase);
                 }
             }
         }
@@ -222,14 +298,16 @@ fn build_entity_layer(
 
 fn update_colliders(
     map: &mut CollisionMap,
+    units: &MapUnits,
     layer: &MapLayer,
 ) {
     match layer {
         MapLayer::Tiles(layer) => {
             for tile in layer.tiles.iter() {
-                if layer.has_enum(tile.id, "collider") {
-                    let xy = tile.grid_xy;
-                    let xy = xy + map.size().as_ivec2() / 2;
+                if layer.has_enum(tile.id(), "collider") {
+                    let xy = units.xy_to_grid(tile.pixel_xy().as_vec2());
+
+                    //let xy = xy + map.size().as_ivec2() / 2;
                     map.set_collidable(xy);
                 }
             }
@@ -237,17 +315,29 @@ fn update_colliders(
         MapLayer::Entities(layer) => {
             for entity in layer.entities() {
                 if entity.tagged("collider") {
-                    let xy = entity.grid_xy();
-                    let xy = xy + map.size().as_ivec2() / 2;
-                    let i = map.to_index(xy.into());
-                    //println!("Entity Xy {}, i {}", xy, i);
-                    map.0.toggle_obstacle_index(i);
+                    let xy = units.xy_to_grid(entity.pixel_xy().as_vec2());
+                    map.set_collidable(xy);
                 } 
             }
         },
     }
 }
 
+
+
+fn update_map_units(
+    mut units: ResMut<MapUnits>,
+    q_units: Query<(Entity,&Transform),(With<MapUnit>, With<PlayerUnit>)>, 
+) {
+    units.clear();
+
+    for (entity,transform) in q_units.iter() {
+     
+        //println!("Inserting {:?} at {}", entity, xy);
+        //let i = units.xy_to_index(transform.translation.xy());
+        units.set_from_xy(transform.translation.xy(), entity);
+    }
+}
 
 fn get_atlas(
     atlases: &mut Assets<TextureAtlas>,
@@ -268,19 +358,5 @@ fn get_atlas(
             atlas_handles.0.insert(name.to_string(), handle.clone());
             handle
         }
-    }
-}
-
-fn update_map_units(
-    mut units: ResMut<MapUnits>,
-    q_units: Query<(Entity,&Transform),(With<MapUnit>, With<PlayerUnit>)>, 
-) {
-    for unit in units.0.iter_mut() {
-        *unit = None;
-    }
-
-    for (entity,transform) in q_units.iter() {
-        let xy = transform.translation.xy() + units.size().as_vec2() / 2.0;
-        units.0[xy.floor().as_uvec2()] = Some(entity)
     }
 }

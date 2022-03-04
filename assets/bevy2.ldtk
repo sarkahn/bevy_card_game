@@ -47,7 +47,7 @@
 			"autoSourceLayerDefUid": null,
 			"tilesetDefUid": 21,
 			"tilePivotX": 0,
-			"tilePivotY": 0
+			"tilePivotY": 1
 		},
 		{
 			"__type": "Entities",
@@ -85,7 +85,7 @@
 			"autoSourceLayerDefUid": null,
 			"tilesetDefUid": 20,
 			"tilePivotX": 0,
-			"tilePivotY": 0
+			"tilePivotY": 1
 		},
 		{
 			"__type": "Entities",
@@ -123,7 +123,7 @@
 			"autoSourceLayerDefUid": null,
 			"tilesetDefUid": 2,
 			"tilePivotX": 0,
-			"tilePivotY": 0
+			"tilePivotY": 1
 		}
 	], "entities": [
 		{
@@ -448,7 +448,7 @@
 			"enumTags": [ { "enumValueId": "Player", "tileIds": [0,1,2] }, { "enumValueId": "Enemy", "tileIds": [3] }, { "enumValueId": "Collider", "tileIds": [4,5] } ],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a000039750000000000000000000000000000" }
+			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a395439752231355500000000000075550000" }
 		},
 		{
 			"__cWid": 4,
@@ -552,6 +552,7 @@
 					"seed": 4666800,
 					"overrideTilesetUid": null,
 					"gridTiles": [
+						{ "px": [64,64], "src": [0,0], "f": 0, "t": 0, "d": [30] },
 						{ "px": [1088,192], "src": [0,0], "f": 0, "t": 0, "d": [104] },
 						{ "px": [1152,192], "src": [64,0], "f": 0, "t": 1, "d": [105] }
 					],
@@ -636,6 +637,17 @@
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] }
 							]
+						},
+						{
+							"__identifier": "Wizard",
+							"__grid": [8,8],
+							"__pivot": [0,1],
+							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
+							"width": 64,
+							"height": 64,
+							"defUid": 29,
+							"px": [512,576],
+							"fieldInstances": []
 						}
 					]
 				},

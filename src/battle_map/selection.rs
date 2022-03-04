@@ -2,12 +2,12 @@ use bevy::{ math::Vec3Swizzles, prelude::*};
 
 use sark_pathfinding::AStar;
 
-use crate::{config::ConfigAsset, make_sprite, GameState, SETTINGS_PATH};
+use crate::{config::ConfigAsset, make_sprite, GameState, SETTINGS_PATH, TILE_SIZE};
 
 use super::{
     input::{Cursor, TileClickedEvent},
     map::CollisionMap,
-    units::{PlayerUnit, UnitCommand, UnitCommands},
+    units::{PlayerUnit, UnitCommand, UnitCommands}, MapUnits,
 };
 
 pub struct BattleMapSelectionPlugin;
@@ -49,7 +49,6 @@ fn on_select(
             .for_each(|e| commands.entity(e).despawn());
         if let Some(selected) = selection.selected_unit {
             if let Ok(transform) = q_pos.get(selected) {
-                //let xy = xy + map.size().as_vec2() / 2.0;
                 make_sprite(
                     &mut commands,
                     transform.translation.xy(),
@@ -60,23 +59,29 @@ fn on_select(
             }
 
             if let Ok(cursor_transform) = q_cursor.get_single() {
-                let center_offset = map.size().as_vec2() / 2.0;
-                let a = q_pos.get(selected).unwrap().translation.xy();
-                let a = (a + center_offset).floor().as_ivec2();
+                
+                let a = q_pos.get(selected).unwrap().translation.xy().as_ivec2() / TILE_SIZE;
+                //let a = (a + center_offset).floor().as_ivec2();
 
-                let b = cursor_transform.translation.xy();
-                let b = (b + center_offset).floor().as_ivec2();
+                let b = cursor_transform.translation.xy().as_ivec2() / TILE_SIZE / TILE_SIZE;
+                //let b = (b + center_offset).floor().as_ivec2();
 
                 //let b = map.0.to_index_2d(cursor_transform.translation.xy());
                 if a == b {
                     return;
                 }
+                //println!("Trying to get path from {} to {}", a, b);
                 selection.path = get_path(a, b, &map);
+                if selection.path.is_some() {
+                   // println!("Found path: {:?}", selection.path);
+                }
             }
         }
 
         for ev in ev_click.iter() {
+            //println!("Read click");
             if let Some(clicked_unit) = ev.unit {
+                //println!("Unit clicked: {:?}", clicked_unit);
                 // Can only select player units
                 if q_player.get(clicked_unit).is_ok() {
                     println!("Selected {:?}", clicked_unit);
@@ -109,8 +114,8 @@ fn on_select(
 fn get_path(a: IVec2, b: IVec2, map: &CollisionMap) -> Option<Vec<IVec2>> {
     let mut astar = AStar::new(10);
     if let Some(path) = astar.find_path(&map.0, a.into(), b.into()) {
-        let offset = map.half_offset();
-        return Some(path.iter().map(|p| IVec2::from(*p) + offset).collect::<Vec<IVec2>>());
+        //let offset = map.half_offset();
+        return Some(path.iter().map(|p| IVec2::from(*p)).collect::<Vec<IVec2>>());
     }
     None
 }
@@ -122,12 +127,15 @@ fn path_sprites(
     mut commands: Commands,
     q_path_sprites: Query<Entity, With<PathSprite>>,
     selection: Res<Selection>,
+    map: Res<MapUnits>,
 ) {
     q_path_sprites.for_each(|e| commands.entity(e).despawn());
     if let Some(path) = &selection.path {
         for p in path.iter() {
             let xy = IVec2::from(*p).as_vec2();
-            make_sprite(&mut commands, xy, 2, Color::rgba_u8(200, 200, 200, 200)).insert(PathSprite);
+            let xy = xy * TILE_SIZE as f32;
+           // println!("Trying to draw path at {}", xy);
+            make_sprite(&mut commands, xy, 5, Color::rgba_u8(200, 200, 200, 200)).insert(PathSprite);
         }
     }
 }
