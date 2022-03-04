@@ -3,7 +3,7 @@ use bevy::prelude::*;
 
 use crate::{
     config::ConfigAsset, ldtk_loader::*,
-    AtlasHandles, GameState, SETTINGS_PATH, make_sprite_image_sized, make_sprite_atlas_sized, unit::Element, make_sprite,
+    AtlasHandles, GameState, SETTINGS_PATH, make_sprite_image_sized, make_sprite_atlas_sized, unit::Element, make_sprite, TILE_SIZE,
 };
 
 use super::cards::{CardLabel, CardLabelType, SpawnCard};
@@ -52,13 +52,13 @@ fn setup(
     if let Some(ldtk) = ldtk.get(&config.settings.arena_file) {
 
         if let Some(bg) = &ldtk.background() {
-            //println!("Spawned background, Size {}",  bg.size);
             let size = bg.size;
-            let size = size / 64;
+            let pos = size / 2;
+            println!("Spawned background, Size {}",  size);
             make_sprite_image_sized(
                 &mut commands, 
-                Vec2::ZERO,
-                10,
+                pos.as_vec2(),
+                1,
                 bg.image.clone(),
                 size,
             );
@@ -74,11 +74,17 @@ fn setup(
         let atlas = get_atlas(&mut atlases, &mut atlas_handles, &card_tileset);
         card_atlas.0 = atlas;
 
+        let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
+
+        let player_spawns = spawns.iter().filter(|e|e.tagged("player"));
+
         state.set(GameState::Arena).unwrap();
 
         commands.spawn().insert(SpawnCard {
             element: Element::Death,
         });
+
+
     }
 }
 
@@ -107,6 +113,8 @@ fn on_spawn(
     }
 }
 
+
+
 #[derive(Default)]
 pub struct CardsAtlas(Handle<TextureAtlas>);
 
@@ -127,13 +135,13 @@ fn spawn_card(
         .expect("Couldn't find 'card_rarity' in layer");
     let abilities = layer.get_all_from_name("card_abilities");
 
-    let mut xy = get_xy(root);
-    let mut xy = Vec2::new(3.0, 3.0);
-    let size = get_size(root);
+    let mut xy = root.pixel_xy().as_vec2();
+    let size = root.size().as_vec2();
+
+    println!("XY: {}", xy);
     //let root_offset = -(Vec2::new(0.0, size.y) / 2.0);
     //xy += root_offset;
     //let root_offset = Vec2::ZERO;//-root_offset * 4.0;
-
     println!("Spawning card at {}, size {}", xy, size);
     let depth = 11;
     let root = make_sprite_atlas_sized(
@@ -209,23 +217,16 @@ fn get_label_pos(label: &MapEntity) -> Vec3 {
 }
 
 fn get_area(entity: &MapEntity) -> Rect<f32> {
-    let xy = get_xy(entity);
-    let size = get_size(entity);
-    let offset = Vec2::new(0.0,0.0);
+    let xy = entity.pixel_xy().as_vec2();
+    let size = entity.size().as_vec2();
+    //todo!()
+    // let offset = Vec2::new(0.0,0.0);
     Rect {
-        left: xy.x + offset.x,
-        right: xy.x + size.x + offset.x,
-        top: xy.y + size.y + offset.y,
-        bottom: xy.y + offset.y,
+        left: xy.x ,
+        right: xy.x + size.x ,
+        top: xy.y + size.y,
+        bottom: xy.y,
     }
-}
-
-fn get_xy(entity: &MapEntity) -> Vec2 {
-    entity.xy().as_vec2() / 64.0
-}
-
-fn get_size(entity: &MapEntity) -> Vec2 {
-    entity.size().as_vec2() / 64.0
 }
 
 fn get_atlas(

@@ -75,6 +75,12 @@ impl LdtkMap {
         None
     }
 
+    pub fn get_tagged<'a>(&'a self, name: &'a str) -> impl Iterator<Item=&MapEntity> {
+        self.layers().filter(|l|l.is_entities()).flat_map(|l|{
+            l.as_entities().unwrap().get_tagged(name)
+        })
+    }
+
     pub fn layers(&self) -> impl DoubleEndedIterator<Item=&MapLayer> {
         self.layers.iter().map(|(_,b)|b)
     }

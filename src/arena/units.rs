@@ -18,3 +18,9 @@ pub struct ArenaUnit;
 
 pub fn spawn() {}
 
+pub struct LoadingPrefab(Handle<LdtkMap>);
+fn load_prefab(
+) {
+
+}
+
