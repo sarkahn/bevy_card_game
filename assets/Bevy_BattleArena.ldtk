@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 61,
+	"nextUid": 62,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -224,7 +224,7 @@
 		{
 			"identifier": "Card",
 			"uid": 9,
-			"tags": [ "player", "battle_card" ],
+			"tags": [ "player", "battle_card", "spawn_point" ],
 			"width": 512,
 			"height": 512,
 			"resizableX": false,
@@ -242,8 +242,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": []
 		},
 		{
@@ -267,8 +267,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "name",
@@ -353,8 +353,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "offset",
@@ -439,8 +439,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "offset",
@@ -525,8 +525,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnID",
@@ -565,14 +565,14 @@
 			"color": "#94D9B3",
 			"renderMode": "Tile",
 			"showName": true,
-			"tilesetId": 5,
+			"tilesetId": 61,
 			"tileId": 0,
 			"tileRenderMode": "FitInside",
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnID",
@@ -663,8 +663,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnID",
@@ -709,8 +709,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnID",
@@ -755,8 +755,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnID",
@@ -801,8 +801,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnID",
@@ -847,8 +847,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnId",
@@ -893,8 +893,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnID",
@@ -939,8 +939,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnID",
@@ -985,8 +985,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": [
 				{
 					"identifier": "SpawnID",
@@ -1095,6 +1095,26 @@
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "000000000", "averageColors": "000008de07de17de17de17de17de28de0000" }
+		},
+		{
+			"__cWid": 5,
+			"__cHei": 4,
+			"identifier": "EnemyUnit_Slime_animation",
+			"uid": 61,
+			"relPath": "textures/enemyUnit_Slime_animation.png",
+			"pxWid": 320,
+			"pxHei": 256,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": {
+				"opaqueTiles": "00000000000000000000",
+				"averageColors": "367b367b367b367b367b367b367b367b367b367b367b367b367b367b367b367b367b000000000000"
+			}
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -1142,57 +1162,57 @@
 					"entityInstances": [
 						{
 							"__identifier": "EnemyStatus_Name",
-							"__grid": [3,39],
-							"__pivot": [0,0],
+							"__grid": [7,39],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 18,
 							"defUid": 38,
-							"px": [63,632],
+							"px": [127,632],
 							"fieldInstances": [{ "__identifier": "SpawnId", "__value": 0, "__type": "Int", "defUid": 43, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "EnemyStatus_Attack",
-							"__grid": [5,40],
-							"__pivot": [0,0],
+							"__grid": [8,40],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 100,
 							"height": 18,
 							"defUid": 39,
-							"px": [80,655],
+							"px": [128,655],
 							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 44, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "EnemyStatus_Defense",
-							"__grid": [5,42],
-							"__pivot": [0,0],
+							"__grid": [8,42],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 100,
 							"height": 18,
 							"defUid": 40,
-							"px": [81,676],
+							"px": [129,676],
 							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 45, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "EnemyStatus_Health",
-							"__grid": [16,40],
-							"__pivot": [0,0],
+							"__grid": [18,41],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 60,
 							"height": 20,
 							"defUid": 41,
-							"px": [256,654],
+							"px": [288,670],
 							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 46, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "EnemyStatus_Name",
-							"__grid": [7,45],
-							"__pivot": [0,0],
+							"__grid": [11,46],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 18,
 							"defUid": 38,
-							"px": [123,730],
+							"px": [187,746],
 							"fieldInstances": [{
 								"__identifier": "SpawnId",
 								"__value": 1,
@@ -1203,13 +1223,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Name",
-							"__grid": [3,51],
-							"__pivot": [0,0],
+							"__grid": [8,51],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 18,
 							"defUid": 38,
-							"px": [54,831],
+							"px": [134,831],
 							"fieldInstances": [{
 								"__identifier": "SpawnId",
 								"__value": 2,
@@ -1220,13 +1240,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Name",
-							"__grid": [7,58],
-							"__pivot": [0,0],
+							"__grid": [11,59],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 18,
 							"defUid": 38,
-							"px": [119,929],
+							"px": [183,945],
 							"fieldInstances": [{
 								"__identifier": "SpawnId",
 								"__value": 3,
@@ -1237,13 +1257,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Attack",
-							"__grid": [8,46],
-							"__pivot": [0,0],
+							"__grid": [10,47],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 100,
 							"height": 18,
 							"defUid": 39,
-							"px": [139,750],
+							"px": [171,766],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 1,
@@ -1254,13 +1274,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Attack",
-							"__grid": [4,53],
-							"__pivot": [0,0],
+							"__grid": [7,54],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 100,
 							"height": 18,
 							"defUid": 39,
-							"px": [69,851],
+							"px": [117,867],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 2,
@@ -1271,13 +1291,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Attack",
-							"__grid": [8,59],
-							"__pivot": [0,0],
+							"__grid": [10,60],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 100,
 							"height": 18,
 							"defUid": 39,
-							"px": [136,949],
+							"px": [168,965],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 3,
@@ -1288,13 +1308,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Defense",
-							"__grid": [4,54],
-							"__pivot": [0,0],
+							"__grid": [7,55],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 100,
 							"height": 18,
 							"defUid": 40,
-							"px": [70,872],
+							"px": [118,888],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 2,
@@ -1305,13 +1325,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Defense",
-							"__grid": [8,48],
-							"__pivot": [0,0],
+							"__grid": [10,49],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 100,
 							"height": 18,
 							"defUid": 40,
-							"px": [140,772],
+							"px": [172,788],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 1,
@@ -1322,13 +1342,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Defense",
-							"__grid": [8,60],
-							"__pivot": [0,0],
+							"__grid": [10,61],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 100,
 							"height": 18,
 							"defUid": 40,
-							"px": [138,970],
+							"px": [170,986],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 3,
@@ -1339,13 +1359,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Health",
-							"__grid": [19,47],
-							"__pivot": [0,0],
+							"__grid": [21,48],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 60,
 							"height": 20,
 							"defUid": 41,
-							"px": [318,754],
+							"px": [350,770],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 1,
@@ -1356,13 +1376,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Health",
-							"__grid": [16,53],
-							"__pivot": [0,0],
+							"__grid": [18,54],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 60,
 							"height": 20,
 							"defUid": 41,
-							"px": [259,851],
+							"px": [291,867],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 2,
@@ -1373,13 +1393,13 @@
 						},
 						{
 							"__identifier": "EnemyStatus_Health",
-							"__grid": [20,59],
-							"__pivot": [0,0],
+							"__grid": [22,60],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 60,
 							"height": 20,
 							"defUid": 41,
-							"px": [320,953],
+							"px": [352,969],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 3,
@@ -1416,57 +1436,57 @@
 					"entityInstances": [
 						{
 							"__identifier": "UnitStatus_Name",
-							"__grid": [96,39],
-							"__pivot": [0,0],
+							"__grid": [102,40],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 180,
 							"height": 18,
 							"defUid": 25,
-							"px": [1545,631],
+							"px": [1641,647],
 							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 30, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "UnitStatus_Attack",
-							"__grid": [98,41],
-							"__pivot": [0,0],
+							"__grid": [101,42],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 16,
 							"defUid": 27,
-							"px": [1570,658],
+							"px": [1618,674],
 							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 31, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "UnitStatus_Defense",
-							"__grid": [98,42],
-							"__pivot": [0,0],
+							"__grid": [101,43],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 16,
 							"defUid": 28,
-							"px": [1569,678],
+							"px": [1617,694],
 							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 32, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "UnitStatus_Health",
-							"__grid": [108,40],
-							"__pivot": [0,0],
+							"__grid": [110,41],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 64,
 							"height": 22,
 							"defUid": 29,
-							"px": [1741,654],
+							"px": [1773,670],
 							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 33, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "UnitStatus_Name",
-							"__grid": [100,45],
-							"__pivot": [0,0],
+							"__grid": [106,45],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 180,
 							"height": 18,
 							"defUid": 25,
-							"px": [1610,732],
+							"px": [1706,732],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 1,
@@ -1477,13 +1497,13 @@
 						},
 						{
 							"__identifier": "UnitStatus_Name",
-							"__grid": [96,51],
-							"__pivot": [0,0],
+							"__grid": [102,52],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 180,
 							"height": 18,
 							"defUid": 25,
-							"px": [1547,829],
+							"px": [1643,845],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 2,
@@ -1493,31 +1513,14 @@
 							}]
 						},
 						{
-							"__identifier": "UnitStatus_Name",
-							"__grid": [100,58],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 180,
-							"height": 18,
-							"defUid": 25,
-							"px": [1605,928],
-							"fieldInstances": [{
-								"__identifier": "SpawnID",
-								"__value": 3,
-								"__type": "Int",
-								"defUid": 30,
-								"realEditorValues": [{ "id": "V_Int", "params": [3] }]
-							}]
-						},
-						{
 							"__identifier": "UnitStatus_Attack",
-							"__grid": [100,47],
-							"__pivot": [0,0],
+							"__grid": [104,47],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 16,
 							"defUid": 27,
-							"px": [1612,753],
+							"px": [1676,753],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 1,
@@ -1528,13 +1531,13 @@
 						},
 						{
 							"__identifier": "UnitStatus_Attack",
-							"__grid": [96,53],
-							"__pivot": [0,0],
+							"__grid": [100,54],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 16,
 							"defUid": 27,
-							"px": [1547,850],
+							"px": [1611,866],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 2,
@@ -1545,13 +1548,13 @@
 						},
 						{
 							"__identifier": "UnitStatus_Attack",
-							"__grid": [100,59],
-							"__pivot": [0,0],
+							"__grid": [104,60],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 16,
 							"defUid": 27,
-							"px": [1606,948],
+							"px": [1670,964],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 3,
@@ -1562,13 +1565,13 @@
 						},
 						{
 							"__identifier": "UnitStatus_Defense",
-							"__grid": [100,60],
-							"__pivot": [0,0],
+							"__grid": [104,61],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 16,
 							"defUid": 28,
-							"px": [1608,969],
+							"px": [1672,985],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 3,
@@ -1579,13 +1582,13 @@
 						},
 						{
 							"__identifier": "UnitStatus_Defense",
-							"__grid": [96,54],
-							"__pivot": [0,0],
+							"__grid": [100,55],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 16,
 							"defUid": 28,
-							"px": [1548,869],
+							"px": [1612,885],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 2,
@@ -1596,13 +1599,13 @@
 						},
 						{
 							"__identifier": "UnitStatus_Defense",
-							"__grid": [100,48],
-							"__pivot": [0,0],
+							"__grid": [104,48],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 130,
 							"height": 16,
 							"defUid": 28,
-							"px": [1612,774],
+							"px": [1676,774],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 1,
@@ -1613,13 +1616,13 @@
 						},
 						{
 							"__identifier": "UnitStatus_Health",
-							"__grid": [112,46],
-							"__pivot": [0,0],
+							"__grid": [114,47],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 64,
 							"height": 22,
 							"defUid": 29,
-							"px": [1806,747],
+							"px": [1838,763],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 1,
@@ -1630,13 +1633,13 @@
 						},
 						{
 							"__identifier": "UnitStatus_Health",
-							"__grid": [109,52],
-							"__pivot": [0,0],
+							"__grid": [111,53],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 64,
 							"height": 22,
 							"defUid": 29,
-							"px": [1749,845],
+							"px": [1781,861],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 2,
@@ -1647,13 +1650,13 @@
 						},
 						{
 							"__identifier": "UnitStatus_Health",
-							"__grid": [113,59],
-							"__pivot": [0,0],
+							"__grid": [115,60],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 64,
 							"height": 22,
 							"defUid": 29,
-							"px": [1810,949],
+							"px": [1842,965],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 3,
@@ -1735,13 +1738,13 @@
 						},
 						{
 							"__identifier": "CardSpawnPosition",
-							"__grid": [54,50],
+							"__grid": [56,50],
 							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 300,
 							"height": 512,
 							"defUid": 23,
-							"px": [872,808],
+							"px": [904,808],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 3,
@@ -1752,13 +1755,13 @@
 						},
 						{
 							"__identifier": "CardSpawnPosition",
-							"__grid": [61,50],
+							"__grid": [67,50],
 							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 300,
 							"height": 512,
 							"defUid": 23,
-							"px": [984,808],
+							"px": [1080,808],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 4,
@@ -1769,13 +1772,13 @@
 						},
 						{
 							"__identifier": "CardSpawnPosition",
-							"__grid": [72,50],
+							"__grid": [76,50],
 							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 300,
 							"height": 512,
 							"defUid": 23,
-							"px": [1160,808],
+							"px": [1224,808],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 5,
@@ -1786,13 +1789,13 @@
 						},
 						{
 							"__identifier": "CardSpawnPosition",
-							"__grid": [77,50],
+							"__grid": [82,50],
 							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 300,
 							"height": 512,
 							"defUid": 23,
-							"px": [1240,808],
+							"px": [1320,808],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 6,
@@ -1829,24 +1832,24 @@
 					"entityInstances": [
 						{
 							"__identifier": "EnemySpawnPoints",
-							"__grid": [400,37],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 5, "srcRect": [0,0,64,64] },
+							"__grid": [403,141],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 61, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 19,
-							"px": [400,37],
+							"px": [403,141],
 							"fieldInstances": [{ "__identifier": "SpawnID", "__value": 0, "__type": "Int", "defUid": 20, "realEditorValues": [] }]
 						},
 						{
 							"__identifier": "EnemySpawnPoints",
-							"__grid": [274,149],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 5, "srcRect": [0,0,64,64] },
+							"__grid": [248,251],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 61, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 19,
-							"px": [274,149],
+							"px": [248,251],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 1,
@@ -1857,13 +1860,13 @@
 						},
 						{
 							"__identifier": "EnemySpawnPoints",
-							"__grid": [283,354],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 5, "srcRect": [0,0,64,64] },
+							"__grid": [254,457],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 61, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 19,
-							"px": [283,354],
+							"px": [254,457],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 3,
@@ -1874,13 +1877,13 @@
 						},
 						{
 							"__identifier": "EnemySpawnPoints",
-							"__grid": [406,245],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 5, "srcRect": [0,0,64,64] },
+							"__grid": [396,365],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 61, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 19,
-							"px": [406,245],
+							"px": [396,365],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 2,
@@ -1917,13 +1920,13 @@
 					"entityInstances": [
 						{
 							"__identifier": "PlayerSpawnPoints",
-							"__grid": [1409,40],
-							"__pivot": [0,0],
+							"__grid": [1391,137],
+							"__pivot": [0.5,0.5],
 							"__tile": { "tilesetUid": 5, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 15,
-							"px": [1409,40],
+							"px": [1391,137],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 0,
@@ -1934,13 +1937,13 @@
 						},
 						{
 							"__identifier": "PlayerSpawnPoints",
-							"__grid": [1544,143],
-							"__pivot": [0,0],
+							"__grid": [1524,232],
+							"__pivot": [0.5,0.5],
 							"__tile": { "tilesetUid": 5, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 15,
-							"px": [1544,143],
+							"px": [1524,232],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 1,
@@ -1951,13 +1954,13 @@
 						},
 						{
 							"__identifier": "PlayerSpawnPoints",
-							"__grid": [1413,242],
-							"__pivot": [0,0],
+							"__grid": [1395,320],
+							"__pivot": [0.5,0.5],
 							"__tile": { "tilesetUid": 5, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 15,
-							"px": [1413,242],
+							"px": [1395,320],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 2,
@@ -1968,13 +1971,13 @@
 						},
 						{
 							"__identifier": "PlayerSpawnPoints",
-							"__grid": [1549,343],
-							"__pivot": [0,0],
+							"__grid": [1525,424],
+							"__pivot": [0.5,0.5],
 							"__tile": { "tilesetUid": 5, "srcRect": [0,0,64,64] },
 							"width": 128,
 							"height": 128,
 							"defUid": 15,
-							"px": [1549,343],
+							"px": [1525,424],
 							"fieldInstances": [{
 								"__identifier": "SpawnID",
 								"__value": 3,
@@ -2008,175 +2011,7 @@
 					"seed": 9533804,
 					"overrideTilesetUid": null,
 					"gridTiles": [],
-					"entityInstances": [
-						{
-							"__identifier": "Card",
-							"__grid": [1295,506],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 7, "srcRect": [0,0,512,512] },
-							"width": 512,
-							"height": 512,
-							"defUid": 9,
-							"px": [1295,506],
-							"fieldInstances": []
-						},
-						{
-							"__identifier": "Card_Title",
-							"__grid": [1430,526],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 30,
-							"defUid": 11,
-							"px": [1430,526],
-							"fieldInstances": [
-								{
-									"__identifier": "name",
-									"__value": "Title",
-									"__type": "String",
-									"defUid": 52,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Title"]
-									}]
-								},
-								{
-									"__identifier": "id",
-									"__value": "title",
-									"__type": "String",
-									"defUid": 56,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["title"]
-									}]
-								},
-								{
-									"__identifier": "offset",
-									"__value": [-2.6,1.6],
-									"__type": "Array<Float>",
-									"defUid": 60,
-									"realEditorValues": [ { "id": "V_Float", "params": [-2.6] }, { "id": "V_Float", "params": [1.6] } ]
-								}
-							]
-						},
-						{
-							"__identifier": "Card_Rarity",
-							"__grid": [1420,764],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 32,
-							"defUid": 12,
-							"px": [1420,764],
-							"fieldInstances": [
-								{
-									"__identifier": "offset",
-									"__value": [0,0],
-									"__type": "Array<Float>",
-									"defUid": 50,
-									"realEditorValues": [ null, null ]
-								},
-								{
-									"__identifier": "name",
-									"__value": "Rarity",
-									"__type": "String",
-									"defUid": 53,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Rarity"]
-									}]
-								},
-								{
-									"__identifier": "id",
-									"__value": "rarity",
-									"__type": "String",
-									"defUid": 57,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["rarity"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Card_Abilities",
-							"__grid": [1422,806],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 60,
-							"defUid": 14,
-							"px": [1422,806],
-							"fieldInstances": [
-								{
-									"__identifier": "offset",
-									"__value": [0,0],
-									"__type": "Array<Float>",
-									"defUid": 51,
-									"realEditorValues": [ null, null ]
-								},
-								{
-									"__identifier": "name",
-									"__value": "Ability",
-									"__type": "String",
-									"defUid": 54,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Ability"]
-									}]
-								},
-								{
-									"__identifier": "id",
-									"__value": "ability0",
-									"__type": "String",
-									"defUid": 58,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["ability0"]
-									}]
-								}
-							]
-						},
-						{
-							"__identifier": "Card_Abilities",
-							"__grid": [1422,868],
-							"__pivot": [0,0],
-							"__tile": null,
-							"width": 240,
-							"height": 60,
-							"defUid": 14,
-							"px": [1422,868],
-							"fieldInstances": [
-								{
-									"__identifier": "offset",
-									"__value": [0,0],
-									"__type": "Array<Float>",
-									"defUid": 51,
-									"realEditorValues": [ null, null ]
-								},
-								{
-									"__identifier": "name",
-									"__value": "Ability",
-									"__type": "String",
-									"defUid": 54,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Ability"]
-									}]
-								},
-								{
-									"__identifier": "id",
-									"__value": "ability1",
-									"__type": "String",
-									"defUid": 58,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["ability1"]
-									}]
-								}
-							]
-						}
-					]
+					"entityInstances": []
 				},
 				{
 					"__identifier": "Battle_cards",
