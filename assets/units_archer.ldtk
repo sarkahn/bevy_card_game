@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 62,
+	"nextUid": 65,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -30,6 +30,25 @@
 	"levelNamePattern": "Level_%idx",
 	"flags": [],
 	"defs": { "layers": [
+		{
+			"__type": "Entities",
+			"identifier": "Map",
+			"type": "Entities",
+			"uid": 63,
+			"gridSize": 16,
+			"displayOpacity": 1,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"requiredTags": [],
+			"excludedTags": [],
+			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"autoTilesetDefUid": null,
+			"autoRuleGroups": [],
+			"autoSourceLayerDefUid": null,
+			"tilesetDefUid": null,
+			"tilePivotX": 0,
+			"tilePivotY": 0
+		},
 		{
 			"__type": "Entities",
 			"identifier": "Animation",
@@ -131,7 +150,7 @@
 					"acceptFileTypes": null,
 					"defaultOverride": {
 						"id": "V_String",
-						"params": ["Wizard"]
+						"params": ["Archer"]
 					},
 					"textLanguageMode": null
 				},
@@ -457,6 +476,31 @@
 					"textLanguageMode": null
 				}
 			]
+		},
+		{
+			"identifier": "MapUnit",
+			"uid": 62,
+			"tags": ["map_sprite"],
+			"width": 64,
+			"height": 64,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 2,
+			"tileId": 1,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
 		}
 	], "tilesets": [
 		{
@@ -474,7 +518,7 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a000039750000000000000000000000000000" }
+			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a395439752231355500000000000075550000" }
 		},
 		{
 			"__cWid": 1,
@@ -694,9 +738,9 @@
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [
 		{
-			"identifier": "tile_count",
+			"identifier": "name",
 			"__type": "String",
-			"uid": 60,
+			"uid": 64,
 			"type": "F_String",
 			"isArray": false,
 			"canBeNull": true,
@@ -710,27 +754,10 @@
 			"max": null,
 			"regex": null,
 			"acceptFileTypes": null,
-			"defaultOverride": null,
-			"textLanguageMode": null
-		},
-		{
-			"identifier": "pixels_per_tile",
-			"__type": "String",
-			"uid": 61,
-			"type": "F_String",
-			"isArray": false,
-			"canBeNull": true,
-			"arrayMinLength": null,
-			"arrayMaxLength": null,
-			"editorDisplayMode": "Hidden",
-			"editorDisplayPos": "Above",
-			"editorAlwaysShow": false,
-			"editorCutLongValues": true,
-			"min": null,
-			"max": null,
-			"regex": null,
-			"acceptFileTypes": null,
-			"defaultOverride": null,
+			"defaultOverride": {
+				"id": "V_String",
+				"params": ["Archer"]
+			},
 			"textLanguageMode": null
 		}
 	] },
@@ -751,29 +778,45 @@
 			"bgPivotY": 0.5,
 			"__bgPos": null,
 			"externalRelPath": null,
-			"fieldInstances": [
-				{
-					"__identifier": "tile_count",
-					"__value": "[20,20]",
-					"__type": "String",
-					"defUid": 60,
-					"realEditorValues": [{
-						"id": "V_String",
-						"params": ["[20,20]"]
-					}]
-				},
-				{
-					"__identifier": "pixels_per_tile",
-					"__value": "[64,64]",
-					"__type": "String",
-					"defUid": 61,
-					"realEditorValues": [{
-						"id": "V_String",
-						"params": ["[64,64]"]
-					}]
-				}
-			],
+			"fieldInstances": [{ "__identifier": "name", "__value": "Archer", "__type": "String", "defUid": 64, "realEditorValues": [] }],
 			"layerInstances": [
+				{
+					"__identifier": "Map",
+					"__type": "Entities",
+					"__cWid": 58,
+					"__cHei": 37,
+					"__gridSize": 16,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"levelId": 0,
+					"layerDefUid": 63,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGrid": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 7145771,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": [
+						{
+							"__identifier": "MapUnit",
+							"__grid": [42,27],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 2, "srcRect": [64,0,64,64] },
+							"width": 64,
+							"height": 64,
+							"defUid": 62,
+							"px": [680,432],
+							"fieldInstances": []
+						}
+					]
+				},
 				{
 					"__identifier": "Animation",
 					"__type": "Entities",

@@ -9,7 +9,7 @@ use sark_pathfinding::PathMap2d;
 use crate::{
     battle_map::units::PlayerBase,
     config::{ConfigAsset, GameSettings},
-    ldtk_loader::{EntitiesLayer, LdtkMap, MapEntity, MapLayer, MapTile, MapTileset, TilesLayer},
+    ldtk_loader::{EntitiesLayer, LdtkMap, PrefabEntity, MapLayer, MapTile, MapTileset, TilesLayer, Tags},
     make_sprite_atlas, AnimationController, AnimationData, AtlasHandles, GameState, GridHelper,
     SETTINGS_PATH, TILE_SIZE,
 };
@@ -26,15 +26,23 @@ impl Plugin for MapPlugin {
         app.init_resource::<MapUnits>()
             .init_resource::<CollisionMap>()
             .init_resource::<BattleMapLdtkHandle>()
-            .add_system_set(SystemSet::on_update(GameState::LoadBattleMap).with_system(build_map))
+            .add_system_set(SystemSet::on_update(GameState::LoadBattleMap)
+                .with_system(build_map)
+                .label(BUILD_MAP_SYSTEM))
             .add_system_set(
-                SystemSet::on_update(GameState::BattleMap).with_system(update_map_units),
+                SystemSet::on_update(GameState::BattleMap)
+                    .with_system(update_map_units),
             );
     }
 }
 
+pub const BUILD_MAP_SYSTEM: &str = "build_map_system";
+
 #[derive(Default)]
 pub struct BattleMapLdtkHandle(pub Handle<LdtkMap>);
+
+#[derive(Default, Component)]
+pub struct BattleMapEntity;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub enum TerrainTile {
@@ -163,19 +171,27 @@ pub fn axis_offset(size: IVec2) -> Vec2 {
     Vec2::select(cmp, Vec2::new(0.5, 0.5), Vec2::ZERO)
 }
 
+#[derive(Component)]
+pub struct MapLoaded;
+
 fn build_map(
     mut commands: Commands,
     configs: Res<Assets<ConfigAsset>>,
     ldtk: Res<Assets<LdtkMap>>,
-    mut game_state: ResMut<State<GameState>>,
     mut atlas_handles: ResMut<AtlasHandles>,
     mut atlases: ResMut<Assets<TextureAtlas>>,
     mut map: ResMut<CollisionMap>,
     mut q_cam: Query<&mut TiledProjection>,
     mut units: ResMut<MapUnits>,
+    q_loaded: Query<&MapLoaded>,
 ) {
+    if !q_loaded.is_empty() {
+        return;
+    }
     if let Some(configs) = configs.get(SETTINGS_PATH) {
         if let Some(ldtk) = ldtk.get(&configs.settings.map_file) {
+
+
             map.0 = PathMap2d::new(ldtk.size_px().as_uvec2().into());
             if let Some(tile_count) = ldtk.tile_count() {
                 q_cam
@@ -205,9 +221,9 @@ fn build_map(
                     }
                 }
                 update_colliders(&mut map, &units, layer);
-            }
 
-            game_state.set(GameState::BattleMap).unwrap();
+                commands.spawn().insert(MapLoaded);
+            }
         }
     }
 }
@@ -251,6 +267,19 @@ fn build_entity_layer(
                     atlas.clone(),
                     entity.tile_id().unwrap_or(0) as usize,
                 );
+                
+                if !entity.tags().is_empty() || !entity.fields().none() {
+                    let tags = Tags::new(entity.tags().iter());
+                    sprite.insert(entity.fields().clone());
+                    sprite.insert(tags);
+                } 
+
+                sprite.insert(BattleMapEntity);
+
+                if entity.tagged("player") && entity.tagged("spawner") {
+                    println!("Added player spawner tags to entity {:?}", sprite.id());
+                }
+
                 if entity.tags().contains(&"animation".to_string()) {
                     let frames = entity.get_str("frames");
                     let speed = entity.get_f32("speed");
@@ -264,30 +293,18 @@ fn build_entity_layer(
                     let controller = AnimationController::from(anim);
                     sprite.insert(controller);
                 }
-                if entity.tagged("player") {
-                    sprite
-                        .insert(PlayerUnit)
-                        .insert_bundle(MapUnitBundle::default());
-                }
                 if entity.tagged("monster") {
                     sprite
                         .insert(EnemyUnit)
                         .insert_bundle(MapUnitBundle::with_commands(&[UnitCommand::AiThink()]));
                 }
-                if entity.tagged("spawner") {
-                    println!("SPAWNER");
-                    let delay = entity.get_f32("spawn_delay");
-                    sprite
-                        .insert(Spawner {
-                            timer: Timer::from_seconds(delay, true),
-                        })
-                        .insert(EnemyUnit);
-                }
 
-                if entity.tagged("player_base") {
-                    println!("FOUND CASTLE on {:?}", entity.name());
-                    sprite.insert(PlayerBase);
-                }
+                sprite.insert(Name::new(entity.name().to_owned()));
+
+                // if entity.tagged("player_base") {
+                //     println!("FOUND CASTLE on {:?}", entity.name());
+                //     sprite.insert(PlayerBase);
+                // }
             }
         }
     }

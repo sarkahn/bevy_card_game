@@ -5,7 +5,10 @@ use crate::{config::ConfigAsset, ldtk_loader::LdtkMap, GameState, SETTINGS_PATH,
 use super::{
     map::BattleMapLdtkHandle,
     //MapPosition,
-    spawn::{SpawnEntity, SPAWN_SYSTEM},
+    spawn::{
+        //SpawnEntity, 
+        //SPAWN_SYSTEM
+    },
 };
 
 pub struct EnemiesPlugin;
@@ -15,7 +18,6 @@ impl Plugin for EnemiesPlugin {
         app.add_system_set(
             SystemSet::on_update(GameState::BattleMap)
                 .with_system(spawn)
-                .before(SPAWN_SYSTEM),
         );
     }
 }
@@ -43,12 +45,12 @@ fn spawn(
             //println!("Trying to spawn slime");
             let p = transform.translation + (Vec3::new(0.0, -1.0, 0.0) * TILE_SIZE as f32);
             //let xyz = (pos.xy + IVec2::new(0,-1)).extend(2);
-            let spawn = SpawnEntity {
-                ldtk: handle.clone(),
-                name: "Slime".to_string(),
-                pos: p,
-            };
-            commands.spawn().insert(spawn);
+            // let spawn = SpawnEntity {
+            //     ldtk: handle.clone(),
+            //     name: "Slime".to_string(),
+            //     pos: p,
+            // };
+            //commands.spawn().insert(spawn);
         }
     }
 }

@@ -29,10 +29,11 @@ pub use grid::*;
 
 pub const SETTINGS_PATH: &str = "game_settings.config";
 pub const LDTK_CARDS_PATH: &str = "units_BattleCardPreMade.ldtk";
+pub const LDTK_ARCHER_PATH: &str = "units_archer.ldtk";
 
 pub use animation::{AnimationController, AnimationData};
 pub use prefab::LoadCardPrefab;
-pub use prefab::LoadUnitPrefab;
+pub use prefab::SpawnPrefabOld;
 pub use util::*;
 
 #[derive(Component)]

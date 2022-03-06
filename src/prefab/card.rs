@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    ldtk_loader::{LdtkMap, MapEntity, MapTileset},
+    ldtk_loader::{LdtkMap, MapTileset},
     AnimationController, AnimationData, AtlasHandles, LoadCardPrefab,
 };
 

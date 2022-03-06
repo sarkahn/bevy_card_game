@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use bevy::{
     asset::{AssetLoader, AssetPath, BoxedFuture, LoadedAsset},
     prelude::*,
-    reflect::TypeUuid,
+    reflect::{TypeUuid, ReflectRef},
     utils::{HashMap, HashSet},
 };
 use ldtk_rust::{
@@ -20,7 +20,48 @@ pub struct LdtkAssetPlugin;
 
 impl Plugin for LdtkAssetPlugin {
     fn build(&self, app: &mut App) {
-        app.add_asset_loader(LdtkAssetLoader).add_asset::<LdtkMap>();
+        app.add_asset_loader(LdtkAssetLoader)
+        .add_asset::<LdtkMap>()
+        .add_system(build_atlases);
+    }
+}
+
+#[derive(Component)]
+pub struct Tags {
+    tags: Vec<String>,
+}
+impl Tags {
+    pub fn new<'a>(tags: impl Iterator<Item=&'a String>) -> Self {
+        Self {
+            tags: tags.cloned().collect()
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item=&String> {
+        self.tags.iter()
+    }
+
+    pub fn has(&self, tag: &str) -> bool {
+        self.iter().any(|t|t == tag)
+    }
+
+    pub fn has_all(&self, tags: &[&str]) -> bool {
+        tags.iter().all(|t| self.contains(t))
+    }
+
+    fn contains(&self, t: &str) -> bool {
+        for s in self.tags.iter() {
+            if s == t {
+                return true;
+            }
+        }
+        false
+    }
+    pub fn has_any(&self, tags: &[&str]) -> bool {
+        tags.iter().any(|t| self.contains(t))
+    }
+    pub fn none(&self) -> bool {
+        self.tags.is_empty()
     }
 }
 
@@ -46,6 +87,7 @@ pub struct LdtkMap {
     max_tile_size: IVec2,
     entity_defs: MapEntityDefinitions,
     custom_fields: Fields,
+    texture_atlases: HashMap<String, Handle<TextureAtlas>>,
 }
 
 impl LdtkMap {
@@ -77,10 +119,15 @@ impl LdtkMap {
         None
     }
 
-    pub fn get_tagged<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &MapEntity> {
+    pub fn get_tagged<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &PrefabEntity> {
         self.layers()
             .filter(|l| l.is_entities())
             .flat_map(|l| l.as_entities().unwrap().get_tagged(name))
+    }
+    pub fn get_tagged_multi<'a>(&'a self, tags: &'a[&'a str]) -> impl Iterator<Item = &PrefabEntity> {
+        self.layers()
+            .filter(|l| l.is_entities())
+            .flat_map(|l| l.as_entities().unwrap().get_tagged_multi(tags))
     }
 
     pub fn layers(&self) -> impl DoubleEndedIterator<Item = &MapLayer> {
@@ -262,6 +309,7 @@ impl AssetLoader for LdtkAssetLoader {
                 max_tile_size: IVec2::splat(max_tile_size),
                 entity_defs: MapEntityDefinitions::from_defs(&entity_defs),
                 custom_fields: fields,
+                texture_atlases: HashMap::default(),
             };
 
             let asset = LoadedAsset::new(map);
@@ -350,6 +398,7 @@ fn build_tileset(def: &TilesetDefinition, image: Handle<Image>) -> MapTileset {
             true => None,
             false => Some(enums),
         },
+        atlas: Default::default()
     }
 }
 
@@ -466,20 +515,20 @@ impl MapEntityDefinitions {
 
 #[derive(Debug, Default)]
 pub struct MapEntityInstances {
-    defs: HashMap<i32, MapEntity>,
+    defs: HashMap<i32, PrefabEntity>,
     name_map: HashMap<String, i32>,
 }
 impl MapEntityInstances {
-    pub fn def_from_id(&self, id: i32) -> Option<&MapEntity> {
+    pub fn def_from_id(&self, id: i32) -> Option<&PrefabEntity> {
         self.defs.get(&id)
     }
-    pub fn def_from_name(&self, name: &str) -> Option<&MapEntity> {
+    pub fn def_from_name(&self, name: &str) -> Option<&PrefabEntity> {
         if let Some(id) = self.name_map.get(&name.to_lowercase()) {
             return self.def_from_id(*id);
         }
         None
     }
-    pub fn all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &'a MapEntity> {
+    pub fn all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &'a PrefabEntity> {
         self.defs
             .iter()
             .map(|(_, d)| d)
@@ -568,6 +617,7 @@ pub struct MapTileset {
     pub name: String,
     pub image: Handle<Image>,
     pub path: String,
+    pub atlas: Handle<TextureAtlas>,
     enums: Option<HashMap<String, Vec<i32>>>,
 }
 impl MapTileset {
@@ -578,6 +628,15 @@ impl MapTileset {
             }
         }
         false
+    }
+
+    pub fn get_texture_atlas(&self) -> TextureAtlas {
+        TextureAtlas::from_grid(
+            self.image.clone(),
+            Vec2::splat(self.tile_size as f32),
+            self.tile_count.x as usize,
+            self.tile_count.y as usize
+        )
     }
 }
 
@@ -627,7 +686,7 @@ impl TilesLayer {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Component, Debug, Default, Clone)]
 pub struct Fields {
     fields: HashMap<String, Value>,
 }
@@ -651,9 +710,7 @@ impl Fields {
     }
     pub fn try_get_str(&self, field_name: &str) -> Option<&str> {
         if let Some(val) = self.fields.get(field_name) {
-            if let Some(val) = val.as_str() {
-                return Some(val);
-            }
+            return val.as_str();
         }
         None
     }
@@ -664,49 +721,23 @@ impl Fields {
                 return val;
             }
         }
-        panic!("Filed to find i32 field {}", field_name);
+        panic!("Failed to find i32 field {}", field_name);
     }
 
     pub fn get_f32(&self, field_name: &str) -> f32 {
         if let Some(val) = self.fields.get(field_name) {
-            //println!("VAL TYPE {:?}", val);
-            if let Some(val) = val.as_object() {
-                //println!("Obj");
-                if let Some(val) = val.get("params") {
-                    if let Some(val) = val.as_array() {
-                        //println!("ARRAY {:?}", val);
-                        match &val[0] {
-                            Value::Number(n) => {
-                                return n.as_f64().unwrap() as f32;
-                            }
-                            _ => {}
-                        }
-                    }
-                }
+            if let Some(val) = val.as_f32() {
+                return val;
             }
         }
-        panic!("Filed to find f32 field {}", field_name);
+        panic!("Failed to find f32 field {}", field_name);
     }
 
-    pub fn try_get_f32(&self, field_name: &str) -> f32 {
+    pub fn try_get_f32(&self, field_name: &str) -> Option<f32> {
         if let Some(val) = self.fields.get(field_name) {
-            //println!("VAL TYPE {:?}", val);
-            if let Some(val) = val.as_object() {
-                //println!("Obj");
-                if let Some(val) = val.get("params") {
-                    if let Some(val) = val.as_array() {
-                        //println!("ARRAY {:?}", val);
-                        match &val[0] {
-                            Value::Number(n) => {
-                                return n.as_f64().unwrap() as f32;
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-            }
+            return val.as_f32()
         }
-        panic!("Filed to find f32 field {}", field_name);
+        None
     }
 
     pub fn get_vec2(&self, field_name: &str) -> Vec2 {
@@ -789,10 +820,14 @@ impl Fields {
         }
         Self { fields }
     }
+
+    pub fn none(&self) -> bool {
+        self.fields.is_empty()
+    }
 }
 
 #[derive(Debug)]
-pub struct MapEntity {
+pub struct PrefabEntity {
     name: String,
     fields: Fields,
     pixel_xy: IVec2,
@@ -805,7 +840,7 @@ pub struct MapEntity {
     tags: Vec<String>,
     pixels_per_unit: i32,
 }
-impl MapEntity {
+impl PrefabEntity {
     /// Get a reference to the map entity's name.
     pub fn name(&self) -> &str {
         self.name.as_ref()
@@ -921,27 +956,31 @@ impl Values for Value {
 
 #[derive(Default, Debug)]
 pub struct EntitiesLayer {
-    entities: Vec<MapEntity>,
+    entities: Vec<PrefabEntity>,
     name: String,
     /// Map of entity uid to animations mapping. Each entity type
     /// has it's own set of animations.
     animations: HashMap<i32, HashMap<String, AnimationData>>,
 }
 impl EntitiesLayer {
-    pub fn get_from_name(&self, name: &str) -> Option<&MapEntity> {
+    pub fn get_from_name(&self, name: &str) -> Option<&PrefabEntity> {
         self.entities.iter().find(|&e| e.name == name)
     }
 
-    pub fn get_all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &MapEntity> {
+    pub fn get_all_from_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &PrefabEntity> {
         self.entities.iter().filter(move |&e| e.name == name)
     }
 
-    pub fn get_tagged(&self, tag: &str) -> impl Iterator<Item = &MapEntity> {
+    pub fn get_tagged(&self, tag: &str) -> impl Iterator<Item = &PrefabEntity> {
         let tag = tag.to_string();
         self.entities.iter().filter(move |e| e.tags.contains(&tag))
     }
 
-    pub fn entities(&self) -> impl Iterator<Item = &MapEntity> {
+    pub fn get_tagged_multi<'a>(&'a self, tags: &'a [&'a str]) -> impl Iterator<Item = &'a PrefabEntity> + 'a {
+        self.entities().filter(|e| tags.iter().all(|t|e.tagged(t)))
+    }
+
+    pub fn entities(&self) -> impl Iterator<Item = &PrefabEntity> {
         self.entities.iter()
     }
 }
@@ -998,7 +1037,7 @@ fn entities_from_defs(
         let tags: Vec<_> = def.tags.iter().map(|s| s.to_lowercase()).collect();
         let size = size.as_ivec2();
 
-        let entity = MapEntity {
+        let entity = PrefabEntity {
             name: entity.identifier.to_lowercase(),
             fields,
             pixel_xy: xy,
@@ -1029,4 +1068,26 @@ fn entities_from_defs(
         name: layer.identifier.to_lowercase(),
         animations,
     }
+}
+
+fn build_atlases(
+    mut ev_assets: EventReader<AssetEvent<LdtkMap>>,
+    mut atlases: ResMut<Assets<TextureAtlas>>,
+    mut ldtk: ResMut<Assets<LdtkMap>>,
+) {
+    // for ev in ev_assets.iter() {
+    //     match ev {
+    //         AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
+    //             let ldtk = ldtk.get_mut(handle).unwrap();
+
+    //             println!("Adding atlas handles for ldtk {:?}", ldtk.name());
+    //             for (_,tileset) in ldtk.tilesets.iter_mut() {
+    //                 let atlas = tileset.get_texture_atlas();
+    //                 tileset.atlas = atlases.add(atlas);
+    //                 ldtk.texture_atlases.insert(tileset.name.clone(), tileset.atlas.clone());
+    //             }
+    //         },
+    //         AssetEvent::Removed { handle: _ } => {},
+    //     }
+    // }
 }

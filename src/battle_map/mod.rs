@@ -11,7 +11,9 @@ use crate::{
 
 use self::{
     combat::MapCombatPlugin, enemies::EnemiesPlugin, input::InputPlugin, map::MapPlugin,
-    selection::BattleMapSelectionPlugin, spawn::MapSpawnPlugin, units::UnitsPlugin,
+    selection::BattleMapSelectionPlugin, 
+    //spawn::MapSpawnPlugin, 
+    units::UnitsPlugin, player::BattleMapPlayerPlugin, spawn::MapSpawnPlugin,
 };
 
 mod combat;
@@ -22,6 +24,8 @@ mod map;
 mod selection;
 mod spawn;
 mod units;
+mod player;
+mod setup;
 
 pub use components::*;
 pub use map::MapUnits;
@@ -37,6 +41,7 @@ impl Plugin for BattleMapPlugin {
             .add_plugin(EnemiesPlugin)
             .add_plugin(BattleMapSelectionPlugin)
             .add_plugin(MapCombatPlugin)
+            .add_plugin(BattleMapPlayerPlugin)
             .add_system_set(SystemSet::on_enter(GameState::LoadBattleMap).with_system(load_map));
     }
 }

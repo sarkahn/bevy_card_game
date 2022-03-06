@@ -4,7 +4,7 @@ use rand::{prelude::SliceRandom, thread_rng, Rng};
 use crate::{
     config::ConfigAsset, ldtk_loader::*, make_sprite, make_sprite_atlas_sized,
     make_sprite_image_sized, prefab::ChangeSprite, unit::Element, AtlasHandles, GameState,
-    LoadCardPrefab, LoadUnitPrefab, LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, AnimationController,
+    LoadCardPrefab, SpawnPrefabOld, LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, AnimationController,
 };
 
 use super::{cards::{CardLabel, CardLabelType, CardsAtlas, SpawnCard}, TakingATurn};
@@ -15,7 +15,7 @@ impl Plugin for ArenaLoadPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CardsAtlas>()
             .add_system_set(SystemSet::on_enter(GameState::LoadArena).with_system(load_data))
-            .add_system_set(SystemSet::on_update(GameState::LoadArena).with_system(setup.before("prefab_unit_load")));
+            .add_system_set(SystemSet::on_update(GameState::LoadArena).with_system(setup));
     }
 }
 
@@ -84,7 +84,7 @@ fn setup(
  
 
             let xy = spawn.xy();
-            commands.spawn().insert(LoadUnitPrefab {
+            commands.spawn().insert(SpawnPrefabOld {
                 path: "units_wizard.ldtk".to_string(),
                 xy: xy,
                 depth: 10 + i as i32,
@@ -100,7 +100,7 @@ fn setup(
 
         for (i,spawn) in slimes.rev().enumerate() {
             let xy = spawn.xy();
-            commands.spawn().insert(LoadUnitPrefab {
+            commands.spawn().insert(SpawnPrefabOld {
                 path: "units_slime.ldtk".to_string(),
                 xy: xy,
                 depth: 10 + i as i32,

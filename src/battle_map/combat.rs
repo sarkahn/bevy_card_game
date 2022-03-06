@@ -9,7 +9,10 @@ use crate::{
 
 use super::{
     map::CollisionMap,
-    spawn::{DespawnTimer, SpawnEntity},
+    spawn::{
+        DespawnTimer, 
+        //SpawnEntity
+    },
     units::EnemyUnit,
     MapUnits,
 };
@@ -20,7 +23,8 @@ impl Plugin for MapCombatPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_update(GameState::BattleMap).with_system(on_collision))
             .add_system_set(
-                SystemSet::on_update(GameState::BeginningCombat).with_system(begin_combat),
+                SystemSet::on_update(GameState::BeginningCombat)
+                .with_system(begin_combat),
             );
     }
 }
@@ -42,16 +46,16 @@ fn on_collision(
             if let Some(player) = units.get_from_grid_xy(xy) {
                 let mut pos = transform.translation;
                 pos += Vec3::new(0.0, 0.0, 1.0);
-                commands
-                    .spawn()
-                    .insert(SpawnEntity {
-                        ldtk: ldtk.clone(),
-                        name: "BeginCombat".to_string(),
-                        pos,
-                    })
-                    .insert(BeginCombat { player, enemy })
-                    .insert(DespawnTimer(Timer::from_seconds(3.0, false)));
-                state.set(GameState::BeginningCombat).unwrap();
+                // commands
+                //     .spawn()
+                //     .insert(SpawnEntity {
+                //         ldtk: ldtk.clone(),
+                //         name: "BeginCombat".to_string(),
+                //         pos,
+                //     })
+                //     .insert(BeginCombat { player, enemy })
+                //     .insert(DespawnTimer(Timer::from_seconds(3.0, false)));
+                // state.set(GameState::BeginningCombat).unwrap();
             }
         }
     }
