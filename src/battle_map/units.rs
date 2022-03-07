@@ -80,14 +80,14 @@ fn process_commands(
                     }
                 }
                 UnitCommand::AiThink() => {
-                    println!("{:?} Thinking!", entity);
+                    //println!("{:?} Thinking!", entity);
                     let mut rng = thread_rng();
                     let choices = ["wait", "attack"];
                     let weights = [1_i32, 5];
                     let dist = WeightedIndex::new(&weights).unwrap();
                     if choices[dist.sample(&mut rng)] == "wait" {
                         let wait: f32 = rng.gen_range(0.15..1.5);
-                        println!("Slime {:?} is gonna wait for {} seconds!", entity, wait);
+                        //println!("Slime {:?} is gonna wait for {} seconds!", entity, wait);
                         unit_commands.push(UnitCommand::Wait(wait));
                         unit_commands.push(UnitCommand::AiThink());
                         unit_commands.next();
@@ -100,12 +100,12 @@ fn process_commands(
                         //println!("{:?} at {}, Finding nearest player {:?}", entity, a, player_positions);
                         //let b = map.to_index_2d(b.as_vec2());
                         let b = base_pos.as_ivec2() / TILE_SIZE;
-                        println!("Slime to base {}, {}", a, b);
+                        //println!("Slime to base {}, {}", a, b);
                         let mut astar = AStar::new(10);
                         let i = map.to_index(b.into());
                         map.0.toggle_obstacle_index(i);
                         if let Some(path) = astar.find_path(&map.0, a.into(), b.into()) {
-                            println!("Path {:?}", path);
+                            //println!("Path {:?}", path);
                             if let Some(next) = path.get(1) {
                                 let b = IVec2::from(*next);
                                 //println!("Pathin {} to {} (no divide)", a, b);
@@ -116,11 +116,11 @@ fn process_commands(
                                 //println!("Should see 'done moving' next");
                                 unit_commands.push(UnitCommand::MoveToTile(a, b));
                                 unit_commands.push(UnitCommand::AiThink());
-                                println!("{:?} pushed {} to {} to commands for move. Stack state: {:?}. Calling next",entity, a, b, unit_commands.queue);
+                                //println!("{:?} pushed {} to {} to commands for move. Stack state: {:?}. Calling next",entity, a, b, unit_commands.queue);
                                 unit_commands.next();
                             }
                         } else {
-                            println!("Couldn't find path!");
+                            //println!("Couldn't find path!");
                             // Couldn't find a player to path to. Go for the kill!
                             //println!("Couldn't find a player!");
                         }

@@ -6,7 +6,8 @@ use bevy_easings::EasingsPlugin;
 use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
 use config::{ConfigAsset, ConfigPlugin};
-use ldtk_loader::LdtkPlugin;
+use ldtk_loader::{LdtkPlugin, LdtkMap};
+use party::PartyPlugin;
 use prefab::PrefabsPlugin;
 use serde::{Deserialize, Serialize};
 
@@ -29,8 +30,18 @@ pub use grid::*;
 
 pub const SETTINGS_PATH: &str = "game_settings.config";
 pub const LDTK_CARDS_PATH: &str = "units_BattleCardPreMade.ldtk";
-pub const LDTK_ARCHER_PATH: &str = "units_archer.ldtk";
-pub const LDTK_SLIME_PATH: &str = "units_slime.ldtk";
+
+pub const LDTK_PLAYER_UNITS: &[&str] = &[
+    "units_archer.ldtk",
+    "units_wizard.ldtk",
+];
+
+
+pub const LDTK_ENEMY_UNITS: &[&str] = &[
+    "units_slime.ldtk",
+];
+
+pub const GENERATE_PARTY_SYSTEM: &str = "generate_party";
 
 pub use animation::{AnimationController, AnimationData};
 //pub use prefab::LoadCardPrefab;
@@ -39,6 +50,9 @@ pub use util::*;
 
 #[derive(Component)]
 pub struct ResizeCamera(pub IVec2);
+
+#[derive(Default)]
+pub struct LdtkHandles(Vec<Handle<LdtkMap>>);
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub enum GameState {
@@ -66,6 +80,7 @@ pub fn main() {
             ..Default::default()
         })
         .init_resource::<AtlasHandles>()
+        .init_resource::<LdtkHandles>()
         .add_plugins(DefaultPlugins)
         .add_plugin(GameCameraPlugin)
         .add_plugin(BattleMapPlugin)
@@ -77,6 +92,7 @@ pub fn main() {
         .add_plugin(EguiPlugin)
         .add_plugin(AnimationPlugin)
         .add_plugin(PrefabsPlugin)
+        .add_plugin(PartyPlugin)
         .add_state(GameState::Starting)
         .add_startup_system(load_configs)
         .add_system_set(SystemSet::on_update(GameState::Starting).with_system(start))

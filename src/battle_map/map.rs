@@ -129,6 +129,10 @@ impl MapUnits {
         //println!("inserting at {}", i);
         self.units[i] = Some(entity);
     }
+
+    pub fn size(&self) -> IVec2 {
+        self.size
+    }
 }
 
 pub struct CollisionMap(pub PathMap2d);

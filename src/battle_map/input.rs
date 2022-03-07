@@ -1,4 +1,5 @@
 use bevy::{math::Vec3Swizzles, prelude::*};
+use bevy_egui::{egui::{self, panel::Side}, EguiContext};
 use bevy_tiled_camera::TiledProjection;
 
 use crate::{GameState, TILE_SIZE};
@@ -12,7 +13,9 @@ impl Plugin for InputPlugin {
         app.add_system_set(SystemSet::on_enter(GameState::BattleMap).with_system(on_enter))
             .add_system_set(SystemSet::on_exit(GameState::BattleMap).with_system(on_exit))
             .add_event::<TileClickedEvent>()
-            .add_system_set(SystemSet::on_update(GameState::BattleMap).with_system(cursor_system));
+            .add_system_set(SystemSet::on_update(GameState::BattleMap).with_system(cursor_system))
+            //.add_system(gui)
+            ;
     }
 }
 
@@ -51,6 +54,7 @@ fn cursor_system(
     mut q_cursor: Query<(&mut Transform, &mut Visibility), With<Cursor>>,
     mut ev_tile_clicked: EventWriter<TileClickedEvent>,
     units: Res<MapUnits>,
+    mut egui: ResMut<EguiContext>,
 ) {
     let window = windows.get_primary().unwrap();
 
@@ -59,19 +63,44 @@ fn cursor_system(
             if let Some(mut p) = screen_to_world(cam, &windows, cam_transform, pos) {
                 p.z = 2.0;
 
+                
+                let ctx = egui.ctx_mut();
+                egui::SidePanel::new(Side::Right, "sidepanel").show(ctx, |ui| {
+                    let p = p.xy() / TILE_SIZE as f32;
+                    let p = p - Vec2::new(0.5,0.5);
+                    let p = p.floor();
+                    ui.label(p.to_string());
+                });
+
                 let (mut cursor_transform, mut v) = q_cursor.single_mut();
                 v.is_visible = true;
 
                 cursor_transform.translation = p * TILE_SIZE as f32;
 
                 if input.just_pressed(MouseButton::Left) {
-                    let xy = p.xy().floor() + Vec2::new(0.5, 0.5) * TILE_SIZE as f32;
+                    // let xy = p.xy().floor() 
+                    // + Vec2::new(1.0, 1.0) 
+                    // * TILE_SIZE as f32;
+                    // let xy = p.xy() / TILE_SIZE as f32;
+                    // let xy = xy + Vec2::new(0.5,0.5);
+                    // let xy = xy.floor();
+                    // let xy = xy * TILE_SIZE as f32;
+                    // let xy = p.xy() / TILE_SIZE as f32;
+                    // let p = xy + Vec2::new(1.5,1.5);
+                    // let p = p.floor();
+                    // let p = p * TILE_SIZE as f32;
 
-                    let i = units.xy_to_index(xy);
+                    //let i = units.xy_to_index(xy);
+                    let p = p.xy() / TILE_SIZE as f32;
+                    let p = p + Vec2::new(0.5,0.5);
+                    let p = p.floor();
+                    let xy = p.as_ivec2();
+                    let i = xy.y * units.size().x + xy.x;
+
                     println!("Clicked {}. Index {}", p, i);
-                    let unit = units.get_from_index(i);
+                    let unit = units.get_from_index(i as usize);
                     ev_tile_clicked.send(TileClickedEvent {
-                        xy: xy.as_ivec2(),
+                        xy: xy,
                         unit,
                     });
 
@@ -115,3 +144,12 @@ pub fn screen_to_world(
 
     Some(world_pos)
 }
+
+// fn gui(
+//     mut egui: ResMut<EguiContext>,
+// ) {
+//     let ctx = egui.ctx_mut();
+//     egui::SidePanel::new(Side::Left, "sidepanel").show(ctx, |ui| {
+//         ui.label("hi");
+//     });
+// }

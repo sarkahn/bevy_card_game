@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 58,
+	"nextUid": 60,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -457,6 +457,31 @@
 					"textLanguageMode": null
 				}
 			]
+		},
+		{
+			"identifier": "MapSprite",
+			"uid": 58,
+			"tags": ["map_sprite"],
+			"width": 64,
+			"height": 64,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 59,
+			"tileId": 0,
+			"tileRenderMode": "Stretch",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
 		}
 	], "tilesets": [
 		{
@@ -611,6 +636,23 @@
 			"customData": [],
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "000000000000", "averageColors": "000002220222022212321232123202320232023202320000" }
+		},
+		{
+			"__cWid": 4,
+			"__cHei": 4,
+			"identifier": "FigurinesSmall_spriteSheet",
+			"uid": 59,
+			"relPath": "textures/figurinesSmall_spriteSheet.png",
+			"pxWid": 256,
+			"pxHei": 256,
+			"tileGridSize": 64,
+			"spacing": 0,
+			"padding": 0,
+			"tagsSourceEnumUid": null,
+			"enumTags": [],
+			"customData": [],
+			"savedSelections": [],
+			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "585258625852285376664642645a395439752231355500000000000075550000" }
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
@@ -1182,6 +1224,17 @@
 									}]
 								}
 							]
+						},
+						{
+							"__identifier": "MapSprite",
+							"__grid": [606,403],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 59, "srcRect": [0,0,64,64] },
+							"width": 64,
+							"height": 64,
+							"defUid": 58,
+							"px": [606,403],
+							"fieldInstances": []
 						}
 					]
 				}

@@ -7,9 +7,6 @@ mod arena;
 mod battle_map;
 mod unit;
 
-pub use unit::SpawnPrefab;
-pub use unit::SpawnType;
-
 pub const LOAD_PREFAB_SYSTEM: &str = "load_prefab";
 
 pub const PREFAB_NAMES: &'static [&str] = &[

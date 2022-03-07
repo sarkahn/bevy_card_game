@@ -12,7 +12,7 @@ use crate::{
 };
 
 use self::{
-    combat::MapCombatPlugin, enemies::BattleMapEnemiesPlugin, input::InputPlugin, map::{MapPlugin, CollisionMap},
+    combat::MapCombatPlugin, enemies::BattleMapEnemyPlugin, input::InputPlugin, map::{MapPlugin, CollisionMap},
     selection::BattleMapSelectionPlugin, 
     //spawn::MapSpawnPlugin, 
     units::UnitsPlugin, player::BattleMapPlayerPlugin, spawn::MapSpawnPlugin,
@@ -40,7 +40,7 @@ impl Plugin for BattleMapPlugin {
             .add_plugin(InputPlugin)
             .add_plugin(MapPlugin)
             .add_plugin(MapSpawnPlugin)
-            .add_plugin(BattleMapEnemiesPlugin)
+            .add_plugin(BattleMapEnemyPlugin)
             .add_plugin(BattleMapSelectionPlugin)
             .add_plugin(MapCombatPlugin)
             .add_plugin(BattleMapPlayerPlugin)
@@ -72,6 +72,7 @@ struct MapUnit;
 
 #[derive(Component, Default)]
 struct PlayerBase;
+
 
 #[derive(Default, Component)]
 struct BattleMapEntity;
@@ -188,7 +189,6 @@ fn get_valid_spawn_points<'a>(
 ) -> Option<impl Iterator<Item=IVec2> + 'a> {
     let valid = ADJACENT.iter().filter(move |adj| {
         let adj = xy + IVec2::from(**adj);
-        
         return units.get_from_grid_xy(adj).is_none() && !colliders.0.is_obstacle(adj.to_array());
     }).map(move |p| xy + IVec2::from(*p));
     if valid.clone().count() > 0 {

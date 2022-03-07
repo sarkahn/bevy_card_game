@@ -3,7 +3,9 @@ use rand::{thread_rng, prelude::IteratorRandom, Rng};
 
 use crate::{ldtk_loader::{LdtkMap, Tags, Fields}, GameState, AtlasHandles, animation::Animator, SETTINGS_PATH, config::ConfigAsset, 
 //SpawnPrefabOld, 
-LDTK_ARCHER_PATH, prefab::Prefabs, TILE_SIZE, battle_map::{PlayerUnit, UnitCommands}};
+prefab::Prefabs, TILE_SIZE, battle_map::{PlayerUnit, UnitCommands}, party::{GenerateParty, Party, PartyUnit}, 
+
+GENERATE_PARTY_SYSTEM, LdtkHandles, LDTK_PLAYER_UNITS};
 
 use super::{map::{BUILD_MAP_SYSTEM, CollisionMap}, spawn::Spawner, MapUnit, BattleMapEntity, MapUnits, get_valid_spawn_points, PlayerBase};
 
@@ -23,18 +25,23 @@ impl Plugin for BattleMapPlayerPlugin {
         )
         .add_system_set(
             SystemSet::on_update(GameState::BattleMap)
-            .with_system(spawn)
+            .with_system(spawn.before(GENERATE_PARTY_SYSTEM))
         )
+        .add_system_to_stage(CoreStage::PreUpdate, on_spawn)
         ;
     }
 }
 
 #[derive(Component)]
-pub struct BattleMapPlayerLoaded;
+pub struct Player;
+
 
 fn setup(
+    asset_server: Res<AssetServer>,
+    ldtk: Res<Assets<LdtkMap>>,
     mut commands: Commands,
     q_tags: Query<(Entity, &Tags, &Fields, &Name), (Added<Tags>, With<BattleMapEntity>)>,
+    mut ldtk_handles: ResMut<LdtkHandles>,
 ) {
     for (entity, tags, fields, name) in q_tags.iter() {
         if tags.has_all(&["player", "spawner"]) {
@@ -42,10 +49,10 @@ fn setup(
                 if let Some(max) = fields.try_get_f32("spawn_delay_max") {
                     let mut rng = thread_rng();
                     let delay: f32 = rng.gen_range(min..max);
-                    println!("Spawning player spawner!");
+                    //println!("Spawning player spawner!");
                     commands.entity(entity).insert(
                         Spawner(Timer::from_seconds(delay, true))
-                    ).insert(PlayerUnit)
+                    ).insert(Player)
                     ;
                 }
             }
@@ -54,12 +61,18 @@ fn setup(
             commands.entity(entity).insert(PlayerBase);
         }
     }
+
+    for name in LDTK_PLAYER_UNITS {
+        if ldtk.get(*name).is_none() {
+            ldtk_handles.0.push(asset_server.load(*name));
+        }
+    }
 }
 
 fn spawn(
     mut commands: Commands,
     time: Res<Time>,
-    mut q_spawner: Query<(&Transform, &mut Spawner), With<PlayerUnit>>,
+    mut q_spawner: Query<(&Transform, &mut Spawner), With<Player>>,
     map_units: Res<MapUnits>,
     colliders: Res<CollisionMap>,
     prefabs: Res<Prefabs>,
@@ -68,64 +81,54 @@ fn spawn(
 ) {
 
     for (transform, mut spawner) in q_spawner.iter_mut() {
+
+        // Ensure all our prefabs are loaded
+        for name in LDTK_PLAYER_UNITS {
+            if ldtk.get(&**name).is_none() {
+                return;
+            }
+        }
+
         spawner.tick(time.delta());
 
         if spawner.just_finished() {
-            let unit_name = LDTK_ARCHER_PATH;
-            if let Some(ldtk) = ldtk.get(unit_name) {
-                let map_pfb = ldtk.get_tagged("map_sprite").next().expect("Error loading prefab");
 
-                let tileset = ldtk.tileset_from_id(map_pfb.tileset_id().expect("No tileset attached to prefab entity"))
-                    .expect("Couldn't find tileset");
-                let p = transform.translation;
-                // let mut p = p + Vec3::new(0.0, -1.0, 0.0) * TILE_SIZE as f32;
-                // p.z = 10.0;
+            let p = transform.translation;
+            let curr = map_units.xy_to_grid(p.xy());
+            let spawn_points = get_valid_spawn_points(curr, &map_units, &colliders);
 
-                let curr = map_units.xy_to_grid(p.xy());
+            if let Some(spawn_points) = spawn_points {
+                let mut rng = thread_rng(); 
+                let spawn = spawn_points.choose(&mut rng).unwrap();
+                let spawn = map_units.grid_to_xy(spawn);
+                
+                let pos = Vec3::new(spawn.x, spawn.y, 10.0);
 
-                let spawn_points = get_valid_spawn_points(curr, &map_units, &colliders);
+                let names = LDTK_PLAYER_UNITS.iter().map(|s|s.to_string()).collect();
+                //println!("Spawning gen...");
+                commands.spawn().insert(
+                    GenerateParty::new(4, names, pos),
+                ).insert(Player);
 
-                if let Some(spawn_points) = spawn_points {
-                    let mut rng = thread_rng(); 
-                    let spawn = spawn_points.choose(&mut rng).unwrap();
-                    let spawn = map_units.grid_to_xy(spawn);
-                    
-                    let spawn = Vec3::new(spawn.x, spawn.y, 10.0);
-
-                    //println!("Spawning at {}", spawn);
-
-                    let sprite = TextureAtlasSprite {
-                        index: map_pfb.tile_id().unwrap() as usize,
-                        ..Default::default()
-                    };
-                    let sprite = SpriteSheetBundle {
-                        sprite,
-                        texture_atlas: tileset.atlas().clone(),
-                        transform: Transform::from_translation(spawn),
-                        ..Default::default()
-                    };
-                    
-                    if let Some(configs) = configs.get(SETTINGS_PATH) {
-                        commands.spawn_bundle(sprite)
-                        .insert(PlayerUnit)
-                        .insert(MapUnit)
-                        
-                        .insert(UnitCommands {
-                            move_timer: Timer::from_seconds(configs.settings.map_move_speed, false),
-                            wait_timer: Timer::from_seconds(configs.settings.map_move_wait, false),
-                            ..Default::default()
-                        });
-                    } else {
-                        warn!("Attempted to spawn from player spawner, but config settings for map movement
-                        were not found");
-                    }
-                } else {
-                    info!("No valid spot found to spawn!");
-                }
-
-    
+            } else {
+                info!("No valid spot found to spawn!");
             }
         }
     }
 }
 
+fn on_spawn(
+    mut commands: Commands,
+    mut q_spawn: Query<(Entity,&Transform, &Children), (Added<Party>, With<Player>)>,
+    configs: Res<Assets<ConfigAsset>>,
+) {
+    if let Some(configs) = configs.get(SETTINGS_PATH) {
+        for (party, party_transform, units) in q_spawn.iter() {
+            //println!("Atlas {:?}", atlas.get(unit_atlas).unwrap());
+            commands.entity(party)
+            .insert(UnitCommands::new(configs.settings.map_move_speed, configs.settings.map_move_wait))
+            .insert(PlayerUnit)
+            .insert(MapUnit);
+        }
+    }
+}
