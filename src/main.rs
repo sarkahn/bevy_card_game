@@ -7,7 +7,7 @@ use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
 use config::{ConfigAsset, ConfigPlugin};
 use ldtk_loader::LdtkPlugin;
-use prefab::PrefabPlugin;
+use prefab::PrefabsPlugin;
 use serde::{Deserialize, Serialize};
 
 use self::battle_map::BattleMapPlugin;
@@ -30,10 +30,11 @@ pub use grid::*;
 pub const SETTINGS_PATH: &str = "game_settings.config";
 pub const LDTK_CARDS_PATH: &str = "units_BattleCardPreMade.ldtk";
 pub const LDTK_ARCHER_PATH: &str = "units_archer.ldtk";
+pub const LDTK_SLIME_PATH: &str = "units_slime.ldtk";
 
 pub use animation::{AnimationController, AnimationData};
-pub use prefab::LoadCardPrefab;
-pub use prefab::SpawnPrefabOld;
+//pub use prefab::LoadCardPrefab;
+//pub use prefab::SpawnPrefabOld;
 pub use util::*;
 
 #[derive(Component)]
@@ -75,7 +76,7 @@ pub fn main() {
         .add_plugin(AssetsPlugin)
         .add_plugin(EguiPlugin)
         .add_plugin(AnimationPlugin)
-        .add_plugin(PrefabPlugin)
+        .add_plugin(PrefabsPlugin)
         .add_state(GameState::Starting)
         .add_startup_system(load_configs)
         .add_system_set(SystemSet::on_update(GameState::Starting).with_system(start))

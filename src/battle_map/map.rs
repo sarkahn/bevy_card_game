@@ -7,16 +7,13 @@ use sark_grids::Grid;
 use sark_pathfinding::PathMap2d;
 
 use crate::{
-    battle_map::units::PlayerBase,
-    config::{ConfigAsset, GameSettings},
-    ldtk_loader::{EntitiesLayer, LdtkMap, PrefabEntity, MapLayer, MapTile, MapTileset, TilesLayer, Tags},
-    make_sprite_atlas, AnimationController, AnimationData, AtlasHandles, GameState, GridHelper,
+    config::ConfigAsset,
+    ldtk_loader::{EntitiesLayer, LdtkMap, TilesLayer, Tags, MapLayer, MapTileset},
+    make_sprite_atlas, AnimationController, AnimationData, AtlasHandles, GameState,
     SETTINGS_PATH, TILE_SIZE,
 };
 
-use super::{
-    enemies::Spawner,
-    units::{EnemyUnit, MapUnit, MapUnitBundle, PlayerUnit, UnitCommand},
+use super::{ EnemyUnit, MapUnit, PlayerUnit, MapLoaded, BattleMapEntity,
 };
 
 pub struct MapPlugin;
@@ -32,7 +29,8 @@ impl Plugin for MapPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::BattleMap)
                     .with_system(update_map_units),
-            );
+            )
+            ;
     }
 }
 
@@ -40,9 +38,6 @@ pub const BUILD_MAP_SYSTEM: &str = "build_map_system";
 
 #[derive(Default)]
 pub struct BattleMapLdtkHandle(pub Handle<LdtkMap>);
-
-#[derive(Default, Component)]
-pub struct BattleMapEntity;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub enum TerrainTile {
@@ -113,6 +108,9 @@ impl MapUnits {
     }
 
     pub fn get_from_grid_xy(&self, grid_xy: IVec2) -> Option<Entity> {
+        if grid_xy.cmplt(IVec2::ZERO).any() || grid_xy.cmpge(self.size).any() {
+            return None;
+        }
         let i = self.grid_to_index(grid_xy);
         self.units[i]
     }
@@ -171,8 +169,6 @@ pub fn axis_offset(size: IVec2) -> Vec2 {
     Vec2::select(cmp, Vec2::new(0.5, 0.5), Vec2::ZERO)
 }
 
-#[derive(Component)]
-pub struct MapLoaded;
 
 fn build_map(
     mut commands: Commands,
@@ -184,6 +180,7 @@ fn build_map(
     mut q_cam: Query<&mut TiledProjection>,
     mut units: ResMut<MapUnits>,
     q_loaded: Query<&MapLoaded>,
+    mut state: ResMut<State<GameState>>,
 ) {
     if !q_loaded.is_empty() {
         return;
@@ -224,6 +221,8 @@ fn build_map(
 
                 commands.spawn().insert(MapLoaded);
             }
+
+            state.set(GameState::BattleMap).unwrap();
         }
     }
 }
@@ -268,7 +267,7 @@ fn build_entity_layer(
                     entity.tile_id().unwrap_or(0) as usize,
                 );
                 
-                if !entity.tags().is_empty() || !entity.fields().none() {
+                if !entity.tags().none() || !entity.fields().none() {
                     let tags = Tags::new(entity.tags().iter());
                     sprite.insert(entity.fields().clone());
                     sprite.insert(tags);
@@ -276,11 +275,11 @@ fn build_entity_layer(
 
                 sprite.insert(BattleMapEntity);
 
-                if entity.tagged("player") && entity.tagged("spawner") {
+                if entity.tags().has_all(&["player","spawner"]) {
                     println!("Added player spawner tags to entity {:?}", sprite.id());
                 }
 
-                if entity.tags().contains(&"animation".to_string()) {
+                if entity.tags().has("animation") {
                     let frames = entity.get_str("frames");
                     let speed = entity.get_f32("speed");
                     let anim = AnimationData {
@@ -293,10 +292,11 @@ fn build_entity_layer(
                     let controller = AnimationController::from(anim);
                     sprite.insert(controller);
                 }
-                if entity.tagged("monster") {
+                if entity.tags().has("monster") {
                     sprite
                         .insert(EnemyUnit)
-                        .insert_bundle(MapUnitBundle::with_commands(&[UnitCommand::AiThink()]));
+                        //.insert_bundle(MapUnitBundle::with_commands(&[UnitCommand::AiThink()]))
+                        ;
                 }
 
                 sprite.insert(Name::new(entity.name().to_owned()));
@@ -324,7 +324,7 @@ fn update_colliders(map: &mut CollisionMap, units: &MapUnits, layer: &MapLayer) 
         }
         MapLayer::Entities(layer) => {
             for entity in layer.entities() {
-                if entity.tagged("collider") {
+                if entity.tags().has("collider") {
                     let xy = units.xy_to_grid(entity.pixel_xy().as_vec2());
                     map.set_collidable(xy);
                 }
@@ -340,8 +340,8 @@ fn update_map_units(
     units.clear();
 
     for (entity, transform) in q_units.iter() {
-        //println!("Inserting {:?} at {}", entity, xy);
-        //let i = units.xy_to_index(transform.translation.xy());
+        //println!("Inserting {:?} at {}", entity, transform.translation.xy());
+        ///let i = units.xy_to_index(transform.translation.xy());
         units.set_from_xy(transform.translation.xy(), entity);
     }
 }

@@ -13,8 +13,7 @@ use super::{
         DespawnTimer, 
         //SpawnEntity
     },
-    units::EnemyUnit,
-    MapUnits,
+    MapUnits, EnemyUnit,
 };
 
 pub struct MapCombatPlugin;

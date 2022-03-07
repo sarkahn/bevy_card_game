@@ -3,8 +3,11 @@ use rand::{prelude::SliceRandom, thread_rng, Rng};
 
 use crate::{
     config::ConfigAsset, ldtk_loader::*, make_sprite, make_sprite_atlas_sized,
-    make_sprite_image_sized, prefab::ChangeSprite, unit::Element, AtlasHandles, GameState,
-    LoadCardPrefab, SpawnPrefabOld, LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, AnimationController,
+    make_sprite_image_sized, 
+    //prefab::ChangeSprite, 
+    unit::Element, AtlasHandles, GameState,
+    //LoadCardPrefab, SpawnPrefabOld, 
+    LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, AnimationController,
 };
 
 use super::{cards::{CardLabel, CardLabelType, CardsAtlas, SpawnCard}, TakingATurn};
@@ -62,7 +65,7 @@ fn setup(
 
         let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
 
-        let player_spawns = spawns.iter().filter(|e|e.tagged("player") && !e.tagged("card"));
+        let player_spawns = spawns.iter().filter(|e|e.tags().has("player") && !e.tags().has("card"));
 
         let actions = player_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
 
@@ -83,29 +86,28 @@ fn setup(
             );
  
 
-            let xy = spawn.xy();
-            commands.spawn().insert(SpawnPrefabOld {
-                path: "units_wizard.ldtk".to_string(),
-                xy: xy,
-                depth: 10 + i as i32,
-                ..Default::default()
-            })
-            //.insert(TakingATurn)
-            .insert(animator)
-            ;
+            // let xy = spawn.xy();
+            // commands.spawn().insert(SpawnPrefabOld {
+            //     path: "units_wizard.ldtk".to_string(),
+            //     xy: xy,
+            //     depth: 10 + i as i32,
+            //     ..Default::default()
+            // })
+            // .insert(animator)
+            // ;
         }
 
-        let slimes = spawns.iter().filter(|e|e.tagged("enemy"));
+        let slimes = spawns.iter().filter(|e|e.tags().has("enemy"));
 
 
         for (i,spawn) in slimes.rev().enumerate() {
             let xy = spawn.xy();
-            commands.spawn().insert(SpawnPrefabOld {
-                path: "units_slime.ldtk".to_string(),
-                xy: xy,
-                depth: 10 + i as i32,
-                ..Default::default()
-            });
+            // commands.spawn().insert(SpawnPrefabOld {
+            //     path: "units_slime.ldtk".to_string(),
+            //     xy: xy,
+            //     depth: 10 + i as i32,
+            //     ..Default::default()
+            // });
         }
 
         let cards: Vec<_> = cards_pfb
@@ -118,7 +120,7 @@ fn setup(
             })
             .collect();
 
-        let spawns = spawns.iter().filter(|e| e.tagged("card"));
+        let spawns = spawns.iter().filter(|e| e.tags().has("card"));
 
         let mut rng = thread_rng();
 
@@ -148,14 +150,14 @@ fn setup(
 
             let xy = spawn.xy();
             //println!("Spawning card {}", card.name());
-            commands.spawn().insert(LoadCardPrefab {
-                path: "units_BattleCardPremade.ldtk".to_string(),
-                xy,
-                depth: 5 + i as i32,
-                atlas,
-                tile_id,
-                size: card.size(),
-            });
+            // commands.spawn().insert(LoadCardPrefab {
+            //     path: "units_BattleCardPremade.ldtk".to_string(),
+            //     xy,
+            //     depth: 5 + i as i32,
+            //     atlas,
+            //     tile_id,
+            //     size: card.size(),
+            // });
         }
 
         state.set(GameState::Arena).unwrap();

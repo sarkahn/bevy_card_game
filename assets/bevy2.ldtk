@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 48,
+	"nextUid": 55,
 	"worldLayout": "Free",
 	"worldGridWidth": 1920,
 	"worldGridHeight": 1080,
@@ -148,7 +148,7 @@
 		{
 			"identifier": "Spawner_Cave",
 			"uid": 4,
-			"tags": [ "animation", "collider", "spawner" ],
+			"tags": [ "animation", "collider", "spawner", "enemy" ],
 			"width": 64,
 			"height": 64,
 			"resizableX": false,
@@ -213,7 +213,7 @@
 					"textLanguageMode": null
 				},
 				{
-					"identifier": "spawn_delay",
+					"identifier": "spawn_delay_min",
 					"__type": "Float",
 					"uid": 46,
 					"type": "F_Float",
@@ -229,7 +229,27 @@
 					"max": null,
 					"regex": null,
 					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Float", "params": [5] },
+					"defaultOverride": { "id": "V_Float", "params": [3.5] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "spawn_delay_max",
+					"__type": "Float",
+					"uid": 53,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Float", "params": [7] },
 					"textLanguageMode": null
 				}
 			]
@@ -257,7 +277,28 @@
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
 			"pivotY": 1,
-			"fieldDefs": []
+			"fieldDefs": [
+				{
+					"identifier": "tile_travel_ti",
+					"__type": "Float",
+					"uid": 51,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
 		},
 		{
 			"identifier": "Wizard",
@@ -437,7 +478,7 @@
 		{
 			"identifier": "Castle",
 			"uid": 44,
-			"tags": [ "player_base", "spawner", "player" ],
+			"tags": [ "player_base", "spawner", "player", "collider" ],
 			"width": 64,
 			"height": 64,
 			"resizableX": false,
@@ -459,7 +500,27 @@
 			"pivotY": 1,
 			"fieldDefs": [
 				{
-					"identifier": "spawn_delay",
+					"identifier": "spawn_delay_max",
+					"__type": "Float",
+					"uid": 54,
+					"type": "F_Float",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": { "id": "V_Float", "params": [6.5] },
+					"textLanguageMode": null
+				},
+				{
+					"identifier": "spawn_delay_min",
 					"__type": "Float",
 					"uid": 47,
 					"type": "F_Float",
@@ -475,7 +536,7 @@
 					"max": null,
 					"regex": null,
 					"acceptFileTypes": null,
-					"defaultOverride": null,
+					"defaultOverride": { "id": "V_Float", "params": [3] },
 					"textLanguageMode": null
 				}
 			]
@@ -594,7 +655,28 @@
 			{ "id": "Collider", "tileId": null, "color": 0, "__tileSrcRect": null }
 		], "iconTilesetUid": 20, "externalRelPath": null, "externalFileChecksum": null },
 		{ "identifier": "Spawner", "uid": 32, "values": [ { "id": "Spawner", "tileId": null, "color": 0, "__tileSrcRect": null }, { "id": "Collider", "tileId": null, "color": 0, "__tileSrcRect": null } ], "iconTilesetUid": 11, "externalRelPath": null, "externalFileChecksum": null }
-	], "externalEnums": [], "levelFields": [] },
+	], "externalEnums": [], "levelFields": [
+		{
+			"identifier": "tile_travel_tile",
+			"__type": "Float",
+			"uid": 52,
+			"type": "F_Float",
+			"isArray": false,
+			"canBeNull": false,
+			"arrayMinLength": null,
+			"arrayMaxLength": null,
+			"editorDisplayMode": "Hidden",
+			"editorDisplayPos": "Above",
+			"editorAlwaysShow": false,
+			"editorCutLongValues": true,
+			"min": null,
+			"max": null,
+			"regex": null,
+			"acceptFileTypes": null,
+			"defaultOverride": { "id": "V_Float", "params": [1.5] },
+			"textLanguageMode": null
+		}
+	] },
 	"levels": [
 		{
 			"identifier": "Level_0",
@@ -612,7 +694,7 @@
 			"bgPivotY": 0.5,
 			"__bgPos": null,
 			"externalRelPath": null,
-			"fieldInstances": [],
+			"fieldInstances": [{ "__identifier": "tile_travel_tile", "__value": 1.5, "__type": "Float", "defUid": 52, "realEditorValues": [] }],
 			"layerInstances": [
 				{
 					"__identifier": "PlayerBase",
@@ -647,13 +729,16 @@
 							"height": 64,
 							"defUid": 44,
 							"px": [1152,192],
-							"fieldInstances": [{
-								"__identifier": "spawn_delay",
-								"__value": 1.5,
-								"__type": "Float",
-								"defUid": 47,
-								"realEditorValues": [{ "id": "V_Float", "params": [1.5] }]
-							}]
+							"fieldInstances": [
+								{
+									"__identifier": "spawn_delay_min",
+									"__value": 1.5,
+									"__type": "Float",
+									"defUid": 47,
+									"realEditorValues": [{ "id": "V_Float", "params": [1.5] }]
+								},
+								{ "__identifier": "spawn_delay_max", "__value": 6.5, "__type": "Float", "defUid": 54, "realEditorValues": [] }
+							]
 						}
 					]
 				},
@@ -718,7 +803,8 @@
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
-								{ "__identifier": "spawn_delay", "__value": 5, "__type": "Float", "defUid": 46, "realEditorValues": [] }
+								{ "__identifier": "spawn_delay_min", "__value": 3.5, "__type": "Float", "defUid": 46, "realEditorValues": [] },
+								{ "__identifier": "spawn_delay_max", "__value": 7, "__type": "Float", "defUid": 53, "realEditorValues": [] }
 							]
 						},
 						{
@@ -733,7 +819,8 @@
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
-								{ "__identifier": "spawn_delay", "__value": 5, "__type": "Float", "defUid": 46, "realEditorValues": [] }
+								{ "__identifier": "spawn_delay_min", "__value": 3.5, "__type": "Float", "defUid": 46, "realEditorValues": [] },
+								{ "__identifier": "spawn_delay_max", "__value": 7, "__type": "Float", "defUid": 53, "realEditorValues": [] }
 							]
 						},
 						{
@@ -748,7 +835,8 @@
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
-								{ "__identifier": "spawn_delay", "__value": 5, "__type": "Float", "defUid": 46, "realEditorValues": [] }
+								{ "__identifier": "spawn_delay_min", "__value": 3.5, "__type": "Float", "defUid": 46, "realEditorValues": [] },
+								{ "__identifier": "spawn_delay_max", "__value": 7, "__type": "Float", "defUid": 53, "realEditorValues": [] }
 							]
 						},
 						{
@@ -763,7 +851,8 @@
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
-								{ "__identifier": "spawn_delay", "__value": 5, "__type": "Float", "defUid": 46, "realEditorValues": [] }
+								{ "__identifier": "spawn_delay_min", "__value": 3.5, "__type": "Float", "defUid": 46, "realEditorValues": [] },
+								{ "__identifier": "spawn_delay_max", "__value": 7, "__type": "Float", "defUid": 53, "realEditorValues": [] }
 							]
 						}
 					]
@@ -877,85 +966,7 @@
 					"seed": 4861734,
 					"overrideTilesetUid": null,
 					"gridTiles": [],
-					"entityInstances": [
-						{
-							"__identifier": "Archer",
-							"__grid": [15,3],
-							"__pivot": [0,1],
-							"__tile": { "tilesetUid": 20, "srcRect": [64,0,64,64] },
-							"width": 64,
-							"height": 64,
-							"defUid": 28,
-							"px": [960,256],
-							"fieldInstances": []
-						},
-						{
-							"__identifier": "Wizard",
-							"__grid": [19,4],
-							"__pivot": [0,1],
-							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
-							"width": 64,
-							"height": 64,
-							"defUid": 29,
-							"px": [1216,320],
-							"fieldInstances": []
-						},
-						{
-							"__identifier": "Soldier",
-							"__grid": [17,4],
-							"__pivot": [0,1],
-							"__tile": { "tilesetUid": 20, "srcRect": [128,0,64,64] },
-							"width": 64,
-							"height": 64,
-							"defUid": 30,
-							"px": [1088,320],
-							"fieldInstances": []
-						},
-						{
-							"__identifier": "Slime",
-							"__grid": [17,12],
-							"__pivot": [0,1],
-							"__tile": { "tilesetUid": 20, "srcRect": [192,0,64,64] },
-							"width": 64,
-							"height": 64,
-							"defUid": 31,
-							"px": [1088,832],
-							"fieldInstances": []
-						},
-						{
-							"__identifier": "Slime",
-							"__grid": [10,14],
-							"__pivot": [0,1],
-							"__tile": { "tilesetUid": 20, "srcRect": [192,0,64,64] },
-							"width": 64,
-							"height": 64,
-							"defUid": 31,
-							"px": [640,960],
-							"fieldInstances": []
-						},
-						{
-							"__identifier": "Slime",
-							"__grid": [6,11],
-							"__pivot": [0,1],
-							"__tile": { "tilesetUid": 20, "srcRect": [192,0,64,64] },
-							"width": 64,
-							"height": 64,
-							"defUid": 31,
-							"px": [384,768],
-							"fieldInstances": []
-						},
-						{
-							"__identifier": "Slime",
-							"__grid": [3,7],
-							"__pivot": [0,1],
-							"__tile": { "tilesetUid": 20, "srcRect": [192,0,64,64] },
-							"width": 64,
-							"height": 64,
-							"defUid": 31,
-							"px": [192,512],
-							"fieldInstances": []
-						}
-					]
+					"entityInstances": []
 				},
 				{
 					"__identifier": "Map_Tiles",

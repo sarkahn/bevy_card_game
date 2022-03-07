@@ -22,11 +22,14 @@ impl Plugin for LdtkAssetPlugin {
     fn build(&self, app: &mut App) {
         app.add_asset_loader(LdtkAssetLoader)
         .add_asset::<LdtkMap>()
-        .add_system(build_atlases);
+        .add_system_to_stage(
+            CoreStage::PreUpdate,
+            build_atlases
+        );
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Debug, Default, Clone)]
 pub struct Tags {
     tags: Vec<String>,
 }
@@ -88,6 +91,7 @@ pub struct LdtkMap {
     entity_defs: MapEntityDefinitions,
     custom_fields: Fields,
     texture_atlases: HashMap<String, Handle<TextureAtlas>>,
+    atlas_loaded: bool,
 }
 
 impl LdtkMap {
@@ -119,16 +123,34 @@ impl LdtkMap {
         None
     }
 
-    pub fn get_tagged<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &PrefabEntity> {
+    pub fn get_tagged<'a>(&'a self, tag: &'a str) -> impl Iterator<Item=&PrefabEntity> {
         self.layers()
             .filter(|l| l.is_entities())
-            .flat_map(|l| l.as_entities().unwrap().get_tagged(name))
+            .flat_map(|l|l.as_entities().unwrap().get_tagged(tag))
     }
-    pub fn get_tagged_multi<'a>(&'a self, tags: &'a[&'a str]) -> impl Iterator<Item = &PrefabEntity> {
+
+    pub fn get_tagged_any<'a>(&'a self, tag: &'a[&str]) -> impl Iterator<Item=&PrefabEntity> {
         self.layers()
             .filter(|l| l.is_entities())
-            .flat_map(|l| l.as_entities().unwrap().get_tagged_multi(tags))
+            .flat_map(|l|l.as_entities().unwrap().get_tagged_any(tag))
     }
+
+    pub fn get_tagged_all<'a>(&'a self, tag: &'a[& str]) -> impl Iterator<Item=&PrefabEntity> {
+        self.layers()
+            .filter(|l| l.is_entities())
+            .flat_map(|l|l.as_entities().unwrap().get_tagged_all(tag))
+    }
+
+    // pub fn get_tagged<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &PrefabEntity> {
+    //     self.layers()
+    //         .filter(|l| l.is_entities())
+    //         .flat_map(|l| l.as_entities().unwrap().get_tagged(name))
+    // }
+    // pub fn get_tagged_multi<'a>(&'a self, tags: &'a[&'a str]) -> impl Iterator<Item = &PrefabEntity> {
+    //     self.layers()
+    //         .filter(|l| l.is_entities())
+    //         .flat_map(|l| l.as_entities().unwrap().get_tagged_multi(tags))
+    // }
 
     pub fn layers(&self) -> impl DoubleEndedIterator<Item = &MapLayer> {
         self.layers.iter().map(|(_, b)| b)
@@ -310,6 +332,7 @@ impl AssetLoader for LdtkAssetLoader {
                 entity_defs: MapEntityDefinitions::from_defs(&entity_defs),
                 custom_fields: fields,
                 texture_atlases: HashMap::default(),
+                ..Default::default()
             };
 
             let asset = LoadedAsset::new(map);
@@ -617,7 +640,7 @@ pub struct MapTileset {
     pub name: String,
     pub image: Handle<Image>,
     pub path: String,
-    pub atlas: Handle<TextureAtlas>,
+    atlas: Handle<TextureAtlas>,
     enums: Option<HashMap<String, Vec<i32>>>,
 }
 impl MapTileset {
@@ -637,6 +660,11 @@ impl MapTileset {
             self.tile_count.x as usize,
             self.tile_count.y as usize
         )
+    }
+
+    /// Get a reference to the map tileset's atlas.
+    pub fn atlas(&self) -> &Handle<TextureAtlas> {
+        &self.atlas
     }
 }
 
@@ -826,7 +854,7 @@ impl Fields {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PrefabEntity {
     name: String,
     fields: Fields,
@@ -837,7 +865,7 @@ pub struct PrefabEntity {
     tile_id: Option<i32>,
     tileset_id: Option<i32>,
     pivot: Vec2,
-    tags: Vec<String>,
+    tags: Tags,
     pixels_per_unit: i32,
 }
 impl PrefabEntity {
@@ -889,12 +917,8 @@ impl PrefabEntity {
         self.fields.field(name)
     }
 
-    pub fn tags(&self) -> &Vec<String> {
-        self.tags.as_ref()
-    }
-
-    pub fn tagged(&self, name: &str) -> bool {
-        self.tags.iter().any(|t| t == name)
+    pub fn tags(&self) -> &Tags {
+        &self.tags
     }
 
     pub fn pivot(&self) -> Vec2 {
@@ -971,17 +995,20 @@ impl EntitiesLayer {
         self.entities.iter().filter(move |&e| e.name == name)
     }
 
-    pub fn get_tagged(&self, tag: &str) -> impl Iterator<Item = &PrefabEntity> {
-        let tag = tag.to_string();
-        self.entities.iter().filter(move |e| e.tags.contains(&tag))
-    }
-
-    pub fn get_tagged_multi<'a>(&'a self, tags: &'a [&'a str]) -> impl Iterator<Item = &'a PrefabEntity> + 'a {
-        self.entities().filter(|e| tags.iter().all(|t|e.tagged(t)))
-    }
-
     pub fn entities(&self) -> impl Iterator<Item = &PrefabEntity> {
         self.entities.iter()
+    }
+
+    pub fn get_tagged<'a>(&'a self, tag: &'a str) -> impl Iterator<Item=&PrefabEntity> {
+        self.entities().filter(move |e|e.tags().has(tag))
+    }
+
+    pub fn get_tagged_all<'a>(&'a self, tags: &'a [&str]) -> impl Iterator<Item=&PrefabEntity> {
+        self.entities().filter(move |e|e.tags().has_all(tags))
+    }
+
+    pub fn get_tagged_any<'a>(&'a self, tags: &'a [&str]) -> impl Iterator<Item=&PrefabEntity> {
+        self.entities().filter(move |e|e.tags().has_any(tags))
     }
 }
 
@@ -1035,6 +1062,7 @@ fn entities_from_defs(
         //println!("LDTK: Xy {}, Size {}, pivot {}, layer_size: {}", xy, size, pivot, layer_size);
 
         let tags: Vec<_> = def.tags.iter().map(|s| s.to_lowercase()).collect();
+        let tags = Tags { tags };
         let size = size.as_ivec2();
 
         let entity = PrefabEntity {
@@ -1075,19 +1103,32 @@ fn build_atlases(
     mut atlases: ResMut<Assets<TextureAtlas>>,
     mut ldtk: ResMut<Assets<LdtkMap>>,
 ) {
-    // for ev in ev_assets.iter() {
-    //     match ev {
-    //         AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
-    //             let ldtk = ldtk.get_mut(handle).unwrap();
+    for ev in ev_assets.iter() {
+        match ev {
+            AssetEvent::Created { handle } => {
 
-    //             println!("Adding atlas handles for ldtk {:?}", ldtk.name());
-    //             for (_,tileset) in ldtk.tilesets.iter_mut() {
-    //                 let atlas = tileset.get_texture_atlas();
-    //                 tileset.atlas = atlases.add(atlas);
-    //                 ldtk.texture_atlases.insert(tileset.name.clone(), tileset.atlas.clone());
-    //             }
-    //         },
-    //         AssetEvent::Removed { handle: _ } => {},
-    //     }
-    // }
+                if let Some(ldtk) = ldtk.get_mut(handle) {
+                    info!("Ldtk file {} loaded", ldtk.name);
+                    if ldtk.atlas_loaded {
+                        return;
+                    }
+                    for (name,tileset) in ldtk.tilesets.iter_mut() {
+                        let atlas = tileset.get_texture_atlas();
+                        let atlas = atlases.add(atlas);
+                        tileset.atlas = atlas.clone();
+                        ldtk.texture_atlases.insert(name.to_string(), atlas.clone());
+                    }
+                    ldtk.atlas_loaded = true;
+                }
+                // let ldtk = ldtk.get_mut(handle).unwrap();
+
+                // for (_,tileset) in ldtk.tilesets.iter_mut() {
+                //     let atlas = tileset.get_texture_atlas();
+                //     tileset.atlas = atlases.add(atlas);
+                //     ldtk.texture_atlases.insert(tileset.name.clone(), tileset.atlas.clone());
+                // }
+            },
+            _ => {},
+        }
+    }
 }

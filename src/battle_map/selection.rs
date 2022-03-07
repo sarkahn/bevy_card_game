@@ -7,8 +7,7 @@ use crate::{config::ConfigAsset, make_sprite, GameState, SETTINGS_PATH, TILE_SIZ
 use super::{
     input::{Cursor, TileClickedEvent},
     map::CollisionMap,
-    units::{PlayerUnit, UnitCommand, UnitCommands},
-    MapUnits,
+    MapUnits, PlayerUnit, UnitCommands, UnitCommand,
 };
 
 pub struct BattleMapSelectionPlugin;
@@ -23,7 +22,7 @@ impl Plugin for BattleMapSelectionPlugin {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 struct Selection {
     selected_unit: Option<Entity>,
     path: Option<Vec<IVec2>>,
@@ -73,26 +72,26 @@ fn on_select(
                 //println!("Trying to get path from {} to {}", a, b);
                 selection.path = get_path(a, b, &map);
                 if selection.path.is_some() {
-                    // println!("Found path: {:?}", selection.path);
+                    //println!("Found path. Selection state: {:?}", selection);
                 }
             }
         }
 
         for ev in ev_click.iter() {
-            //println!("Read click");
+            //println!("Read click. Selection state: {:?}", selection);
             if let Some(clicked_unit) = ev.unit {
                 //println!("Unit clicked: {:?}", clicked_unit);
                 // Can only select player units
                 if q_player.get(clicked_unit).is_ok() {
                     println!("Selected {:?}", clicked_unit);
-                    //println!("Highlighting unit {:?}", clicked_unit);
+                    println!("Highlighting unit {:?}", clicked_unit);
                     selection.selected_unit = Some(clicked_unit);
                     selection.path = None;
                 }
                 //println!("PAth from {} to {}?", a, b);
             }
-
             if let (Some(path), Some(selected)) = (&selection.path, selection.selected_unit) {
+                //println!("Found path");
                 if let Ok(mut commands) = q_unit_commands.get_mut(selected) {
                     //let center_offset = map.size().as_ivec2() / 2;
                     commands.clear();
@@ -103,9 +102,13 @@ fn on_select(
                         commands.push(UnitCommand::MoveToTile(a, b));
                         commands.push(UnitCommand::Wait(config.settings.map_move_wait));
                     }
+                } else {
+                    warn!("Attempting to pathfind with unit, but they have no unitcommands");
                 }
                 selection.path = None;
                 selection.selected_unit = None;
+            } else {
+                //println!("Unable to find path");
             }
         }
     }

@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 62,
+	"nextUid": 63,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -457,6 +457,31 @@
 					"textLanguageMode": null
 				}
 			]
+		},
+		{
+			"identifier": "MapSprite",
+			"uid": 62,
+			"tags": [ "map_sprite", "ai" ],
+			"width": 16,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 2,
+			"tileId": 3,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
 		}
 	], "tilesets": [
 		{
@@ -929,6 +954,17 @@
 									}]
 								}
 							]
+						},
+						{
+							"__identifier": "MapSprite",
+							"__grid": [700,397],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 2, "srcRect": [192,0,64,64] },
+							"width": 16,
+							"height": 16,
+							"defUid": 62,
+							"px": [700,397],
+							"fieldInstances": []
 						}
 					]
 				},

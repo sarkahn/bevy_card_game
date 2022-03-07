@@ -45,8 +45,6 @@ impl Element {
     }
 }
 
-#[derive(Component, Debug, Default)]
-pub struct MapUnit;
 
 #[derive(Component, Debug, Default)]
 pub struct ArenaUnit;
