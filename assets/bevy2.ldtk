@@ -9,13 +9,13 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 55,
+	"nextUid": 58,
 	"worldLayout": "Free",
 	"worldGridWidth": 1920,
 	"worldGridHeight": 1080,
 	"defaultPivotX": 0,
 	"defaultPivotY": 0,
-	"defaultGridSize": 16,
+	"defaultGridSize": 64,
 	"defaultLevelWidth": 256,
 	"defaultLevelHeight": 256,
 	"bgColor": "#40465B",
@@ -35,7 +35,7 @@
 			"identifier": "PlayerBase",
 			"type": "Entities",
 			"uid": 45,
-			"gridSize": 16,
+			"gridSize": 64,
 			"displayOpacity": 1,
 			"pxOffsetX": 0,
 			"pxOffsetY": 0,
@@ -167,7 +167,7 @@
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
-			"pivotY": 1,
+			"pivotY": 0,
 			"fieldDefs": [
 				{
 					"identifier": "frames",
@@ -276,7 +276,7 @@
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
-			"pivotY": 1,
+			"pivotY": 0,
 			"fieldDefs": [
 				{
 					"identifier": "tile_travel_ti",
@@ -322,7 +322,7 @@
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
-			"pivotY": 1,
+			"pivotY": 0,
 			"fieldDefs": []
 		},
 		{
@@ -347,7 +347,7 @@
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
-			"pivotY": 1,
+			"pivotY": 0,
 			"fieldDefs": []
 		},
 		{
@@ -372,14 +372,14 @@
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
-			"pivotY": 1,
+			"pivotY": 0,
 			"fieldDefs": []
 		},
 		{
 			"identifier": "BeginCombat",
 			"uid": 33,
 			"tags": [],
-			"width": 16,
+			"width": 64,
 			"height": 16,
 			"resizableX": false,
 			"resizableY": false,
@@ -497,7 +497,7 @@
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
 			"pivotX": 0,
-			"pivotY": 1,
+			"pivotY": 0,
 			"fieldDefs": [
 				{
 					"identifier": "spawn_delay_max",
@@ -648,7 +648,7 @@
 			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "8a998aa989998aaa" }
 		}
 	], "enums": [
-		{ "identifier": "TileType", "uid": 16, "values": [{ "id": "Collider", "tileId": 30, "color": 0, "__tileSrcRect": [384,192,64,64] }], "iconTilesetUid": 2, "externalRelPath": null, "externalFileChecksum": null },
+		{ "identifier": "TileType", "uid": 16, "values": [{ "id": "Collider", "tileId": 30, "color": 13446188, "__tileSrcRect": [384,192,64,64] }], "iconTilesetUid": 2, "externalRelPath": null, "externalFileChecksum": null },
 		{ "identifier": "Units", "uid": 25, "values": [
 			{ "id": "Player", "tileId": 7, "color": 0, "__tileSrcRect": [192,64,64,64] },
 			{ "id": "Enemy", "tileId": null, "color": 0, "__tileSrcRect": null },
@@ -682,7 +682,7 @@
 			"identifier": "Level_0",
 			"uid": 0,
 			"worldX": 0,
-			"worldY": -2416,
+			"worldY": 0,
 			"pxWid": 1856,
 			"pxHei": 1024,
 			"__bgColor": "#696A79",
@@ -699,9 +699,9 @@
 				{
 					"__identifier": "PlayerBase",
 					"__type": "Entities",
-					"__cWid": 116,
-					"__cHei": 64,
-					"__gridSize": 16,
+					"__cWid": 29,
+					"__cHei": 16,
+					"__gridSize": 64,
 					"__opacity": 1,
 					"__pxTotalOffsetX": 0,
 					"__pxTotalOffsetY": 0,
@@ -722,13 +722,13 @@
 					"entityInstances": [
 						{
 							"__identifier": "Castle",
-							"__grid": [72,11],
-							"__pivot": [0,1],
+							"__grid": [18,2],
+							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 21, "srcRect": [0,0,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 44,
-							"px": [1152,192],
+							"px": [1152,128],
 							"fieldInstances": [
 								{
 									"__identifier": "spawn_delay_min",
@@ -794,12 +794,12 @@
 						{
 							"__identifier": "Spawner_Cave",
 							"__grid": [3,6],
-							"__pivot": [0,1],
+							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 11, "srcRect": [0,0,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 4,
-							"px": [192,448],
+							"px": [192,384],
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
@@ -810,12 +810,12 @@
 						{
 							"__identifier": "Spawner_Cave",
 							"__grid": [5,12],
-							"__pivot": [0,1],
+							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 11, "srcRect": [0,0,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 4,
-							"px": [320,832],
+							"px": [320,768],
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
@@ -826,12 +826,12 @@
 						{
 							"__identifier": "Spawner_Cave",
 							"__grid": [10,13],
-							"__pivot": [0,1],
+							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 11, "srcRect": [0,0,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 4,
-							"px": [640,896],
+							"px": [640,832],
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },
@@ -842,12 +842,12 @@
 						{
 							"__identifier": "Spawner_Cave",
 							"__grid": [18,12],
-							"__pivot": [0,1],
+							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 11, "srcRect": [0,0,64,64] },
 							"width": 64,
 							"height": 64,
 							"defUid": 4,
-							"px": [1152,832],
+							"px": [1152,768],
 							"fieldInstances": [
 								{ "__identifier": "frames", "__value": "[0,1,2,3,4,5,6,7,6,5,4,3,2,1]", "__type": "String", "defUid": 42, "realEditorValues": [] },
 								{ "__identifier": "speed", "__value": 0.1, "__type": "Float", "defUid": 43, "realEditorValues": [] },

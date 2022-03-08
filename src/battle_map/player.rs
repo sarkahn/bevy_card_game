@@ -33,7 +33,7 @@ impl Plugin for BattleMapPlayerPlugin {
 }
 
 #[derive(Component)]
-pub struct Player;
+struct Player;
 
 
 fn setup(
@@ -49,7 +49,7 @@ fn setup(
                 if let Some(max) = fields.try_get_f32("spawn_delay_max") {
                     let mut rng = thread_rng();
                     let delay: f32 = rng.gen_range(min..max);
-                    //println!("Spawning player spawner!");
+                    println!("Spawning player spawner!");
                     commands.entity(entity).insert(
                         Spawner(Timer::from_seconds(delay, true))
                     ).insert(Player)

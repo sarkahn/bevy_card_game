@@ -36,14 +36,15 @@ pub struct BattleMapPlugin;
 
 impl Plugin for BattleMapPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_plugin(UnitsPlugin)
-            .add_plugin(InputPlugin)
+        app
             .add_plugin(MapPlugin)
+            .add_plugin(InputPlugin)
             .add_plugin(MapSpawnPlugin)
-            .add_plugin(BattleMapEnemyPlugin)
             .add_plugin(BattleMapSelectionPlugin)
-            .add_plugin(MapCombatPlugin)
+            .add_plugin(BattleMapEnemyPlugin)
+            .add_plugin(UnitsPlugin)
             .add_plugin(BattleMapPlayerPlugin)
+            .add_plugin(MapCombatPlugin)
             .add_system_set(SystemSet::on_enter(GameState::LoadBattleMap).with_system(load_map));
     }
 }

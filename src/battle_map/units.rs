@@ -16,7 +16,8 @@ impl Plugin for UnitsPlugin {
         app.add_system_set(SystemSet::on_update(GameState::BattleMap))
             .add_system_set(
                 SystemSet::on_update(GameState::BattleMap).with_system(process_commands),
-            );
+            )
+            ;
     }
 }
 

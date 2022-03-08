@@ -9,8 +9,8 @@ use sark_pathfinding::PathMap2d;
 use crate::{
     config::ConfigAsset,
     ldtk_loader::{EntitiesLayer, LdtkMap, TilesLayer, Tags, MapLayer, MapTileset},
-    make_sprite_atlas, AnimationController, AnimationData, AtlasHandles, GameState,
-    SETTINGS_PATH, TILE_SIZE,
+    make_sprite_atlas, AtlasHandles, GameState,
+    SETTINGS_PATH, TILE_SIZE, animation::{Animator, Animation},
 };
 
 use super::{ EnemyUnit, MapUnit, PlayerUnit, MapLoaded, BattleMapEntity,
@@ -68,6 +68,7 @@ impl MapUnits {
         }
     }
 
+    #[inline]
     pub fn xy_to_index(&self, xy: Vec2) -> usize {
         let grid = self.xy_to_grid(xy);
         self.grid_to_index(grid)
@@ -80,6 +81,7 @@ impl MapUnits {
     pub fn xy_to_grid(&self, xy: Vec2) -> IVec2 {
         xy.floor().as_ivec2() / TILE_SIZE
     }
+    #[inline]
     pub fn grid_to_xy(&self, grid: IVec2) -> Vec2 {
         (grid * TILE_SIZE).as_vec2()
     }
@@ -90,23 +92,28 @@ impl MapUnits {
         self.size = size;
     }
 
+    #[inline]
     pub fn len(&self) -> usize {
         (self.size.x * self.size.y) as usize
     }
 
+    #[inline]
     pub fn grid_size(&self) -> IVec2 {
         self.size
     }
 
+    #[inline]
     pub fn clear(&mut self) {
-        self.units = vec![None; self.len()];
+        self.units.iter_mut().for_each(|u| *u = None);
     }
 
+    #[inline]
     pub fn get_from_xy(&self, xy: Vec2) -> Option<Entity> {
         let i = self.xy_to_index(xy);
         self.units[i]
     }
 
+    #[inline]
     pub fn get_from_grid_xy(&self, grid_xy: IVec2) -> Option<Entity> {
         if grid_xy.cmplt(IVec2::ZERO).any() || grid_xy.cmpge(self.size).any() {
             return None;
@@ -114,16 +121,19 @@ impl MapUnits {
         let i = self.grid_to_index(grid_xy);
         self.units[i]
     }
+    #[inline]
     pub fn get_from_index(&self, index: usize) -> Option<Entity> {
         self.units[index]
     }
 
+    #[inline]
     pub fn set_from_grid_xy(&mut self, grid_xy: IVec2, entity: Entity) {
         //println!("xy in {}", grid_xy);
         let i = self.grid_to_index(grid_xy);
         self.units[i] = Some(entity)
     }
 
+    #[inline]
     pub fn set_from_xy(&mut self, xy: Vec2, entity: Entity) {
         let i = self.xy_to_index(xy);
         //println!("inserting at {}", i);
@@ -181,10 +191,11 @@ fn build_map(
     mut atlas_handles: ResMut<AtlasHandles>,
     mut atlases: ResMut<Assets<TextureAtlas>>,
     mut map: ResMut<CollisionMap>,
-    mut q_cam: Query<&mut TiledProjection>,
+    //mut q_cam: Query<&mut TiledProjection>,
     mut units: ResMut<MapUnits>,
     q_loaded: Query<&MapLoaded>,
     mut state: ResMut<State<GameState>>,
+    mut q_cam: Query<&mut Transform, With<Camera>>,
 ) {
     if !q_loaded.is_empty() {
         return;
@@ -194,11 +205,13 @@ fn build_map(
 
 
             map.0 = PathMap2d::new(ldtk.size_px().as_uvec2().into());
-            if let Some(tile_count) = ldtk.tile_count() {
-                q_cam
-                    .single_mut()
-                    .set_tile_count(tile_count.as_uvec2().into());
+
+            if let Ok(mut cam_transform) = q_cam.get_single_mut() {
+                let xy = ldtk.size_px().as_vec2() / 2.0;
+                let xyz = xy.extend(cam_transform.translation.z);
+                cam_transform.translation = xyz;
             }
+
             units.resize(map.size().as_ivec2());
             for (i, layer) in ldtk.layers().enumerate() {
                 match layer {
@@ -242,8 +255,6 @@ fn build_tile_layer(
     let tileset = ldtk.tileset_from_id(tiles.tileset_id).unwrap();
     let atlas = get_atlas(atlases, atlas_handles, tileset);
     for tile in &tiles.tiles {
-        //let offset = axis_offset(ldtk.size_px());
-        //et xy = tile.grid_xy().as_vec2() + offset;//
         let xy = tile.pixel_xy().as_vec2();
         make_sprite_atlas(commands, xy, depth, atlas.clone(), tile.id() as usize);
     }
@@ -279,22 +290,27 @@ fn build_entity_layer(
 
                 sprite.insert(BattleMapEntity);
 
-                if entity.tags().has_all(&["player","spawner"]) {
-                    println!("Added player spawner tags to entity {:?}", sprite.id());
-                }
+                // if entity.tags().has_all(&["player","spawner"]) {
+                //     println!("Added player spawner tags to entity {:?}", sprite.id());
+                // }
 
                 if entity.tags().has("animation") {
-                    let frames = entity.get_str("frames");
-                    let speed = entity.get_f32("speed");
-                    let anim = AnimationData {
-                        name: Default::default(),
-                        frames: ron::de::from_str(frames).unwrap(),
-                        speed: speed,
-                        tileset_path: tileset.path.to_string(),
-                        ldtk_name: ldtk.name().to_string(),
-                    };
-                    let controller = AnimationController::from(anim);
-                    sprite.insert(controller);
+                    let frames = entity.fields().get_str("frames");
+                    let speed = entity.fields().get_f32("speed");
+                    let frames: Vec<usize> = ron::de::from_str(frames).unwrap_or_else(|_|{
+                        panic!("Error creating animation for {} during battle map phase, invalid frames {}",
+                        entity.name(), frames);
+                    });
+                    let mut animator = Animator::new();
+
+                    animator.add_animation(Animation {
+                            name: entity.name().to_string(),
+                            frames,
+                            speed,
+                        });
+                    animator.play(entity.name());
+                        
+                    sprite.insert(animator);
                 }
                 if entity.tags().has("monster") {
                     sprite
@@ -304,11 +320,6 @@ fn build_entity_layer(
                 }
 
                 sprite.insert(Name::new(entity.name().to_owned()));
-
-                // if entity.tagged("player_base") {
-                //     println!("FOUND CASTLE on {:?}", entity.name());
-                //     sprite.insert(PlayerBase);
-                // }
             }
         }
     }
@@ -343,6 +354,7 @@ fn update_map_units(
 ) {
     units.clear();
 
+    // //println!("Count: {}", q_units.iter().count());
     for (entity, transform) in q_units.iter() {
         //println!("Inserting {:?} at {}", entity, transform.translation.xy());
         ///let i = units.xy_to_index(transform.translation.xy());

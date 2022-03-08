@@ -51,21 +51,18 @@ fn on_select(
             if let Ok(transform) = q_pos.get(selected) {
                 make_sprite(
                     &mut commands,
-                    transform.translation.xy(),
+                    transform.translation.xy() + Vec2::new(0.5,0.5) * TILE_SIZE as f32,
                     3,
                     Color::rgba_u8(55, 155, 255, 150),
                 )
-                .insert(PathSprite);
+                .insert(HighlightSprite);
             }
 
             if let Ok(cursor_transform) = q_cursor.get_single() {
                 let a = q_pos.get(selected).unwrap().translation.xy().as_ivec2() / TILE_SIZE;
-                //let a = (a + center_offset).floor().as_ivec2();
+                let b = cursor_transform.translation.xy().as_ivec2() / TILE_SIZE;
+                
 
-                let b = cursor_transform.translation.xy().as_ivec2() / TILE_SIZE / TILE_SIZE;
-                //let b = (b + center_offset).floor().as_ivec2();
-
-                //let b = map.0.to_index_2d(cursor_transform.translation.xy());
                 if a == b {
                     return;
                 }
@@ -136,7 +133,7 @@ fn path_sprites(
     if let Some(path) = &selection.path {
         for p in path.iter() {
             let xy = IVec2::from(*p).as_vec2();
-            let xy = xy * TILE_SIZE as f32;
+            let xy = xy * TILE_SIZE as f32 + Vec2::new(0.5,0.5) * TILE_SIZE as f32;
             // println!("Trying to draw path at {}", xy);
             make_sprite(&mut commands, xy, 5, Color::rgba_u8(200, 200, 200, 200))
                 .insert(PathSprite);

@@ -121,6 +121,7 @@ pub fn make_sprite_atlas<'w, 's, 'a>(
         transform,
         ..Default::default()
     };
+    //println!("spawning entity at {}", transform.translation);
     commands.spawn_bundle(sprite)
 }
 
@@ -162,4 +163,34 @@ impl ToEguiPos for Vec2 {
     fn egui(&self) -> Pos2 {
         Pos2::new(self.x, self.y)
     }
+}
+
+
+/// Converts a screen position [0..resolution] to a world position
+pub fn screen_to_world(
+    camera: &Camera,
+    windows: &Windows,
+    camera_transform: &GlobalTransform,
+    screen_pos: Vec2,
+) -> Option<Vec3> {
+    let window = windows.get(camera.window)?;
+    let window_size = Vec2::new(window.width(), window.height());
+
+    // Convert screen position [0..resolution] to ndc [-1..1]
+    let ndc = (screen_pos / window_size) * 2.0 - Vec2::ONE;
+
+    let min = -Vec2::ONE;
+    let max = Vec2::ONE;
+    let below_min = ndc.cmplt(min);
+    let above_max = ndc.cmpge(max);
+    if below_min.any() || above_max.any() {
+        return None;
+    }
+
+    let ndc_to_world = camera_transform.compute_matrix() * camera.projection_matrix.inverse();
+
+    let world_pos = ndc_to_world.project_point3(ndc.extend(-1.0));
+    let world_pos = world_pos.truncate().extend(0.0);
+
+    Some(world_pos)
 }

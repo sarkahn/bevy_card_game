@@ -35,7 +35,7 @@ fn spawn(mut commands: Commands) {
     //let ver = Vec3::new(0.0, 0.5, 0.0) * TILE_SIZE as f32;
     //cam.transform.translation -= hor + ver;
     //cam.orthographic_projection.scale = 1.0 / 64.0;
-    cam.transform = Transform::from_xyz(1856.0 / 2.0, 1024.0 / 2.0, cam.transform.translation.z);
+    //cam.transform = Transform::from_xyz(1856.0 / 2.0, 1024.0 / 2.0, cam.transform.translation.z);
     commands.spawn_bundle(cam);
 }
 

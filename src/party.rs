@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use rand::{thread_rng, prelude::SliceRandom, Rng};
 
-use crate::{ldtk_loader::LdtkMap, GENERATE_PARTY_SYSTEM};
+use crate::{ldtk_loader::LdtkMap, GENERATE_PARTY_SYSTEM, TILE_SIZE};
 
 pub struct PartyPlugin;
 
@@ -108,10 +108,10 @@ fn generate(
                 warn!("Tries to load ldtk {} while generating party, but it failed!", to_spawn);
             }
         }
-        
+        let pos = gen.pos;// + Vec3::new(0.5,0.5,0.0) * TILE_SIZE as f32;
         //println!("Spawning party, units: {:?}", units);
         commands.entity(entity).insert(Party).push_children(&units)
-        .insert(Transform::from_translation(gen.pos))
+        .insert(Transform::from_translation(pos))
         .insert(GlobalTransform::default())
         .remove::<GenerateParty>();
     }
@@ -125,9 +125,11 @@ fn get_sprite(
         index,
         ..Default::default()
     };
+    let xyz = Vec3::new(0.5, 0.5, 0.0) * TILE_SIZE as f32;
     SpriteSheetBundle {
         sprite,
         texture_atlas: atlas,
+        transform: Transform::from_translation(xyz),
         visibility: Visibility { is_visible: false },
         ..Default::default()
     }

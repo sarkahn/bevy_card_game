@@ -6,6 +6,7 @@ use bevy_easings::EasingsPlugin;
 use bevy_egui::EguiPlugin;
 use camera::GameCameraPlugin;
 use config::{ConfigAsset, ConfigPlugin};
+use debug::DebugPlugin;
 use ldtk_loader::{LdtkPlugin, LdtkMap};
 use party::PartyPlugin;
 use prefab::PrefabsPlugin;
@@ -25,6 +26,7 @@ mod party;
 mod prefab;
 mod unit;
 mod util;
+mod debug;
 
 pub use grid::*;
 
@@ -43,7 +45,6 @@ pub const LDTK_ENEMY_UNITS: &[&str] = &[
 
 pub const GENERATE_PARTY_SYSTEM: &str = "generate_party";
 
-pub use animation::{AnimationController, AnimationData};
 //pub use prefab::LoadCardPrefab;
 //pub use prefab::SpawnPrefabOld;
 pub use util::*;
@@ -79,20 +80,22 @@ pub fn main() {
             title: "Bevy Card Game".to_string(),
             ..Default::default()
         })
+        .insert_resource(ClearColor(Color::rgb_u8(82, 44, 38)))
         .init_resource::<AtlasHandles>()
         .init_resource::<LdtkHandles>()
         .add_plugins(DefaultPlugins)
-        .add_plugin(GameCameraPlugin)
-        .add_plugin(BattleMapPlugin)
-        .add_plugin(EasingsPlugin)
         .add_plugin(ConfigPlugin)
-        .add_plugin(ArenaPlugin)
+        .add_plugin(GameCameraPlugin)
+        .add_plugin(EguiPlugin)
         .add_plugin(LdtkPlugin)
         .add_plugin(AssetsPlugin)
-        .add_plugin(EguiPlugin)
+        .add_plugin(BattleMapPlugin)
+        // .add_plugin(EasingsPlugin)
+        // .add_plugin(ArenaPlugin)
         .add_plugin(AnimationPlugin)
         .add_plugin(PrefabsPlugin)
         .add_plugin(PartyPlugin)
+        // .add_plugin(DebugPlugin)
         .add_state(GameState::Starting)
         .add_startup_system(load_configs)
         .add_system_set(SystemSet::on_update(GameState::Starting).with_system(start))
