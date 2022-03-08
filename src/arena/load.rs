@@ -45,7 +45,9 @@ fn setup(
     ldtk: Res<Assets<LdtkMap>>,
     config: Res<Assets<ConfigAsset>>,
     q_parties: Query<&ArenaCombat>,
+    q_units: Query<&Children>,
     q_unit: Query<&PartyUnit>,
+    mut q_sprite: Query<(Entity, &mut Visibility, &mut Transform, &mut GlobalTransform)>,
 ) {
     let config = config.get(SETTINGS_PATH).unwrap();
     if let (Some(ldtk), Some(cards_pfb)) = (
@@ -54,7 +56,7 @@ fn setup(
     ) {
         if let Some(bg) = &ldtk.background() {
             let size = ldtk.size_px().as_vec2();
-            let pos = (size / 2.0).extend(50.0) - Vec3::new(0.5,0.0,0.0) * TILE_SIZE as f32;
+            let pos = (size / 2.0).extend(10.0) - Vec3::new(0.5,0.0,0.0) * TILE_SIZE as f32;
             println!("Spawned background, Size {}",  size);
             commands.spawn_bundle(SpriteBundle {
                 sprite: Sprite {
@@ -67,14 +69,40 @@ fn setup(
             });
         }   
 
+        let combat = q_parties.single();
+
         let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
         let player_spawns = spawns.iter().filter(|e|e.tags().has("player") && !e.tags().has("card"));
 
         let actions = player_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
 
-        let combat = q_parties.single();
-        
-        //for (i,(spawn,unit)) in player_spawns.zip()
+        let player_units = q_units.get(combat.player_party).unwrap();
+        for (i,(spawn,unit)) in player_spawns.zip(player_units.iter()).enumerate() {
+            let unit = q_unit.get(*unit).unwrap();
+            let (sprite_entity, mut visibility, mut transform, global) = q_sprite.get_mut(unit.arena_sprite()).unwrap();
+
+            let p = spawn.xy().as_vec2().extend(15.0 + i as f32);
+            let local_pos = global.compute_matrix().inverse().transform_point3(p);
+
+            transform.translation = local_pos;
+            visibility.is_visible = true;
+        }
+
+        let enemy_spawns = spawns.iter().filter(|e|e.tags().has("enemy") && !e.tags().has("card"));
+
+        let actions = enemy_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
+
+        let enemy_units = q_units.get(combat.enemy_party).unwrap();
+        for (i,(spawn,unit)) in enemy_spawns.rev().zip(enemy_units.iter()).enumerate() {
+            let unit = q_unit.get(*unit).unwrap();
+            let (sprite_entity, mut visibility, mut transform, global) = q_sprite.get_mut(unit.arena_sprite()).unwrap();
+
+            let p = spawn.xy().as_vec2().extend(15.0 + i as f32);
+            let local_pos = global.compute_matrix().inverse().transform_point3(p);
+
+            transform.translation = local_pos;
+            visibility.is_visible = true;
+        }
 
         // let actions = actions.take_while(|a|a.is_some()).next().unwrap().unwrap();
         // println!("Found {} unit actions: {:?}", actions.len(), actions);

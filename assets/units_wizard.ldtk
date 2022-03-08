@@ -91,7 +91,7 @@
 		{
 			"identifier": "Unit",
 			"uid": 1,
-			"tags": ["root"],
+			"tags": [ "root", "arena_sprite" ],
 			"width": 256,
 			"height": 256,
 			"resizableX": false,
@@ -476,31 +476,6 @@
 			"tilesetId": 59,
 			"tileId": 0,
 			"tileRenderMode": "Stretch",
-			"maxCount": 0,
-			"limitScope": "PerLevel",
-			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
-			"fieldDefs": []
-		},
-		{
-			"identifier": "ArenaSprite",
-			"uid": 60,
-			"tags": ["arena_sprite"],
-			"width": 64,
-			"height": 64,
-			"resizableX": false,
-			"resizableY": false,
-			"keepAspectRatio": false,
-			"fillOpacity": 1,
-			"lineOpacity": 1,
-			"hollow": false,
-			"color": "#94D9B3",
-			"renderMode": "Tile",
-			"showName": true,
-			"tilesetId": 47,
-			"tileId": 0,
-			"tileRenderMode": "FitInside",
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
@@ -1095,17 +1070,6 @@
 									}]
 								}
 							]
-						},
-						{
-							"__identifier": "ArenaSprite",
-							"__grid": [753,344],
-							"__pivot": [0,0],
-							"__tile": { "tilesetUid": 47, "srcRect": [0,0,64,64] },
-							"width": 64,
-							"height": 64,
-							"defUid": 60,
-							"px": [753,344],
-							"fieldInstances": []
 						}
 					]
 				},
@@ -1160,13 +1124,13 @@
 					"entityInstances": [
 						{
 							"__identifier": "Unit",
-							"__grid": [286,216],
+							"__grid": [272,151],
 							"__pivot": [0,0],
 							"__tile": { "tilesetUid": 20, "srcRect": [0,0,64,64] },
 							"width": 256,
 							"height": 256,
 							"defUid": 1,
-							"px": [286,216],
+							"px": [272,151],
 							"fieldInstances": [
 								{ "__identifier": "name", "__value": "Wizard", "__type": "String", "defUid": 3, "realEditorValues": [] },
 								{

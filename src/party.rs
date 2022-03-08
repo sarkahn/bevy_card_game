@@ -77,13 +77,13 @@ fn generate(
             if let Some(ldtk) = ldtk.get(to_spawn) {
 
                 //map_sprite.transform.translation = gen.pos;
-                let mut map_sprite = get_tagged_sprite(ldtk, "map_sprite");
+                let mut map_sprite = get_tagged_sprite(ldtk, "map_sprite", 64.0);
                 if i == icon {
                     map_sprite.visibility.is_visible = true;
                 }
                 let map_sprite = commands.spawn().insert_bundle(map_sprite).id();
 
-                let arena_sprite = get_tagged_sprite(ldtk, "arena_sprite");
+                let arena_sprite = get_tagged_sprite(ldtk, "arena_sprite", 256.0);
                 let arena_sprite = commands.spawn().insert_bundle(arena_sprite).id();
         
                 let unit = PartyUnit {
@@ -106,7 +106,9 @@ fn generate(
         }
         let pos = gen.pos;// + Vec3::new(0.5,0.5,0.0) * TILE_SIZE as f32;
         //println!("Spawning party, units: {:?}", units);
-        commands.entity(entity).insert(Party).push_children(&units)
+        commands.entity(entity)
+        .insert(Party)
+        .push_children(&units)
         .insert(Transform::from_translation(pos))
         .insert(GlobalTransform::default())
         .remove::<GenerateParty>();
@@ -116,6 +118,7 @@ fn generate(
 fn get_tagged_sprite(
     ldtk: &LdtkMap,
     tag: &str,
+    size: f32,
 ) -> SpriteSheetBundle {
     let map_sprite = ldtk.get_tagged(tag).next().unwrap_or_else(||
         panic!("Error spawning unit {}, missing {} tag", ldtk.name(), tag)
@@ -131,15 +134,17 @@ fn get_tagged_sprite(
     let tile_id = map_sprite.tile_id().unwrap_or_else(||
         panic!("Error spawning unit {} {}, invalid tile id", ldtk.name(), tag)
     );
-    get_sprite(tile_id as usize, tileset.atlas().clone())
+    get_sprite(tile_id as usize, tileset.atlas().clone(), Vec2::splat(size))
 }
 
 fn get_sprite(
     index: usize,
     atlas: Handle<TextureAtlas>,
+    size: Vec2,
 ) -> SpriteSheetBundle {
     let sprite = TextureAtlasSprite {
         index,
+        custom_size: Some(size),
         ..Default::default()
     };
     let xyz = Vec3::new(0.5, 0.5, 0.0) * TILE_SIZE as f32;

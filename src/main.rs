@@ -33,15 +33,15 @@ pub use grid::*;
 pub const SETTINGS_PATH: &str = "game_settings.config";
 pub const LDTK_CARDS_PATH: &str = "units_BattleCardPreMade.ldtk";
 
-pub const LDTK_PLAYER_UNITS: &[&str] = &[
-    "units_archer.ldtk",
-    "units_wizard.ldtk",
-];
+// pub const LDTK_PLAYER_UNITS: &[&str] = &[
+//     "units_archer.ldtk",
+//     "units_wizard.ldtk",
+// ];
 
 
-pub const LDTK_ENEMY_UNITS: &[&str] = &[
-    "units_slime.ldtk",
-];
+// pub const LDTK_ENEMY_UNITS: &[&str] = &[
+//     "units_slime.ldtk",
+// ];
 
 pub const GENERATE_PARTY_SYSTEM: &str = "generate_party";
 

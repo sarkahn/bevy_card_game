@@ -33,6 +33,10 @@ pub struct GameSettings {
     pub arena_file: String,
     #[serde(default)]
     pub asset_test_file: String,
+    #[serde(default)]
+    pub player_units: Vec<String>,
+    #[serde(default)]
+    pub enemy_units: Vec<String>,
 }
 
 #[derive(TypeUuid)]

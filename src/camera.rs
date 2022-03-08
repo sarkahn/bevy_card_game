@@ -30,7 +30,7 @@ fn spawn(mut commands: Commands) {
     // commands.spawn_bundle(
     //     TiledCameraBundle::new().with_tile_count([16, 16]), //.with_pixels_per_tile(16)
     // );
-    let mut cam = OrthographicCameraBundle::new_2d();
+    let cam = OrthographicCameraBundle::new_2d();
     //let hor = Vec3::new(0.5, 0.0, 0.0) * TILE_SIZE as f32;
     //let ver = Vec3::new(0.0, 0.5, 0.0) * TILE_SIZE as f32;
     //cam.transform.translation -= hor + ver;

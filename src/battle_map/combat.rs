@@ -78,6 +78,7 @@ fn on_collision(
                     ;
 
                     state.set(GameState::BeginningCombat).unwrap();
+                    return;
                 }
             }
         }
