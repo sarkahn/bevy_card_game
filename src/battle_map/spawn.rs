@@ -12,7 +12,8 @@ pub struct MapSpawnPlugin;
 impl Plugin for MapSpawnPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(despawn_tick)
-            .add_system_to_stage(CoreStage::PostUpdate, despawn_timer)
+            //.add_system_to_stage(CoreStage::PostUpdate, despawn_timer)
+            .add_system(despawn_timer)
             ;
     }
 }

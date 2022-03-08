@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 65,
+	"nextUid": 66,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -501,6 +501,31 @@
 			"pivotX": 0,
 			"pivotY": 0,
 			"fieldDefs": []
+		},
+		{
+			"identifier": "ArenaSprite",
+			"uid": 65,
+			"tags": ["arena_sprite"],
+			"width": 64,
+			"height": 64,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#94D9B3",
+			"renderMode": "Tile",
+			"showName": true,
+			"tilesetId": 59,
+			"tileId": 0,
+			"tileRenderMode": "FitInside",
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
 		}
 	], "tilesets": [
 		{
@@ -813,6 +838,17 @@
 							"height": 64,
 							"defUid": 62,
 							"px": [680,432],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "ArenaSprite",
+							"__grid": [51,24],
+							"__pivot": [0,0],
+							"__tile": { "tilesetUid": 59, "srcRect": [0,0,64,64] },
+							"width": 64,
+							"height": 64,
+							"defUid": 65,
+							"px": [818,386],
 							"fieldInstances": []
 						}
 					]

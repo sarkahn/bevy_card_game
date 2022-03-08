@@ -21,11 +21,14 @@ pub struct MapCombatPlugin;
 
 impl Plugin for MapCombatPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_update(GameState::BattleMap).with_system(on_collision))
-            .add_system_set(
-                SystemSet::on_update(GameState::BeginningCombat)
-                .with_system(begin_combat),
-            );
+        app
+        .add_system_set(
+            SystemSet::on_update(GameState::BattleMap)
+            .with_system(on_collision))
+        .add_system_set(
+            SystemSet::on_update(GameState::BeginningCombat)
+            .with_system(begin_combat),
+        );
     }
 }
 
@@ -87,6 +90,12 @@ pub struct BeginCombat {
     enemy_party: Entity,
 }
 
+#[derive(Component)]
+pub struct ArenaTransitionParties {
+    player_party: Entity,
+    enemy_party: Entity,
+}
+
 fn begin_combat(
     mut commands: Commands,
     mut q_begin: Query<(Entity, &Transform, &mut BeginCombat, &DespawnTimer)>,
@@ -104,20 +113,15 @@ fn begin_combat(
             let pos = transform.translation + Vec3::new(0.0, 1.0, 0.0) * TILE_SIZE as f32;
             if let Some(mut pos) = cam.world_to_screen(&windows, global, pos) {
                 pos.y = window.height() as f32 - pos.y;
-                //let pos = pos + Vec2::new(-1.5, -1.0) * TILE_SIZE as f32;
-                // egui::containers::Area::new("fight_it_out")
-                // .fixed_pos(pos.to_array())
-                // .show(ctx, |ui| {
-                    
-                //     ui.label("FIGHT IT OUT!");
-                // });
             }
         }
         if timer.finished() {
-            //arena_units.player_party = begin.player;
-            //arena_units.enemy_party = begin.enemy;
             println!("Combat is beginning!");
             state.set(GameState::LoadArena).unwrap();
+            commands.spawn().insert(ArenaCombat {
+                player_party: begin.player_party,
+                enemy_party: begin.enemy_party,
+            });
         }
     }
 }

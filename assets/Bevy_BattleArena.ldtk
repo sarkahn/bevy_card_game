@@ -1296,9 +1296,9 @@
 			"useAutoIdentifier": true,
 			"bgRelPath": "textures/BattleArenaBackground_01.png",
 			"bgPos": "Cover",
-			"bgPivotX": 0.5,
-			"bgPivotY": 0.5,
-			"__bgPos": { "topLeftPx": [0,0], "scale": [3.9703703703703703,3.9703703703703703], "cropRect": [2.2089552238805936,0,483.5820895522388,270] },
+			"bgPivotX": 0,
+			"bgPivotY": 0,
+			"__bgPos": { "topLeftPx": [0,0], "scale": [3.9703703703703703,3.9703703703703703], "cropRect": [0,0,483.5820895522388,270] },
 			"externalRelPath": null,
 			"fieldInstances": [],
 			"layerInstances": [

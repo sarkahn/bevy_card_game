@@ -169,6 +169,16 @@ impl CollisionMap {
             self.0.toggle_obstacle_index(i);
         }
     }
+
+    pub fn is_obstacle_bounds_checked(&self, pos: impl Point2d) -> bool {
+        let xy = pos.xy();
+        if xy.cmplt(IVec2::ZERO).any() || xy.cmpge(self.0.size().as_ivec2()).any() {
+            return true;
+        }
+        let i = self.0.to_index(xy.into());
+        self.0.is_obstacle_index(i)
+    }
+
     pub fn axis_offset(&self) -> Vec2 {
         let cmp = (self.size().as_ivec2() % 2).cmpeq(IVec2::ZERO);
         Vec2::select(cmp, Vec2::new(0.5, 0.5), Vec2::ZERO)
@@ -328,6 +338,7 @@ fn build_entity_layer(
 }
 
 fn update_colliders(map: &mut CollisionMap, units: &MapUnits, layer: &MapLayer) {
+
     match layer {
         MapLayer::Tiles(layer) => {
             for tile in layer.tiles.iter() {

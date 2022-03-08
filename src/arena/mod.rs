@@ -25,6 +25,7 @@ impl Plugin for ArenaPlugin {
     }
 }
 
+#[derive(Component)]
 pub struct ArenaCombat {
     pub player_party: Entity,
     pub enemy_party: Entity,

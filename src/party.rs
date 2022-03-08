@@ -35,7 +35,7 @@ pub struct Party;
 #[derive(Component)]
 pub struct PartyUnit {
     map_sprite: Entity,
-    //arena_sprite: Entity,
+    arena_sprite: Entity,
 }
 
 impl PartyUnit {
@@ -43,8 +43,12 @@ impl PartyUnit {
     pub fn map_sprite(&self) -> Entity {
         self.map_sprite
     }
-}
 
+    /// Get the party unit's arena sprite.
+    pub fn arena_sprite(&self) -> Entity {
+        self.arena_sprite
+    }
+}
 
 fn generate(
     mut commands: Commands,
@@ -71,37 +75,29 @@ fn generate(
             let to_spawn = gen.names.choose(&mut rng).unwrap();
 
             if let Some(ldtk) = ldtk.get(to_spawn) {
-                let map_sprite = ldtk.get_tagged("map_sprite").next().unwrap_or_else(||
-                    panic!("Error spawning unit {}, missing 'map_sprite' tag", ldtk.name())
-                );
-                let tileset = map_sprite.tileset_id().unwrap_or_else(||
-                    panic!("Error spawning unit {} map sprite, missing tileset id. Is a tilemap attached
-                    to the entity?", ldtk.name())
-                );
-                let tileset = ldtk.tileset_from_id(tileset).unwrap_or_else(||
-                    panic!("Error spawning unit {} map sprite, invalid tileset id. Is a tilemap attached
-                    to the entity?", ldtk.name())
-                );
-                let tile_id = map_sprite.tile_id().unwrap_or_else(||
-                    panic!("Error spawning unit {} map sprite, invalid tile id", ldtk.name())
-                );
-                let mut map_sprite = get_sprite(tile_id as usize, tileset.atlas().clone());
+
+                //map_sprite.transform.translation = gen.pos;
+                let mut map_sprite = get_tagged_sprite(ldtk, "map_sprite");
                 if i == icon {
                     map_sprite.visibility.is_visible = true;
                 }
-                //map_sprite.transform.translation = gen.pos;
-
                 let map_sprite = commands.spawn().insert_bundle(map_sprite).id();
 
+                let arena_sprite = get_tagged_sprite(ldtk, "arena_sprite");
+                let arena_sprite = commands.spawn().insert_bundle(arena_sprite).id();
+        
                 let unit = PartyUnit {
-                    map_sprite: map_sprite.clone()
+                    map_sprite: map_sprite.clone(),
+                    arena_sprite: arena_sprite.clone()
                 };
 
                 let unit = commands.spawn()
                 .insert(unit)
                 .insert(Transform::default())
                 .insert(GlobalTransform::default())
-                .add_child(map_sprite).id();
+                .add_child(map_sprite)
+                .add_child(arena_sprite)
+                .id();
 
                 units.push(unit);
             } else {
@@ -115,6 +111,27 @@ fn generate(
         .insert(GlobalTransform::default())
         .remove::<GenerateParty>();
     }
+}
+
+fn get_tagged_sprite(
+    ldtk: &LdtkMap,
+    tag: &str,
+) -> SpriteSheetBundle {
+    let map_sprite = ldtk.get_tagged(tag).next().unwrap_or_else(||
+        panic!("Error spawning unit {}, missing {} tag", ldtk.name(), tag)
+    );
+    let tileset = map_sprite.tileset_id().unwrap_or_else(||
+        panic!("Error spawning unit {} {}, missing tileset id. Is a tilemap attached
+        to the entity?", ldtk.name(), tag)
+    );
+    let tileset = ldtk.tileset_from_id(tileset).unwrap_or_else(||
+        panic!("Error spawning unit {} {}, invalid tileset id. Is a tilemap attached
+        to the entity?", ldtk.name(), tag)
+    );
+    let tile_id = map_sprite.tile_id().unwrap_or_else(||
+        panic!("Error spawning unit {} {}, invalid tile id", ldtk.name(), tag)
+    );
+    get_sprite(tile_id as usize, tileset.atlas().clone())
 }
 
 fn get_sprite(

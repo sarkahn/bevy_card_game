@@ -7,10 +7,10 @@ use crate::{
     //prefab::ChangeSprite, 
     unit::Element, AtlasHandles, GameState,
     //LoadCardPrefab, SpawnPrefabOld, 
-    LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, make_spritesheet_bundle,
+    LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, make_spritesheet_bundle, party::PartyUnit,
 };
 
-use super::{cards::{CardLabel, CardLabelType, CardsAtlas, SpawnCard}, TakingATurn};
+use super::{cards::{CardLabel, CardLabelType, CardsAtlas, SpawnCard}, TakingATurn, ArenaCombat};
 
 pub struct ArenaLoadPlugin;
 
@@ -44,6 +44,8 @@ fn setup(
     mut card_atlas: ResMut<CardsAtlas>,
     ldtk: Res<Assets<LdtkMap>>,
     config: Res<Assets<ConfigAsset>>,
+    q_parties: Query<&ArenaCombat>,
+    q_unit: Query<&PartyUnit>,
 ) {
     let config = config.get(SETTINGS_PATH).unwrap();
     if let (Some(ldtk), Some(cards_pfb)) = (
@@ -51,20 +53,28 @@ fn setup(
         ldtk.get(LDTK_CARDS_PATH),
     ) {
         if let Some(bg) = &ldtk.background() {
-
-            //println!("Spawned background, Size {}",  size);
+            let size = ldtk.size_px().as_vec2();
+            let pos = (size / 2.0).extend(50.0) - Vec3::new(0.5,0.0,0.0) * TILE_SIZE as f32;
+            println!("Spawned background, Size {}",  size);
             commands.spawn_bundle(SpriteBundle {
+                sprite: Sprite {
+                    custom_size: Some(ldtk.size_px().as_vec2()),
+                    ..Default::default()
+                },
                 texture: bg.image.clone(),
-                transform: Transform::from_xyz(0.0,0.0,50.0),
+                transform: Transform::from_translation(pos),
                 ..Default::default()
             });
         }   
 
-        // let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
+        let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
+        let player_spawns = spawns.iter().filter(|e|e.tags().has("player") && !e.tags().has("card"));
 
-        // let player_spawns = spawns.iter().filter(|e|e.tags().has("player") && !e.tags().has("card"));
+        let actions = player_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
 
-        // let actions = player_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
+        let combat = q_parties.single();
+        
+        //for (i,(spawn,unit)) in player_spawns.zip()
 
         // let actions = actions.take_while(|a|a.is_some()).next().unwrap().unwrap();
         // println!("Found {} unit actions: {:?}", actions.len(), actions);

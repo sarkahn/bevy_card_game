@@ -4,7 +4,7 @@ use bevy_tiled_camera::TiledProjection;
 
 use crate::{GameState, TILE_SIZE, screen_to_world};
 
-use super::MapUnits;
+use super::{MapUnits, map::CollisionMap};
 
 pub struct InputPlugin;
 
@@ -31,13 +31,13 @@ pub struct TileClickedEvent {
 pub struct Cursor;
 
 fn on_enter(mut commands: Commands) {
-    //let col = Color::rgba(1.0, 1.0, 1.0, 0.55);
+    let color = Color::rgba(1.0, 1.0, 1.0, 0.55);
 
     let sprite_pos = Vec3::ZERO + Vec3::new(0.5,0.5,0.0) * TILE_SIZE as f32;
 
     let sprite = SpriteBundle {
         sprite: Sprite {
-            color: Color::RED,
+            color,
             custom_size: Some(Vec2::splat(TILE_SIZE as f32)),
             ..Default::default()
         },
@@ -46,13 +46,6 @@ fn on_enter(mut commands: Commands) {
     };
     commands.spawn_bundle(sprite)
     .insert(Cursor);
-    // let root = commands.spawn()
-    // .insert(Transform::default())
-    // .insert(GlobalTransform::default())
-    // .insert(Cursor)
-    // .insert(Visibility::default())
-    //.add_child(sprite)
-    ;
 }
 
 fn on_exit(mut commands: Commands, q_cursor: Query<Entity, With<Cursor>>) {
@@ -61,13 +54,25 @@ fn on_exit(mut commands: Commands, q_cursor: Query<Entity, With<Cursor>>) {
     }
 }
 
+fn repeat(t: f32, len: f32) -> f32 {
+    //Clamp(t - Mathf.Floor(t / length) * length, 0.0f, length);
+    f32::clamp(t - f32::floor(t / len) * len, 0.0, len)
+}
+
+fn ping_pong(t: f32, len: f32) -> f32 {
+    let t = repeat(t, len * 2.0);
+    len - f32::abs(t - len)
+}
+
 fn cursor_system(
     input: Res<Input<MouseButton>>,
     windows: Res<Windows>,
     q_camera: Query<(&Camera, &GlobalTransform)>,
-    mut q_cursor: Query<(&mut Transform, &mut Visibility), With<Cursor>>,
+    mut q_cursor: Query<(&mut Transform, &mut Visibility, &mut Sprite), With<Cursor>>,
     mut ev_tile_clicked: EventWriter<TileClickedEvent>,
     units: Res<MapUnits>,
+    collision: Res<CollisionMap>,
+    time: Res<Time>,
 ) {
     let window = windows.get_primary().unwrap();
 
@@ -76,15 +81,28 @@ fn cursor_system(
             if let Some(mut p) = screen_to_world(cam, &windows, global, pos) {
                 //let mut p = (p / TILE_SIZE as f32).floor();
 
-                let (mut cursor_transform, mut v) = q_cursor.single_mut();
-                v.is_visible = true;
 
-                //let mut p = p * TILE_SIZE as f32;
                 let xy = (p.xy() / TILE_SIZE as f32).floor();
                 let grid_xy = xy.as_ivec2();
+
+                if collision.is_obstacle_bounds_checked(grid_xy.to_array()) {
+                    break;
+                }
+
+                let (mut cursor_transform, mut v, mut sprite) = q_cursor.single_mut();
+                v.is_visible = true;
+
+                let t = (time.seconds_since_startup() as f32) / 1.25;
+                let t = 0.2 + ping_pong(t, 0.5);
+                let mut rgba = sprite.color.as_rgba_f32();
+                rgba[3] = t;
+                sprite.color = rgba.into();
+
+
+                //let mut p = p * TILE_SIZE as f32;
                 let xy = xy + Vec2::new(0.5,0.5);
                 let xy = xy * TILE_SIZE as f32;
-                let mut p = xy.extend(30.0);
+                let p = xy.extend(30.0);
                 cursor_transform.translation = p;
 
                 //println!("Setting cursor pos to {}", p);
@@ -104,16 +122,6 @@ fn cursor_system(
             }
         }
     }
-    //let (_, mut v) = q_cursor.single_mut();
-    //v.is_visible = false;
+    let (_, mut v, _) = q_cursor.single_mut();
+    v.is_visible = false;
 }
-
-
-// fn gui(
-//     mut egui: ResMut<EguiContext>,
-// ) {
-//     let ctx = egui.ctx_mut();
-//     egui::SidePanel::new(Side::Left, "sidepanel").show(ctx, |ui| {
-//         ui.label("hi");
-//     });
-// }

@@ -41,7 +41,7 @@ fn on_select(
     q_pos: Query<&Transform>,
     q_player: Query<&PlayerUnit>,
     q_highlight: Query<Entity, With<HighlightSprite>>,
-    q_cursor: Query<&Transform, With<Cursor>>,
+    q_cursor: Query<(&Transform, &Visibility), With<Cursor>>,
 ) {
     if let Some(config) = configs.get(SETTINGS_PATH) {
         q_highlight
@@ -58,7 +58,12 @@ fn on_select(
                 .insert(HighlightSprite);
             }
 
-            if let Ok(cursor_transform) = q_cursor.get_single() {
+            if let Ok((cursor_transform, visibility)) = q_cursor.get_single() {
+                if !visibility.is_visible {
+                    selection.path = None;
+                    return;
+                }
+
                 let a = q_pos.get(selected).unwrap().translation.xy().as_ivec2() / TILE_SIZE;
                 let b = cursor_transform.translation.xy().as_ivec2() / TILE_SIZE;
                 
