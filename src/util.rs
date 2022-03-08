@@ -2,7 +2,7 @@ use bevy::{ecs::system::EntityCommands, prelude::*};
 use bevy_egui::egui::Pos2;
 use serde_json::Value;
 
-use crate::TILE_SIZE;
+use crate::{TILE_SIZE, ldtk_loader::{PrefabEntity, MapTileset}};
 
 pub trait GetValue {
     fn as_f32(&self) -> Option<f32>;
@@ -193,4 +193,22 @@ pub fn screen_to_world(
     let world_pos = world_pos.truncate().extend(0.0);
 
     Some(world_pos)
+}
+
+pub fn make_spritesheet_bundle(
+    tile_index: usize,
+    texture_atlas: Handle<TextureAtlas>,
+    xyz: Vec3,
+) -> SpriteSheetBundle {
+    let sprite = TextureAtlasSprite {
+        index: tile_index,
+        ..Default::default()
+    };
+
+    SpriteSheetBundle {
+        sprite,
+        texture_atlas,
+        transform: Transform::from_translation(xyz),
+        ..Default::default()
+    }
 }

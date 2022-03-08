@@ -378,7 +378,7 @@
 		{
 			"identifier": "BeginCombat",
 			"uid": 33,
-			"tags": [],
+			"tags": ["begin_combat"],
 			"width": 64,
 			"height": 16,
 			"resizableX": false,

@@ -1,10 +1,11 @@
 use bevy::{math::Vec3Swizzles, prelude::*};
+use bevy_egui::{egui::{self, FontDefinitions}, EguiContext};
 
 use crate::{
     arena::{ArenaCombat, ArenaState},
     config::ConfigAsset,
     ldtk_loader::LdtkMap,
-    make_sprite, GameState, GridHelper, SETTINGS_PATH, TILE_SIZE,
+    make_sprite, GameState, GridHelper, SETTINGS_PATH, TILE_SIZE, screen_to_world, make_spritesheet_bundle,
 };
 
 use super::{
@@ -34,27 +35,47 @@ fn on_collision(
     units: Res<MapUnits>,
     mut state: ResMut<State<GameState>>,
     config: Res<Assets<ConfigAsset>>,
+    ldtk: Res<Assets<LdtkMap>>,
     asset_server: Res<AssetServer>,
-    map: Res<CollisionMap>,
 ) {
     if let Some(config) = config.get(SETTINGS_PATH) {
-        let ldtk: Handle<LdtkMap> = asset_server.load(&config.settings.map_file);
-        //if let Ok(ldtk_handle) = asset_server.load::<LdtkMap>(&config.settings.map_file) {
-        for (enemy, transform) in q_enemies.iter() {
-            let xy = units.xy_to_grid(transform.translation.xy());
-            if let Some(player) = units.get_from_grid_xy(xy) {
-                let mut pos = transform.translation;
-                pos += Vec3::new(0.0, 0.0, 1.0);
-                // commands
-                //     .spawn()
-                //     .insert(SpawnEntity {
-                //         ldtk: ldtk.clone(),
-                //         name: "BeginCombat".to_string(),
-                //         pos,
-                //     })
-                //     .insert(BeginCombat { player, enemy })
-                //     .insert(DespawnTimer(Timer::from_seconds(3.0, false)));
-                // state.set(GameState::BeginningCombat).unwrap();
+        if let Some(ldtk) = ldtk.get(&config.settings.map_file) {
+            for (enemy, transform) in q_enemies.iter() {
+                let xy = units.xy_to_grid(transform.translation.xy());
+                if let Some(player) = units.get_from_grid_xy(xy) {
+                    let mut pos = transform.translation;
+                    pos += Vec3::new(0.0, 0.0, 1.0) * TILE_SIZE as f32;
+                    let mut text_pos = Vec3::new(0.0, 1.0, 0.0) * TILE_SIZE as f32;
+                    text_pos.z += 1.0;
+
+                    let fight_entity = ldtk.entity_defs().get_tagged("begin_combat").next().unwrap();
+                    let atlas = ldtk.tileset_from_id(fight_entity.tileset_id().unwrap());
+                    let atlas = atlas.unwrap().atlas();
+
+                    let sprite = make_spritesheet_bundle(
+                        fight_entity.tile_id().unwrap() as usize, atlas.clone(), pos
+                    );
+                    let text = Text2dBundle {
+                        text: Text::with_section(
+                            "FIGHT IT OUT!", 
+                            TextStyle {
+                                font: asset_server.load("fonts/DejaVuSerif-Bold.ttf"),
+                                font_size: 30.0,
+                                color: Color::WHITE,
+                            }, 
+                            TextAlignment::default()),
+                        transform: Transform::from_translation(text_pos),
+                        ..Default::default()
+                    };
+                    let text = commands.spawn_bundle(text).id();
+                    commands.spawn_bundle(sprite)
+                    .insert(DespawnTimer::new(3.0))
+                    .insert(BeginCombat { player_party: player, enemy_party: enemy })
+                    .add_child(text)
+                    ;
+
+                    state.set(GameState::BeginningCombat).unwrap();
+                }
             }
         }
     }
@@ -62,19 +83,37 @@ fn on_collision(
 
 #[derive(Component)]
 pub struct BeginCombat {
-    player: Entity,
-    enemy: Entity,
+    player_party: Entity,
+    enemy_party: Entity,
 }
 
 fn begin_combat(
     mut commands: Commands,
-    mut q_begin: Query<(Entity, &mut BeginCombat, &DespawnTimer)>,
+    mut q_begin: Query<(Entity, &Transform, &mut BeginCombat, &DespawnTimer)>,
     mut state: ResMut<State<GameState>>,
     mut arena_state: ResMut<State<ArenaState>>,
     time: Res<Time>,
+    mut egui: ResMut<EguiContext>,
+    windows: Res<Windows>,
+    q_camera: Query<(&Camera, &GlobalTransform, &OrthographicProjection)>,
 ) {
-    for (entity, mut begin, timer) in q_begin.iter_mut() {
-        if timer.0.finished() {
+    for (entity, transform, mut begin, timer) in q_begin.iter_mut() {
+
+        if let Ok((cam, global, proj)) = q_camera.get_single() {
+            let window = windows.get_primary().unwrap();
+            let pos = transform.translation + Vec3::new(0.0, 1.0, 0.0) * TILE_SIZE as f32;
+            if let Some(mut pos) = cam.world_to_screen(&windows, global, pos) {
+                pos.y = window.height() as f32 - pos.y;
+                //let pos = pos + Vec2::new(-1.5, -1.0) * TILE_SIZE as f32;
+                // egui::containers::Area::new("fight_it_out")
+                // .fixed_pos(pos.to_array())
+                // .show(ctx, |ui| {
+                    
+                //     ui.label("FIGHT IT OUT!");
+                // });
+            }
+        }
+        if timer.finished() {
             //arena_units.player_party = begin.player;
             //arena_units.enemy_party = begin.enemy;
             println!("Combat is beginning!");

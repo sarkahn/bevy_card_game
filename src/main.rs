@@ -91,7 +91,7 @@ pub fn main() {
         .add_plugin(AssetsPlugin)
         .add_plugin(BattleMapPlugin)
         // .add_plugin(EasingsPlugin)
-        // .add_plugin(ArenaPlugin)
+        .add_plugin(ArenaPlugin)
         .add_plugin(AnimationPlugin)
         .add_plugin(PrefabsPlugin)
         .add_plugin(PartyPlugin)

@@ -11,9 +11,9 @@ pub struct MapSpawnPlugin;
 
 impl Plugin for MapSpawnPlugin {
     fn build(&self, app: &mut App) {
-        // app
-        // .add_system(run_spawner)
-        // ;
+        app.add_system(despawn_tick)
+            .add_system_to_stage(CoreStage::PostUpdate, despawn_timer)
+            ;
     }
 }
 
@@ -35,25 +35,28 @@ impl std::ops::DerefMut for Spawner {
 }
 
 #[derive(Component)]
-pub struct DespawnTimer(pub Timer);
+pub struct DespawnTimer(Timer);
 
-// #[derive(Component)]
-// pub struct Spawner {
-//     timer: Timer,
-//     entities: Vec<String>,
-// }
+impl std::ops::Deref for DespawnTimer {
+    type Target = Timer;
 
-// #[derive(Component)]
-// pub struct SpawnCommands(pub fn(&mut EntityCommands));
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
-// impl Spawner {
-//     pub fn new<'a>(timer: Timer, prefab_names: &[&str]) -> Self {
-//         Self {
-//             timer,
-//             entities: prefab_names.iter().map(|s|s.to_string()).collect(),
-//         }
-//     }
-// }
+impl std::ops::DerefMut for DespawnTimer {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl DespawnTimer {
+    pub fn new(time: f32) -> Self {
+        Self(Timer::from_seconds(time, false))
+    }
+}
+
 
 fn despawn_tick(time: Res<Time>, mut q_timers: Query<&mut DespawnTimer>) {
     for mut timer in q_timers.iter_mut() {
@@ -62,35 +65,9 @@ fn despawn_tick(time: Res<Time>, mut q_timers: Query<&mut DespawnTimer>) {
 }
 
 fn despawn_timer(mut commands: Commands, mut q_timers: Query<(Entity, &mut DespawnTimer)>) {
-    for (entity, mut timer) in q_timers.iter_mut() {
-        if timer.0.finished() {
-            commands.entity(entity).despawn();
+    for (entity, timer) in q_timers.iter_mut() {
+        if timer.finished() {
+            commands.entity(entity).despawn_recursive();
         }
     }
 }
-
-// fn run_spawner(
-//     mut commands: Commands, 
-//     time: Res<Time>,
-//     mut q_spawner: Query<(&mut Spawner, &Transform,&SpawnCommands)>,
-// ) {
-//     for (mut spawner, transform, spawn_commands) in q_spawner.iter_mut() {
-//         spawner.timer.tick(time.delta());
-
-//         if spawner.timer.just_finished() {
-//             let mut rng = thread_rng();
-
-//             if let Some(to_spawn) = spawner.entities.choose(&mut rng) {
-//                 let p = transform.translation;
-//                 println!("Spawner pos: {}", p);
-//                 let p = p + Vec3::new(0.0, -1.0, 0.0) * TILE_SIZE as f32;
-
-//                 let mut entity = commands.spawn();
-//                 spawn_commands.0(&mut entity);
-
-//                 // commands.spawn().insert(SpawnPrefab::new(to_spawn, p.xy(), 10, SpawnType::Map))
-//                 // .insert(SpawnCommands);
-//             }
-//         }
-//     }
-// }

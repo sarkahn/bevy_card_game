@@ -479,11 +479,10 @@ impl MapEntityDefinitions {
     }
 
     pub fn get_tagged<'a>(&'a self, tag: &'a str) -> impl Iterator<Item = &'a MapEntityDef> {
-        let tag = tag.to_lowercase();
         self.defs
             .iter()
             .map(|(_, d)| d)
-            .filter(move |d| d.tags.contains(&tag))
+            .filter(move |d| d.tags.has(tag))
     }
 }
 
@@ -518,7 +517,7 @@ pub struct MapEntityDef {
     def_id: i32,
     tile_id: Option<i32>,
     tileset_id: Option<i32>,
-    tags: Vec<String>,
+    tags: Tags,
 }
 impl MapEntityDef {
     pub fn from_ldtk_def(def: &EntityDefinition) -> Self {
@@ -529,8 +528,7 @@ impl MapEntityDef {
         let def_id = def.uid as i32;
         let tileset_id = def.tileset_id.map(|v| v as i32);
         let tile_id = def.tile_id.map(|v| v as i32);
-        let tags = def.tags.clone();
-
+        let tags = Tags::new(def.tags.iter());
         Self {
             name,
             fields,

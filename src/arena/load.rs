@@ -7,7 +7,7 @@ use crate::{
     //prefab::ChangeSprite, 
     unit::Element, AtlasHandles, GameState,
     //LoadCardPrefab, SpawnPrefabOld, 
-    LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand},
+    LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, make_spritesheet_bundle,
 };
 
 use super::{cards::{CardLabel, CardLabelType, CardsAtlas, SpawnCard}, TakingATurn};
@@ -51,114 +51,111 @@ fn setup(
         ldtk.get(LDTK_CARDS_PATH),
     ) {
         if let Some(bg) = &ldtk.background() {
-            let size = bg.size;
-            let pos = size / 2;
+
             //println!("Spawned background, Size {}",  size);
-            make_sprite_image_sized(
-                &mut commands,
-                pos.as_vec2(),
-                0,
-                bg.image.clone(),
-                size,
-            );
+            commands.spawn_bundle(SpriteBundle {
+                texture: bg.image.clone(),
+                transform: Transform::from_xyz(0.0,0.0,50.0),
+                ..Default::default()
+            });
         }   
 
-        let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
+        // let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
 
-        let player_spawns = spawns.iter().filter(|e|e.tags().has("player") && !e.tags().has("card"));
+        // let player_spawns = spawns.iter().filter(|e|e.tags().has("player") && !e.tags().has("card"));
 
-        let actions = player_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
+        // let actions = player_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
 
-        let actions = actions.take_while(|a|a.is_some()).next().unwrap().unwrap();
-        println!("Found {} unit actions: {:?}", actions.len(), actions);
+        // let actions = actions.take_while(|a|a.is_some()).next().unwrap().unwrap();
+        // println!("Found {} unit actions: {:?}", actions.len(), actions);
 
-        for (i,spawn) in player_spawns.enumerate() {
+        // for (i,spawn) in player_spawns.enumerate() {
 
-            let mut animator = Animator::default();
-            if let Some(actions) = try_get_actions(spawn.fields(), "attackactions") {
-                //println!("Found attack acionts for {}", spawn.name());
-                //animator.add_commands(actions);
-            }
-            animator.push_cmds_back(actions.clone());
-            animator.push_cmds_front([
-                AnimationCommand::Play("idle".to_string()),
-                AnimationCommand::Wait(1.5 * i as f32)]
-            );
+        //     let mut animator = Animator::default();
+        //     if let Some(actions) = try_get_actions(spawn.fields(), "attackactions") {
+        //         //println!("Found attack acionts for {}", spawn.name());
+        //         //animator.add_commands(actions);
+        //     }
+        //     animator.push_cmds_back(actions.clone());
+        //     animator.push_cmds_front([
+        //         AnimationCommand::Play("idle".to_string()),
+        //         AnimationCommand::Wait(1.5 * i as f32)]
+        //     );
  
 
-            // let xy = spawn.xy();
-            // commands.spawn().insert(SpawnPrefabOld {
-            //     path: "units_wizard.ldtk".to_string(),
-            //     xy: xy,
-            //     depth: 10 + i as i32,
-            //     ..Default::default()
-            // })
-            // .insert(animator)
-            // ;
-        }
+        //     // let xy = spawn.xy();
+        //     // commands.spawn().insert(SpawnPrefabOld {
+        //     //     path: "units_wizard.ldtk".to_string(),
+        //     //     xy: xy,
+        //     //     depth: 10 + i as i32,
+        //     //     ..Default::default()
+        //     // })
+        //     // .insert(animator)
+        //     // ;
+        // }
 
-        let slimes = spawns.iter().filter(|e|e.tags().has("enemy"));
+        // let slimes = spawns.iter().filter(|e|e.tags().has("enemy"));
 
 
-        for (i,spawn) in slimes.rev().enumerate() {
-            let xy = spawn.xy();
-            // commands.spawn().insert(SpawnPrefabOld {
-            //     path: "units_slime.ldtk".to_string(),
-            //     xy: xy,
-            //     depth: 10 + i as i32,
-            //     ..Default::default()
-            // });
-        }
+        // for (i,spawn) in slimes.rev().enumerate() {
+        //     let xy = spawn.xy();
+        //     // commands.spawn().insert(SpawnPrefabOld {
+        //     //     path: "units_slime.ldtk".to_string(),
+        //     //     xy: xy,
+        //     //     depth: 10 + i as i32,
+        //     //     ..Default::default()
+        //     // });
+        // }
 
-        let cards: Vec<_> = cards_pfb
-            .get_tagged("card")
-            .filter(|card| {
-                if let Some(rarity) = card.fields().try_get_str("rarity") {
-                    return rarity == "common" || rarity == "uncommon";
-                }
-                false
-            })
-            .collect();
+        // let cards: Vec<_> = cards_pfb
+        //     .get_tagged("card")
+        //     .filter(|card| {
+        //         if let Some(rarity) = card.fields().try_get_str("rarity") {
+        //             return rarity == "common" || rarity == "uncommon";
+        //         }
+        //         false
+        //     })
+        //     .collect();
 
-        let spawns = spawns.iter().filter(|e| e.tags().has("card"));
+        // let spawns = spawns.iter().filter(|e| e.tags().has("card"));
 
-        let mut rng = thread_rng();
+        // let mut rng = thread_rng();
 
-        for (i,spawn) in spawns.enumerate() {
-            let card = cards.choose(&mut rng).unwrap();
+        // for (i,spawn) in spawns.enumerate() {
+        //     let card = cards.choose(&mut rng).unwrap();
 
-            let texture = card.fields().try_get_str("texture").unwrap_or_else(|| {
-                panic!(
-                    "Error loading card {}, couldn't parse texture field ",
-                    spawn.name()
-                )
-            });
+        //     let texture = card.fields().try_get_str("texture").unwrap_or_else(|| {
+        //         panic!(
+        //             "Error loading card {}, couldn't parse texture field ",
+        //             spawn.name()
+        //         )
+        //     });
 
-            let tileset = cards_pfb.tileset_from_path(texture).unwrap_or_else(|| {
-                panic!(
-                    "Error loading tileset, {} wasn't found in the ldtk file",
-                    texture
-                )
-            });
+        //     let tileset = cards_pfb.tileset_from_path(texture).unwrap_or_else(|| {
+        //         panic!(
+        //             "Error loading tileset, {} wasn't found in the ldtk file",
+        //             texture
+        //         )
+        //     });
 
-            let tile_id = card
-                .fields()
-                .try_get_i32("sprite_index")
-                .unwrap_or_else(|| panic!("Error loading 'tile_id' from {}", spawn.name()));
+        //     let tile_id = card
+        //         .fields()
+        //         .try_get_i32("sprite_index")
+        //         .unwrap_or_else(|| panic!("Error loading 'tile_id' from {}", spawn.name()));
 
-            let atlas = get_atlas(&mut atlases, &mut atlas_handles, tileset);
+        //     let atlas = get_atlas(&mut atlases, &mut atlas_handles, tileset);
 
-            let xy = spawn.xy();
-            //println!("Spawning card {}", card.name());
-            // commands.spawn().insert(LoadCardPrefab {
-            //     path: "units_BattleCardPremade.ldtk".to_string(),
-            //     xy,
-            //     depth: 5 + i as i32,
-            //     atlas,
-            //     tile_id,
-            //     size: card.size(),
-            // });
-        }
+        //     let xy = spawn.xy();
+        //     //println!("Spawning card {}", card.name());
+        //     // commands.spawn().insert(LoadCardPrefab {
+        //     //     path: "units_BattleCardPremade.ldtk".to_string(),
+        //     //     xy,
+        //     //     depth: 5 + i as i32,
+        //     //     atlas,
+        //     //     tile_id,
+        //     //     size: card.size(),
+        //     // });
+        // }
 
         state.set(GameState::Arena).unwrap();
     }

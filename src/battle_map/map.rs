@@ -74,10 +74,12 @@ impl MapUnits {
         self.grid_to_index(grid)
     }
 
+    #[inline]
     pub fn grid_to_index(&self, grid: IVec2) -> usize {
         (grid.y * self.size.x + grid.x) as usize
     }
 
+    #[inline]
     pub fn xy_to_grid(&self, xy: Vec2) -> IVec2 {
         xy.floor().as_ivec2() / TILE_SIZE
     }
