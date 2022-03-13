@@ -5,7 +5,7 @@ use crate::{ldtk_loader::{LdtkMap, Tags, Fields}, GameState, AtlasHandles, anima
 //SpawnPrefabOld, 
 prefab::Prefabs, TILE_SIZE, battle_map::{PlayerUnit, UnitCommands}, party::{GenerateParty, Party, PartyUnit}, 
 
-GENERATE_PARTY_SYSTEM, LdtkHandles};
+GENERATE_PARTY_SYSTEM, LdtkHandles, unit::Player};
 
 use super::{map::{BUILD_MAP_SYSTEM, CollisionMap}, spawn::Spawner, MapUnit, BattleMapEntity, MapUnits, get_valid_spawn_points, PlayerBase};
 
@@ -32,8 +32,6 @@ impl Plugin for BattleMapPlayerPlugin {
     }
 }
 
-#[derive(Component)]
-struct Player;
 
 
 fn setup(
@@ -61,12 +59,6 @@ fn setup(
             }
             if tags.has("player_base") {
                 commands.entity(entity).insert(PlayerBase);
-            }
-        }
-    
-        for name in config.settings.player_units.iter() {
-            if ldtk.get(name).is_none() {
-                ldtk_handles.0.push(asset_server.load(name));
             }
         }
     }
@@ -105,7 +97,7 @@ fn spawn(
                     let spawn = spawn_points.choose(&mut rng).unwrap();
                     let spawn = map_units.grid_to_xy(spawn);
                     
-                    let pos = Vec3::new(spawn.x, spawn.y, 10.0);
+                    let pos = Vec3::new(spawn.x, spawn.y, 2.0);
     
                     let names = config.settings.player_units.iter().map(|s|s.to_string()).collect();
                     //println!("Spawning gen...");
@@ -124,6 +116,8 @@ fn spawn(
 fn on_spawn(
     mut commands: Commands,
     mut q_spawn: Query<(Entity,&Transform, &Children), (Added<Party>, With<Player>)>,
+    mut q_visibility: Query<&mut Visibility>,
+    q_unit: Query<&PartyUnit>,
     configs: Res<Assets<ConfigAsset>>,
 ) {
     if let Some(configs) = configs.get(SETTINGS_PATH) {
@@ -133,6 +127,14 @@ fn on_spawn(
             .insert(UnitCommands::new(configs.settings.map_move_speed, configs.settings.map_move_wait))
             .insert(PlayerUnit)
             .insert(MapUnit);
+
+            //let mut rng = thread_rng();
+            //let icon = rng.gen_range(0..4);
+
+            //let icon_unit = units[icon];
+            //let unit = q_unit.get(icon_unit).unwrap();
+            //let mut vis = q_visibility.get_mut(unit.map_sprite).unwrap();
+            //vis.is_visible = true;
         }
     }
 }

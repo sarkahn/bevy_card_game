@@ -5,9 +5,9 @@ use crate::{
     config::ConfigAsset, ldtk_loader::*, make_sprite, make_sprite_atlas_sized,
     make_sprite_image_sized, 
     //prefab::ChangeSprite, 
-    unit::Element, AtlasHandles, GameState,
+    unit::{Element, Player, Enemy}, AtlasHandles, GameState,
     //LoadCardPrefab, SpawnPrefabOld, 
-    LDTK_CARDS_PATH, SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, make_spritesheet_bundle, party::PartyUnit,
+    SETTINGS_PATH, TILE_SIZE, animation::{Animator, AnimationCommand}, make_spritesheet_bundle, party::{PartyUnit, GenerateParty, Party, PartyUnitSprite}, GENERATE_PARTY_SYSTEM,
 };
 
 use super::{cards::{CardLabel, CardLabelType, CardsAtlas, SpawnCard}, TakingATurn, ArenaCombat};
@@ -17,47 +17,87 @@ pub struct ArenaLoadPlugin;
 impl Plugin for ArenaLoadPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CardsAtlas>()
-            .add_system_set(SystemSet::on_enter(GameState::LoadArena).with_system(load_data))
-            .add_system_set(SystemSet::on_update(GameState::LoadArena).with_system(setup));
+            .add_system_set(SystemSet::on_enter(GameState::LoadArena)
+                .with_system(load_data))
+            .add_system_set(SystemSet::on_update(GameState::LoadArena)
+                .with_system(setup.after(GENERATE_PARTY_SYSTEM))
+
+        )
+        ;
     }
 }
 
 pub struct LdtkHandles(Vec<Handle<LdtkMap>>);
 
+
+/*
+    let names = config.settings.player_units.iter().map(|s|s.to_string()).collect();
+    //println!("Spawning gen...");
+    commands.spawn().insert(
+        GenerateParty::new(4, names, pos),
+    ).insert(Player);
+*/
+
 fn load_data(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     config: Res<Assets<ConfigAsset>>,
+    q_parties: Query<&ArenaCombat>,
 ) {
     let config = config.get(SETTINGS_PATH).unwrap();
     let handle: Handle<LdtkMap> = asset_server.load(&config.settings.arena_file);
-    let cards: Handle<LdtkMap> = asset_server.load(LDTK_CARDS_PATH);
-    let handles = vec![handle, cards];
+    let handles = vec![handle];
     commands.insert_resource(LdtkHandles(handles));
+
+    if q_parties.is_empty() {
+        warn!("No combat parties found when loading arena scene, generating parties for debug purposes.");
+
+        let player_units = config.settings.player_units.to_owned();
+        let enemy_units = config.settings.enemy_units.to_owned();
+        let player_units = commands.spawn().insert(GenerateParty::new(4, player_units, Vec3::ZERO))
+        .insert(Player);
+        commands.spawn().insert(GenerateParty::new(4, enemy_units, Vec3::ZERO))
+        .insert(Enemy);
+
+    }
 }
 
 fn setup(
     mut commands: Commands,
     mut state: ResMut<State<GameState>>,
-    mut atlases: ResMut<Assets<TextureAtlas>>,
-    mut atlas_handles: ResMut<AtlasHandles>,
     mut card_atlas: ResMut<CardsAtlas>,
     ldtk: Res<Assets<LdtkMap>>,
     config: Res<Assets<ConfigAsset>>,
-    q_parties: Query<&ArenaCombat>,
+    q_combat: Query<&ArenaCombat>,
     q_units: Query<&Children>,
     q_unit: Query<&PartyUnit>,
-    mut q_sprite: Query<(Entity, &mut Visibility, &mut Transform, &mut GlobalTransform)>,
+    q_parties: Query<Entity, With<Party>>,
+    q_player: Query<Entity, With<Player>>,
+    q_enemy: Query<Entity, With<Enemy>>,
+    mut q_sprite: Query<(Entity, &mut Visibility, &mut Transform, &mut GlobalTransform), Without<Camera>>,
+    q_cam: Query<&Transform, With<Camera>>,
 ) {
     let config = config.get(SETTINGS_PATH).unwrap();
-    if let (Some(ldtk), Some(cards_pfb)) = (
-        ldtk.get(&config.settings.arena_file),
-        ldtk.get(LDTK_CARDS_PATH),
-    ) {
+    if let Some(ldtk) = ldtk.get(&config.settings.arena_file) {
+        if q_combat.is_empty() {
+            if q_parties.is_empty() {
+                // Wait for party to generate
+                return;
+            }
+            let player_party = q_player.single();
+            let enemy_party = q_enemy.single();
+            //println!("Found debug parties, intiiating combat");
+            commands.spawn().insert(ArenaCombat {
+                player_party,
+                enemy_party,
+            });
+            // Let commands execute
+            return;
+        }
+
         if let Some(bg) = &ldtk.background() {
-            let size = ldtk.size_px().as_vec2();
-            let pos = (size / 2.0).extend(10.0) - Vec3::new(0.5,0.0,0.0) * TILE_SIZE as f32;
-            println!("Spawned background, Size {}",  size);
+            let mut pos = q_cam.single().translation;
+            pos.z = 10.0;
             commands.spawn_bundle(SpriteBundle {
                 sprite: Sprite {
                     custom_size: Some(ldtk.size_px().as_vec2()),
@@ -67,41 +107,53 @@ fn setup(
                 transform: Transform::from_translation(pos),
                 ..Default::default()
             });
-        }   
-
-        let combat = q_parties.single();
-
-        let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
-        let player_spawns = spawns.iter().filter(|e|e.tags().has("player") && !e.tags().has("card"));
-
-        let actions = player_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
-
-        let player_units = q_units.get(combat.player_party).unwrap();
-        for (i,(spawn,unit)) in player_spawns.zip(player_units.iter()).enumerate() {
-            let unit = q_unit.get(*unit).unwrap();
-            let (sprite_entity, mut visibility, mut transform, global) = q_sprite.get_mut(unit.arena_sprite()).unwrap();
-
-            let p = spawn.xy().as_vec2().extend(15.0 + i as f32);
-            let local_pos = global.compute_matrix().inverse().transform_point3(p);
-
-            transform.translation = local_pos;
-            visibility.is_visible = true;
         }
 
-        let enemy_spawns = spawns.iter().filter(|e|e.tags().has("enemy") && !e.tags().has("card"));
 
-        let actions = enemy_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
+        if let Ok(combat) = q_combat.get_single() {
 
-        let enemy_units = q_units.get(combat.enemy_party).unwrap();
-        for (i,(spawn,unit)) in enemy_spawns.rev().zip(enemy_units.iter()).enumerate() {
-            let unit = q_unit.get(*unit).unwrap();
-            let (sprite_entity, mut visibility, mut transform, global) = q_sprite.get_mut(unit.arena_sprite()).unwrap();
+            let spawns: Vec<_> = ldtk.get_tagged("spawn_point").collect();
+            let player_spawns = spawns.iter().filter(|e|e.tags().has("player") && !e.tags().has("card"));
+    
+            let actions = player_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
+    
+            let player_units = q_units.get(combat.player_party).unwrap();
+            for (i,(spawn,unit)) in player_spawns.zip(player_units.iter()).enumerate() {
+                let unit = q_unit.get(*unit).unwrap();
+                let (sprite_entity, mut visibility, mut transform, global) = q_sprite.get_mut(unit.arena_sprite()).unwrap();
+    
+                let p = spawn.xy().as_vec2().extend(20.0 + i as f32);
+                let local_pos = global.compute_matrix().inverse().transform_point3(p);
+    
+                transform.translation = local_pos;
+                visibility.is_visible = true;
+            }
+    
+            let enemy_spawns = spawns.iter().filter(|e|e.tags().has("enemy") && !e.tags().has("card"));
+    
+            let actions = enemy_spawns.clone().map(|e|try_get_actions(e.fields(), "attackactions"));
+    
+            let enemy_units = q_units.get(combat.enemy_party).unwrap();
+            for (i,(spawn,unit)) in enemy_spawns.rev().zip(enemy_units.iter()).enumerate() {
+                let unit = q_unit.get(*unit).unwrap();
+                let (sprite_entity, mut visibility, mut transform, global) = q_sprite.get_mut(unit.arena_sprite()).unwrap();
+    
+                let p = spawn.xy().as_vec2().extend(15.0 + i as f32);
+                let local_pos = global.compute_matrix().inverse().transform_point3(p);
+    
+                transform.translation = local_pos;
+                visibility.is_visible = true;
+            }
 
-            let p = spawn.xy().as_vec2().extend(15.0 + i as f32);
-            let local_pos = global.compute_matrix().inverse().transform_point3(p);
-
-            transform.translation = local_pos;
-            visibility.is_visible = true;
+            commands.spawn_bundle(SpriteBundle {
+                sprite: Sprite {
+                    custom_size: Some(Vec2::splat(TILE_SIZE as f32)),
+                    ..Default::default()
+                },
+                transform: Transform::from_xyz(50.0,50.0,30.0),
+                ..Default::default()
+            });
+    
         }
 
         // let actions = actions.take_while(|a|a.is_some()).next().unwrap().unwrap();
@@ -198,6 +250,7 @@ fn setup(
         state.set(GameState::Arena).unwrap();
     }
 }
+
 
 fn get_actions<'a>(
     fields: &'a Fields,

@@ -85,14 +85,9 @@ fn on_collision(
     }
 }
 
+/// Used to store party information while the "fight it out" animation plays
 #[derive(Component)]
 pub struct BeginCombat {
-    player_party: Entity,
-    enemy_party: Entity,
-}
-
-#[derive(Component)]
-pub struct ArenaTransitionParties {
     player_party: Entity,
     enemy_party: Entity,
 }

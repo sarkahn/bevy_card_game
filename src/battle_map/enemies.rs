@@ -6,7 +6,7 @@ AtlasHandles, animation::Animator, SETTINGS_PATH, config::ConfigAsset,
 //SpawnPrefabOld, 
 prefab::Prefabs, TILE_SIZE, battle_map::{UnitCommands}, party::{GenerateParty, Party, PartyUnit}, 
 
-GENERATE_PARTY_SYSTEM, LdtkHandles};
+GENERATE_PARTY_SYSTEM, LdtkHandles, unit::Enemy};
 
 use super::{map::{BUILD_MAP_SYSTEM, CollisionMap}, spawn::Spawner, MapUnit, BattleMapEntity, MapUnits, get_valid_spawn_points, PlayerBase, EnemyUnit, UnitCommand};
 
@@ -29,10 +29,6 @@ impl Plugin for BattleMapEnemyPlugin {
         ;
     }
 }
-
-#[derive(Component)]
-pub struct Enemy;
-
 
 fn setup(
     asset_server: Res<AssetServer>,
@@ -104,7 +100,7 @@ fn spawn(
                     let spawn = spawn_points.choose(&mut rng).unwrap();
                     let spawn = map_units.grid_to_xy(spawn);
                     
-                    let pos = Vec3::new(spawn.x, spawn.y, 10.0);
+                    let pos = Vec3::new(spawn.x, spawn.y, 2.0);
     
                     let names = config.settings.enemy_units.iter().map(|s|s.to_string()).collect();
                     //println!("Spawning gen...");

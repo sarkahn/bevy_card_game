@@ -1,179 +1,93 @@
-// use bevy::{prelude::*, utils::HashMap, ecs::system::EntityCommands};
+use bevy::{prelude::*, utils::HashMap, ecs::system::EntityCommands};
 
-// use crate::{ldtk_loader::{LdtkMap, MapTileset}, AtlasHandles};
+use crate::{ldtk_loader::{LdtkMap, MapTileset}, AtlasHandles, party::{PartyUnitSprite, PartyUnit}, TILE_SIZE, BuildPrefab};
 
-// pub struct UnitPrefabPlugin;
+pub struct UnitPrefabPlugin;
 
-// impl Plugin for UnitPrefabPlugin {
-//     fn build(&self, app: &mut App) {
-//         app
-//         //.init_resource::<Prefabs>()
-//         .add_startup_system(setup)
-//         .add_system(load_prefab)
-//         .add_system(build_from_file)
-//         .add_system(spawn)
-//         ;
-//     }
-// }
+impl Plugin for UnitPrefabPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_system(build_prefab);
+    }
+}
 
+fn build_prefab( 
+    mut commands: Commands,
+    ldtk: Res<Assets<LdtkMap>>,
+    q_build: Query<(Entity, &BuildPrefab)>,
+) {
+    for (entity, build) in q_build.iter() {
+        let ldtk = ldtk.get(&build.name).unwrap_or_else(||{
+            panic!("Error loading prefab {}, unable to load ldtk file", build.name);
+        });
+        println!("Building prefab for {:?}", entity);
+        //map_sprite.transform.translation = gen.pos;
+        let map_sprite = get_tagged_sprite(ldtk, "map_sprite", 64.0);
 
-// #[derive(Component)]
-// pub struct Unit;
+        let map_sprite = commands.spawn()
+            .insert_bundle(map_sprite)
+            .insert(PartyUnitSprite)
+            .id();
 
-// #[derive(Component)]
-// pub struct MapSprite(pub Entity);
+        let arena_sprite = get_tagged_sprite(ldtk, "arena_sprite", 128.0);
+        let arena_sprite = commands.spawn()
+            .insert_bundle(arena_sprite)
+            .insert(PartyUnitSprite)
+            .id();
 
-// #[derive(Component)]
-// pub struct ArenaSprite(pub Entity);
+        let unit = PartyUnit {
+            map_sprite: map_sprite.clone(),
+            arena_sprite: arena_sprite.clone()
+        };
 
-// #[derive(Component)]
-// pub struct BuildPrefab {
-//     pub name: String,
-// }
-
-
-
-// pub enum SpawnType {
-//     Map,
-//     Arena,
-// }
-
-
-
-// pub fn load_prefab(
-//     mut commands: Commands,
-//     asset_server: Res<AssetServer>,
-//     q_build: Query<(Entity, &BuildPrefab), Added<BuildPrefab>>,
-// ) {
-//     for (entity, build) in q_build.iter() {
-//         let handle: Handle<LdtkMap> = asset_server.load(&build.name);
-//         commands.entity(entity).insert(handle);
-//     }
-// }
-
-// pub fn build_from_file(
-//     mut commands: Commands,
-//     ldtk: Res<Assets<LdtkMap>>,
-//     q_build: Query<(Entity, &BuildPrefab, &Handle<LdtkMap>)>,
-//     //mut prefabs: ResMut<Prefabs>,
-//     mut atlas: ResMut<Assets<TextureAtlas>>,
-//     mut atlas_handles: ResMut<AtlasHandles>,
-// ) {
-//     // for (entity, build, handle) in q_build.iter() {
-//     //     if let Some(ldtk) = ldtk.get(handle) {
-//     //         if let Some(pfb) = ldtk.get_tagged("map_sprite").next() {
-//     //             let tsid = pfb.tileset_id().expect("Could't get tileset id for map sprite");
-//     //             let tileset = ldtk.tileset_from_id(tsid).expect("Couldn't get tileset from ldtk");
+         commands.entity(entity)
+        .insert(unit)
+        .insert(Transform::default())
+        .insert(GlobalTransform::default())
+        .add_child(map_sprite)
+        .add_child(arena_sprite)
+        .remove::<BuildPrefab>();
+    }
+}
 
 
-//     //             let sprite = TextureAtlasSprite {
-//     //                 index: pfb.tile_id().unwrap() as usize,
-//     //                 custom_size: Some(pfb.size().as_vec2()),
-//     //                 ..Default::default()
-//     //             };
+fn get_tagged_sprite(
+    ldtk: &LdtkMap,
+    tag: &str,
+    size: f32,
+) -> SpriteSheetBundle {
+    let map_sprite = ldtk.get_tagged(tag).next().unwrap_or_else(||
+        panic!("Error spawning unit {}, missing {} tag", ldtk.name(), tag)
+    );
+    let tileset = map_sprite.tileset_id().unwrap_or_else(||
+        panic!("Error spawning unit {} {}, missing tileset id. Is a tilemap attached
+        to the entity?", ldtk.name(), tag)
+    );
+    let tileset = ldtk.tileset_from_id(tileset).unwrap_or_else(||
+        panic!("Error spawning unit {} {}, invalid tileset id. Is a tilemap attached
+        to the entity?", ldtk.name(), tag)
+    );
+    let tile_id = map_sprite.tile_id().unwrap_or_else(||
+        panic!("Error spawning unit {} {}, invalid tile id", ldtk.name(), tag)
+    );
+    get_sprite(tile_id as usize, tileset.atlas().clone(), Vec2::splat(size))
+}
 
-//     //             let name = pfb.name().to_string();
-
-//     //             info!("Loading {} prefab: {:?}",name, sprite );
-//     //             let atlas = get_atlas(&mut atlas, &mut atlas_handles, tileset);
-//     //             //let atlas = &tileset.atlas;
-//     //             prefabs.map.insert(
-//     //                 name,
-//     //                 UnitPrefab {
-//     //                 map_sprite: sprite,
-//     //                 atlas: atlas.clone(),
-//     //             });
-
-//     //             commands.entity(entity).remove::<BuildPrefab>();
-//     //             let tags = pfb.tags();
-//     //             let fields = pfb.fields();
-//     //         } else {
-//     //             warn!("Error loading prefab {}, couldn't find 'map_sprite' tag", build.name);
-//     //         }
-//     //     }
-//     // }
-// }
-
-// #[derive(Component)]
-// pub struct SpawnPrefab {
-//     name: String,
-//     pos: Vec2,
-//     depth: u32,
-//     spawn_type: SpawnType,
-// }
-// impl SpawnPrefab {
-//     pub fn new(name: &str, pos: Vec2, depth: u32, spawn_type: SpawnType) -> Self {
-//         Self {
-//             name: name.to_string(),
-//             pos,
-//             depth,
-//             spawn_type
-//         }
-//     }
-// }
-
-// fn spawn(
-//     mut commands: Commands,
-//     //prefabs: Res<Prefabs>,
-//     q_spawn: Query<(Entity, &SpawnPrefab)>,
-//     mut atlas: Res<Assets<TextureAtlas>>,
-//     mut atlas_handles: ResMut<AtlasHandles>,
-// ) {
-//     // for (entity, spawn) in q_spawn.iter() {
-//     //     commands.entity(entity).remove::<SpawnPrefab>();
-//     //     let mut entity = commands.entity(entity);
-//     //     entity.remove::<SpawnPrefab>();
-
-//     //     let pfb = prefabs.get_unit_prefab(&spawn.name).unwrap_or_else(||
-//     //     panic!("Error spawning prefab - {} not found. Has it been loaded yet?", spawn.name));
-
-//     //     println!("Spawning {}", spawn.name, );
-
-//     //     let sprite = match spawn.spawn_type {
-//     //         SpawnType::Map => pfb.map_sprite.clone(),
-//     //         SpawnType::Arena => todo!(),
-//     //     };
-//     //     let texture_atlas = pfb.atlas.clone();
-
-//     //     //println!("Atlas: {:?}", atlas);
-
-//     //     let xyz = spawn.pos.extend(spawn.depth as f32);
-//     //     let bundle = SpriteSheetBundle {
-//     //         sprite,
-//     //         texture_atlas,
-//     //         transform: Transform::from_translation(xyz),
-//     //         ..Default::default()
-//     //     };
-//     //     entity.insert_bundle(bundle);
-
-//     // }
-// }
-
-// #[derive(Debug)]
-// pub struct UnitPrefab {
-//     map_sprite: TextureAtlasSprite,
-//     atlas: Handle<TextureAtlas>,
-// }
-
-
-// fn get_atlas(
-//     atlases: &mut Assets<TextureAtlas>,
-//     atlas_handles: &mut AtlasHandles,
-//     tileset: &MapTileset,
-// ) -> Handle<TextureAtlas> {
-//     let name = &tileset.name;
-//     match atlas_handles.0.get(name) {
-//         Some(atlas) => atlas.clone(),
-//         None => {
-//             let atlas = TextureAtlas::from_grid(
-//                 tileset.image.clone(),
-//                 IVec2::splat(tileset.tile_size).as_vec2(),
-//                 tileset.tile_count.x as usize,
-//                 tileset.tile_count.y as usize,
-//             );
-//             let handle = atlases.add(atlas);
-//             atlas_handles.0.insert(name.to_string(), handle.clone());
-//             handle
-//         }
-//     }
-// }
+fn get_sprite(
+    index: usize,
+    atlas: Handle<TextureAtlas>,
+    size: Vec2,
+) -> SpriteSheetBundle {
+    let sprite = TextureAtlasSprite {
+        index,
+        custom_size: Some(size),
+        ..Default::default()
+    };
+    let xyz = Vec3::new(0.5, 0.5, 0.0) * TILE_SIZE as f32;
+    SpriteSheetBundle {
+        sprite,
+        texture_atlas: atlas,
+        transform: Transform::from_translation(xyz),
+        visibility: Visibility { is_visible: false },
+        ..Default::default()
+    }
+}

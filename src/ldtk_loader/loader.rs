@@ -241,13 +241,13 @@ impl AssetLoader for LdtkAssetLoader {
                     let path: AssetPath = path.join(&bg_path).into();
                     //println!("Loading {}", path.path().to_string_lossy());
                     dep_paths.push(path.clone());
-                    let image: Handle<Image> = load_context.get_handle(bg_path);
+                    let image: Handle<Image> = load_context.get_handle(path.clone());
                     // TODO : Should derive size of tile
                     let w = level.px_wid;
                     let h = level.px_hei;
                     let size = IVec2::new(w as i32, h as i32);
                     bg = Some(MapBackground { image, size });
-                    println!("Background = yes: {}", path.path().to_string_lossy());
+                    //println!("Background = yes: {}", path.path().to_string_lossy());
                 }
             }
 

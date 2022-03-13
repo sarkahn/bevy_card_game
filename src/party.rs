@@ -1,14 +1,16 @@
 use bevy::prelude::*;
 use rand::{thread_rng, prelude::SliceRandom, Rng};
 
-use crate::{ldtk_loader::LdtkMap, GENERATE_PARTY_SYSTEM, TILE_SIZE};
+use crate::{ldtk_loader::LdtkMap, GENERATE_PARTY_SYSTEM, TILE_SIZE, BuildPrefab};
 
 pub struct PartyPlugin;
 
 impl Plugin for PartyPlugin {
     fn build(&self, app: &mut App) {
         app
-        .add_system(generate.label(GENERATE_PARTY_SYSTEM));
+        .add_system(generate.label(GENERATE_PARTY_SYSTEM))
+        .add_system(show_map_sprite)
+        ;
 
     }
 }
@@ -34,9 +36,18 @@ pub struct Party;
 
 #[derive(Component)]
 pub struct PartyUnit {
-    map_sprite: Entity,
-    arena_sprite: Entity,
+    pub map_sprite: Entity,
+    pub arena_sprite: Entity,
 }
+
+#[derive(Component)]
+pub struct ShowMapSprite;
+
+#[derive(Component)]
+pub struct ArenaSpriteVisibility(pub bool);
+
+#[derive(Component)]
+pub struct PartyUnitSprite;
 
 impl PartyUnit {
     /// Get the party unit's map sprite.
@@ -60,11 +71,9 @@ fn generate(
     for (entity, gen) in q_gen.iter_mut() {
         //println!("Generating party");
 
-        // Try load
-        for name in &gen.names {
-            if ldtk.get(name).is_none() {
-                continue;
-            }
+        if gen.names.iter().any(|n|ldtk.get(n).is_none()) {
+            warn!("Error spawning party, unit prefabs were not loaded yet!");
+            continue;
         }
 
         let mut units = Vec::new();
@@ -74,35 +83,20 @@ fn generate(
         for i in 0..gen.count {
             let to_spawn = gen.names.choose(&mut rng).unwrap();
 
-            if let Some(ldtk) = ldtk.get(to_spawn) {
+            let mut unit = commands.spawn();
+            
+            unit.insert(BuildPrefab {
+                name: to_spawn.to_owned()
+            });
 
-                //map_sprite.transform.translation = gen.pos;
-                let mut map_sprite = get_tagged_sprite(ldtk, "map_sprite", 64.0);
-                if i == icon {
-                    map_sprite.visibility.is_visible = true;
-                }
-                let map_sprite = commands.spawn().insert_bundle(map_sprite).id();
-
-                let arena_sprite = get_tagged_sprite(ldtk, "arena_sprite", 256.0);
-                let arena_sprite = commands.spawn().insert_bundle(arena_sprite).id();
-        
-                let unit = PartyUnit {
-                    map_sprite: map_sprite.clone(),
-                    arena_sprite: arena_sprite.clone()
-                };
-
-                let unit = commands.spawn()
-                .insert(unit)
-                .insert(Transform::default())
-                .insert(GlobalTransform::default())
-                .add_child(map_sprite)
-                .add_child(arena_sprite)
-                .id();
-
-                units.push(unit);
-            } else {
-                warn!("Tries to load ldtk {} while generating party, but it failed!", to_spawn);
+            if i == icon {
+                //println!("Inserting showmapsprite on {:?}", unit.id());
+                unit.insert(ShowMapSprite);
             }
+
+            let unit = unit.id();
+
+            units.push(unit);
         }
         let pos = gen.pos;// + Vec3::new(0.5,0.5,0.0) * TILE_SIZE as f32;
         //println!("Spawning party, units: {:?}", units);
@@ -115,44 +109,59 @@ fn generate(
     }
 }
 
-fn get_tagged_sprite(
-    ldtk: &LdtkMap,
-    tag: &str,
-    size: f32,
-) -> SpriteSheetBundle {
-    let map_sprite = ldtk.get_tagged(tag).next().unwrap_or_else(||
-        panic!("Error spawning unit {}, missing {} tag", ldtk.name(), tag)
-    );
-    let tileset = map_sprite.tileset_id().unwrap_or_else(||
-        panic!("Error spawning unit {} {}, missing tileset id. Is a tilemap attached
-        to the entity?", ldtk.name(), tag)
-    );
-    let tileset = ldtk.tileset_from_id(tileset).unwrap_or_else(||
-        panic!("Error spawning unit {} {}, invalid tileset id. Is a tilemap attached
-        to the entity?", ldtk.name(), tag)
-    );
-    let tile_id = map_sprite.tile_id().unwrap_or_else(||
-        panic!("Error spawning unit {} {}, invalid tile id", ldtk.name(), tag)
-    );
-    get_sprite(tile_id as usize, tileset.atlas().clone(), Vec2::splat(size))
-}
-
-fn get_sprite(
-    index: usize,
-    atlas: Handle<TextureAtlas>,
-    size: Vec2,
-) -> SpriteSheetBundle {
-    let sprite = TextureAtlasSprite {
-        index,
-        custom_size: Some(size),
-        ..Default::default()
-    };
-    let xyz = Vec3::new(0.5, 0.5, 0.0) * TILE_SIZE as f32;
-    SpriteSheetBundle {
-        sprite,
-        texture_atlas: atlas,
-        transform: Transform::from_translation(xyz),
-        visibility: Visibility { is_visible: false },
-        ..Default::default()
+fn show_map_sprite(
+    mut commands: Commands,
+    q_unit: Query<(Entity,&PartyUnit), With<ShowMapSprite>>,
+    mut q_vis: Query<&mut Visibility>,
+) {
+    for (entity, unit) in q_unit.iter() {
+        //println!("Found showmapsprite unit!");
+        if let Ok(mut vis) = q_vis.get_mut(unit.map_sprite) {
+            vis.is_visible = true;
+            //println!("Showing sprite");
+            commands.entity(entity).remove::<ShowMapSprite>();
+        }
     }
 }
+
+// fn get_tagged_sprite(
+//     ldtk: &LdtkMap,
+//     tag: &str,
+//     size: f32,
+// ) -> SpriteSheetBundle {
+//     let map_sprite = ldtk.get_tagged(tag).next().unwrap_or_else(||
+//         panic!("Error spawning unit {}, missing {} tag", ldtk.name(), tag)
+//     );
+//     let tileset = map_sprite.tileset_id().unwrap_or_else(||
+//         panic!("Error spawning unit {} {}, missing tileset id. Is a tilemap attached
+//         to the entity?", ldtk.name(), tag)
+//     );
+//     let tileset = ldtk.tileset_from_id(tileset).unwrap_or_else(||
+//         panic!("Error spawning unit {} {}, invalid tileset id. Is a tilemap attached
+//         to the entity?", ldtk.name(), tag)
+//     );
+//     let tile_id = map_sprite.tile_id().unwrap_or_else(||
+//         panic!("Error spawning unit {} {}, invalid tile id", ldtk.name(), tag)
+//     );
+//     get_sprite(tile_id as usize, tileset.atlas().clone(), Vec2::splat(size))
+// }
+
+// fn get_sprite(
+//     index: usize,
+//     atlas: Handle<TextureAtlas>,
+//     size: Vec2,
+// ) -> SpriteSheetBundle {
+//     let sprite = TextureAtlasSprite {
+//         index,
+//         custom_size: Some(size),
+//         ..Default::default()
+//     };
+//     let xyz = Vec3::new(0.5, 0.5, 0.0) * TILE_SIZE as f32;
+//     SpriteSheetBundle {
+//         sprite,
+//         texture_atlas: atlas,
+//         transform: Transform::from_translation(xyz),
+//         visibility: Visibility { is_visible: false },
+//         ..Default::default()
+//     }
+// }

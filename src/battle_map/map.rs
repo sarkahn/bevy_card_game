@@ -207,7 +207,7 @@ fn build_map(
     mut units: ResMut<MapUnits>,
     q_loaded: Query<&MapLoaded>,
     mut state: ResMut<State<GameState>>,
-    mut q_cam: Query<&mut Transform, With<Camera>>,
+    //mut q_cam: Query<&mut Transform, With<Camera>>,
 ) {
     if !q_loaded.is_empty() {
         return;
@@ -218,11 +218,6 @@ fn build_map(
 
             map.0 = PathMap2d::new(ldtk.size_px().as_uvec2().into());
 
-            if let Ok(mut cam_transform) = q_cam.get_single_mut() {
-                let xy = ldtk.size_px().as_vec2() / 2.0;
-                let xyz = xy.extend(cam_transform.translation.z);
-                cam_transform.translation = xyz;
-            }
 
             units.resize(map.size().as_ivec2());
             for (i, layer) in ldtk.layers().enumerate() {
